@@ -20,15 +20,13 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'contacts'],
+    'depends': ['base', 'contacts','mail'],
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+         'views/loan_application.xml',
+        'views/rod_cooperativa_menuitem.xml',
         'views/res_partner.xml',
-    ],
-    # only loaded in demonstration mode
-    'demo': [
-        'demo/demo.xml',
+        'security/ir.model.access.csv',
     ],
 }

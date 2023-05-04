@@ -15,6 +15,7 @@ class ResPartner(models.Model):
     paternal_surname = fields.Char(string='Apellido paterno')
     maternal_surname = fields.Char(string='Apellido materno')
 
+
     @api.onchange('name_contact', 'paternal_surname', 'maternal_surname')
     def _onchange_name(self):
         for partner in self:

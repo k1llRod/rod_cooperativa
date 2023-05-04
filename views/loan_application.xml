@@ -1,0 +1,77 @@
+<odoo>
+    <data>
+        <!-- Vista Árbol de Modelo loan application -->
+
+        <record model="ir.ui.view" id="loan_application_tree_id">
+            <field name="name">loan.application.tree</field>
+            <field name="model">loan.application</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="letter_of_request"/>
+                    <field name="contact_request"/>
+                    <field name="last_copy_paid_slip"/>
+                    <field name="ci_fothocopy"/>
+                    <field name="photocopy_military_ci"/>
+                    <field name="type_of_loan"/>
+                    <field name="guarantor"/>
+                    <field name="code_loan"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Formulario loan.application  -->
+
+        <record model="ir.ui.view" id="loan_application_form_id">
+            <field name="name">loan.application.form</field>
+            <field name="model">loan.application</field>
+            <field name="arch" type="xml">
+                <form string="Solicitud de presupuesto" class="oe_left oe_edit_only oe_form_required">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" string="Nombre"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="partner_id"/>
+                                <field name="letter_of_request" />
+                                <field name="contact_request" />
+                                <field name="last_copy_paid_slip" />
+                                <field name="ci_fothocopy" />
+                                <field name="photocopy_military_ci" />
+                                <field name="type_of_loan" />
+                                <field name="guarantor" />
+                                <field name="code_loan" />
+                                <field name="state"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+
+                        <field name="message_follower_ids" groups="base.group_user"/>
+
+                        <field name="activity_ids"/>
+
+                        <field name="message_ids"/>
+
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Accion para visualizar loan.application -->
+
+        <record id="action_loan_application" model="ir.actions.act_window">
+            <field name="name">Solicitud de préstamos</field>
+            <field name="res_model">loan.application</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>
