@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_cooperativa" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.cooperativa</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="95"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Point of sale" string="Cooperativa de ahorro y credito de vinculo laboral" >
+                    <h2>Valores para tabla de prestamos</h2>
+                    <div class="row mt16 o_settings_container" name="taxes_setting_container">
+                        <div class="col-12 col-lg-6 o_setting_box"
+                            id="default_sales_tax_setting"
+                            title="Valores para parametrizar prestamos.">
+                            <div class="o_setting_right_pane">
+                                <div>
+                                    <label string="Interes mensual%" for="monthly_interest"/>
+                                    <div class="text-muted">
+                                        Establecer el porcentaje de interes mensual.
+                                    </div>
+                                    <div class="content-group mt16">
+                                        <field name="monthly_interest" colspan="4" nolabel="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <div>
+                                    <label string="Fondo de contingencia%" for="contingency_fund"/>
+                                    <div class="text-muted">
+                                        Establecer el porcentaje de fondo de contingencia.
+                                    </div>
+                                    <div class="content-group mt16">
+                                        <field name="contingency_fund" colspan="4" nolabel="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <div>
+                                    <label string="Porcentaje al ministerio de defensa" for="percentage_min_def"/>
+                                    <div class="text-muted">
+                                        Establecer el porcentaje.
+                                    </div>
+                                    <div class="content-group mt16">
+                                        <field name="percentage_min_def" colspan="4" nolabel="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="rod_cooperativa.action_cooperativa_configuration" model="ir.actions.act_window">
+        <field name="name">Ajustes del cooperativa</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+
+
+</odoo>

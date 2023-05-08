@@ -24,7 +24,9 @@
 
     # always loaded
     'data': [
-         'views/loan_application.xml',
+        'views/res_config_settings.xml',
+        'views/loan_application.xml',
+        'views/type_loan.xml',
         'views/rod_cooperativa_menuitem.xml',
         'views/res_partner.xml',
         'security/ir.model.access.csv',

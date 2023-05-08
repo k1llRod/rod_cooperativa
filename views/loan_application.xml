@@ -9,14 +9,17 @@
                 <tree>
                     <field name="name"/>
                     <field name="partner_id"/>
+                    <field name="net_salary"/>
                     <field name="letter_of_request"/>
                     <field name="contact_request"/>
                     <field name="last_copy_paid_slip"/>
                     <field name="ci_fothocopy"/>
                     <field name="photocopy_military_ci"/>
-                    <field name="type_of_loan"/>
+<!--                    <field name="type_of_loan"/>-->
                     <field name="guarantor"/>
                     <field name="code_loan"/>
+                    <field name="amount_loan" widget="monetary"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
@@ -32,6 +35,18 @@
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="button_value_dolar" class="oe_stat_button" type="object" icon="fa-usd">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field string=" " name="value_dolar" widget="statinfo"/>
+                                    </span>
+                                    <span class="o_stat_text">
+                                        Dolar
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
                         <div class="oe_title">
                             <h1>
                                 <field name="name" string="Nombre"/>
@@ -40,17 +55,29 @@
                         <group>
                             <group>
                                 <field name="partner_id"/>
-                                <field name="letter_of_request" />
-                                <field name="contact_request" />
-                                <field name="last_copy_paid_slip" />
-                                <field name="ci_fothocopy" />
-                                <field name="photocopy_military_ci" />
-                                <field name="type_of_loan" />
-                                <field name="guarantor" />
-                                <field name="code_loan" />
-                                <field name="state"/>
+                                <field name="type_loan"/>
+<!--                                <field name="category_loan"/>-->
+                                <field name="guarantor"/>
+                                <field name="months_quantity"/>
+                                <field name="amount_loan_dollars" widget="monetary"/>
+                                <field name="amount_loan" widget="monetary"/>
+                                <field name="monthly_interest" readonly="1"/>
+                                <field name="contingency_fund" readonly="1"/>
+                                <field name="index_loan"/>
+                                <field name="fixed_fee"/>
+                                <field name="amount_min_def" />
                             </group>
+                            <group>
+                                <field name="letter_of_request"/>
+                                <field name="contact_request"/>
+                                <field name="last_copy_paid_slip"/>
+                                <field name="ci_fothocopy"/>
+                                <field name="photocopy_military_ci"/>
+                            </group>
+
                         </group>
+
+
                     </sheet>
                     <div class="oe_chatter">
 

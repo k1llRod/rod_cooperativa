@@ -1,0 +1,60 @@
+<odoo>
+    <data>
+        <!-- Vista Árbol de Modelo loan application -->
+
+        <record model="ir.ui.view" id="type_loan_tree_id">
+            <field name="name">type.loan.tree</field>
+            <field name="model">type.loan</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="code_loan"/>
+                    <field name="degree"/>
+                    <field name="months"/>
+                    <field name="limit_amount"/>
+                    <field name="limit_amount_dollars"/>
+<!--                    <field name="amount_month"/>-->
+<!--                    <field name="amount_month_dollars"/>-->
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Formulario loan.application  -->
+
+        <record model="ir.ui.view" id="type_loan_form-_id">
+            <field name="name">type.loan.form</field>
+            <field name="model">type.loan</field>
+            <field name="arch" type="xml">
+                <form string="Solicitud de presupuesto" class="oe_left oe_edit_only oe_form_required">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code_loan"/>
+                                <field name="degree" />
+                                <field name="months" />
+                                <field name="limit_amount_dollars" widget="monetary"/>
+                                <field name="limit_amount" widget="monetary"/>
+<!--                                <field name="amount_month" />-->
+<!--                                <field name="amount_month_dollars" />-->
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Accion para visualizar loan.application -->
+
+        <record id="action_type_loan" model="ir.actions.act_window">
+            <field name="name">Tabla de tipos de prestamos</field>
+            <field name="res_model">type.loan</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

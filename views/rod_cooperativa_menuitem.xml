@@ -4,17 +4,10 @@
       <!-- Top menu item -->
       <menuitem name="Cooperativa de ahorro y credito" id="rod_cooperativa.menu_root" sequence="100"/>
       <!-- menu categories -->
+      <menuitem id="rod_cooperativa.rod_cooperativa_prestamos" name="Prestamos" parent="rod_cooperativa.menu_root" sequence="1" action="rod_cooperativa.action_loan_application"/>
+      <menuitem id="rod_cooperativa.rod_cooperativa_configuration" name="Configuración" parent="rod_cooperativa.menu_root" sequence="2" action="rod_cooperativa.action_loan_application"/>
 
-      <menuitem id="rod_cooperativa.rod_cooperativa_prestamos" name="Prestamos y ahorros" parent="rod_cooperativa.menu_root" sequence="1"/>
-      <menuitem name="List" id="rod_cooperativa.vista1" parent="rod_cooperativa.rod_cooperativa_prestamos" action="rod_cooperativa.action_loan_application"/>
-<!--      <menuitem id="activos_fijos_menu_accounting" name="Contabilidad" parent="activos_fijos.menu_root" groups="group_activos_fijos_administrator" sequence="2"/>-->
-<!--      <menuitem id="activos_fijos_menu_configuration" name="Configuración" parent="activos_fijos.menu_root" groups="group_activos_fijos_administrator" sequence="3"/>-->
-
-<!--      <menuitem id="activos_fijos_menu_move_journal" name="Asientos contables" parent="activos_fijos_menu_accounting" action="account.action_move_journal_line" sequence="3"/>-->
-<!--      <menuitem id="activos_fijos_menu_models_asset" name="Modelos de activos" parent="activos_fijos_menu_configuration" action="account_asset.action_account_asset_model_form" sequence="3"/>-->
-
-<!--      <menuitem name="Activos fijos" id="activos_fijos.activofijo_menu" parent="activos_fijos.menu_root" action="activos_fijos.activofijo_action_window"/>-->
-<!--      <menuitem name="Grupos contables" id="activos_fijos.grupocontable_menu" parent="activos_fijos.menu_root"  action="activos_fijos.grupocontable_action_window" />-->
-<!--      <menuitem name="UFV" id="activos_fijos.ufv_menu" parent="activos_fijos.menu_root" action="activos_fijos.ufv_action_window"/>-->
+      <menuitem id="rod_cooperativa.rod_cooperativa_settings" name="Ajustes" parent="rod_cooperativa.rod_cooperativa_configuration" sequence="1" action="rod_cooperativa.action_cooperativa_configuration"/>
+      <menuitem id="rod_cooperativa.rod_cooperativa_type_loan" name="Tabla de tipos de prestamo" parent="rod_cooperativa.rod_cooperativa_configuration" sequence="2" action="rod_cooperativa.action_type_loan"/>
   </data>
 </odoo>

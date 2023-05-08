@@ -5,21 +5,22 @@ class ResConfigSettings(models.TransientModel):
 
     monthly_interest = fields.Float(string='Interes mensual %')
     contingency_fund = fields.Float(string='Fondo de contingencia %')
-
-
-    def set_values(self):
-        super(ResConfigSettings, self).set_values()
-        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.monthly_interest', self.monthly_interest)
-        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.contingency_fund', self.contingency_fund)
+    percentage_min_def = fields.Float(string='Porcentaje Min. Defensa %')
 
     @api.model
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
-        params = self.env['ir.config_parameter'].sudo()
         res.update(
-            monthly_interest=float(params.get_param('rod_cooperativa.monthly_interest', default=False))
+            monthly_interest=float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest')),
+            contingency_fund=float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund')),
+            percentage_min_def = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.percentage_min_def'))
         )
-
         return res
+
+    def set_values(self):
+        super(ResConfigSettings, self).set_values()
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.monthly_interest', self.monthly_interest)
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.contingency_fund', str(self.contingency_fund))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.percentage_min_def', str(self.percentage_min_def))
 
     #crear get y set
