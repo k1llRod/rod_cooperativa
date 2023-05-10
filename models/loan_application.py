@@ -6,6 +6,9 @@ class LoanApplication(models.Model):
     _name = 'loan.application'
     _description = 'Solicitud de prestamo'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _columns = {
+        'partner_id': fields.Many2one('res.partner', string='Socio solicitante', required=True)
+               },
 
     name = fields.Char(string='Código de solicitud', tracking=True)
     state = fields.Selection([
@@ -15,7 +18,7 @@ class LoanApplication(models.Model):
         ('done', 'Concluido'),
         ('cancel', 'Cancelado')
     ], string='Estado', default='init')
-    net_salary = fields.Float(string='Salario neto', currency_field='company_currency_id')
+    net_salary = fields.Float(string='Salario neto')
     type_loan = fields.Selection([('regular','Regular'), ('emergency','Emergencia')], string='Tipo de prestamo')
     partner_id = fields.Many2one('res.partner', string='Socio solicitante', required=True, tracking=True)
     letter_of_request = fields.Boolean(string='Carta de solicitud')
@@ -27,11 +30,11 @@ class LoanApplication(models.Model):
     guarantor = fields.Many2one('res.partner', string='Garante')
     code_loan = fields.Char(string='Codigo de prestamo')
     amount_loan = fields.Float(string='Monto de prestamo (Bolivianos)')
-    amount_loan_dollars = fields.Float(string='Monto de prestamo (dolares)', currency_field='company_currency_id')
+    amount_loan_dollars = fields.Float(string='Monto de prestamo (dolares)')
     months_quantity = fields.Integer(string='Cantidad de meses')
     #valores calculados para prestamos
-    amount_loan_max = fields.Float(string='Monto maximo de prestamo (Bolivianos)', currency_field='company_currency_id', commpute='_compute_set_amount')
-    amount_loan_max_dollars = fields.Float(string='Monto maximo de prestamo (dolares)', currency_field='company_currency_id')
+    amount_loan_max = fields.Float(string='Monto maximo de prestamo (Bolivianos)',  compute='_compute_set_amount')
+    amount_loan_max_dollars = fields.Float(string='Monto maximo de prestamo (dolares)', )
     # monthly_interest = fields.Float(string='Interes mensual %', compute='_compute_interest_monthly')
     # contingency_fund = fields.Float(string='Fondo de contingencia %', compute='_compute_interest_monthly')
     index_loan = fields.Float(string='Indice de prestamo')
@@ -70,5 +73,6 @@ class LoanApplication(models.Model):
     contingency_fund = fields.Float(string='Fondo de contingencia %', default= lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest')))
     monthly_interest = fields.Float(string='Indice de prestamo', default=lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund')))
     amount_min_def = fields.Float(string='Min. Defensa %', default=lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.percentage_min_def')))
+
 
 

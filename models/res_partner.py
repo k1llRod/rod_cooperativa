@@ -15,6 +15,9 @@ class ResPartner(models.Model):
     paternal_surname = fields.Char(string='Apellido paterno')
     maternal_surname = fields.Char(string='Apellido materno')
 
+    #categoria de socio
+    category_partner_id = fields.Many2one('partner.category', string='Categoría de socio')
+
 
     @api.onchange('name_contact', 'paternal_surname', 'maternal_surname')
     def _onchange_name(self):
@@ -27,6 +30,13 @@ class ResPartner(models.Model):
                 partner.name = partner.paternal_surname + ' ' + partner.name
             if not partner.name_contact and not partner.paternal_surname and not partner.maternal_surname:
                 partner.name = ''
+
+    # def name_get(self):
+    #     result = []
+    #     for partner in self:
+    #         name = '6809096 ' + ' - ' + partner.name
+    #         result.append((partner.id,name))
+    #     return result
 
 
     # @api.depends('name_contact', 'paternal_surname', 'maternal_surname')
