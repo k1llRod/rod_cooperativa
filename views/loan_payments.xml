@@ -1,0 +1,61 @@
+<odoo>
+    <data>
+        <!-- Vista Árbol de Modelo loan application -->
+
+        <record model="ir.ui.view" id="loan_payment_tree_id">
+            <field name="name">loan.payment.tree</field>
+            <field name="model">loan.payment</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="capital_index_initial" optional="hidden"/>
+                    <field name="interest"/>
+                    <field name="interest_base" optional="hidden"/>
+                    <field name="res_social" optional="hidden"/>
+                    <field name="capital_initial" optional="hidden"/>
+                    <field name="balance_capital"/>
+                    <field name="mount"/>
+                    <field name="percentage_amount_min_def" optional="hidden"/>
+                    <field name="loan_application_ids" optional="hidden"/>
+                    <field name="type_payment" />
+                    <field name="amount_total" />
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Formulario loan.application  -->
+
+        <record model="ir.ui.view" id="loan_payment_form_id">
+            <field name="name">loan.payment.form</field>
+            <field name="model">loan.payment</field>
+            <field name="arch" type="xml">
+                <form string="Solicitud de presupuesto" class="oe_left oe_edit_only oe_form_required">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="loan_application_ids"/>
+                                <field name="type_payment"/>
+                                <field name="date"/>
+                                <field name="mount"/>
+                                <field name="interest"/>
+                                <field name="state"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Accion para visualizar loan.application -->
+
+        <record id="action_loan_payment" model="ir.actions.act_window">
+            <field name="name">Pagos</field>
+            <field name="res_model">loan.payment</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

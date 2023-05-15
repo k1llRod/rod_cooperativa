@@ -29,6 +29,8 @@
         'views/partner_category.xml',
         'views/rod_cooperativa_menuitem.xml',
         'views/res_partner.xml',
+        'views/loan_payments.xml',
         'security/ir.model.access.csv',
+        'data/sequence.xml',
     ],
 }

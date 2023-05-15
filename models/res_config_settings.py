@@ -3,9 +3,9 @@ from odoo import api, fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    monthly_interest = fields.Float(string='Interes mensual %')
-    contingency_fund = fields.Float(string='Fondo de contingencia %')
-    percentage_min_def = fields.Float(string='Porcentaje Min. Defensa %')
+    monthly_interest = fields.Float(string='Interes mensual %', digits=(6, 3))
+    contingency_fund = fields.Float(string='Fondo de contingencia %', digits=(6, 3))
+    percentage_min_def = fields.Float(string='Porcentaje Min. Defensa %', digits=(6, 3))
 
     @api.model
     def get_values(self):

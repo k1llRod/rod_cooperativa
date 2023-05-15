@@ -6,21 +6,26 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-<!--                <xpath expr="//field[@name='name']" position="attributes">-->
-<!--                   <attribute name="readonly">1</attribute>-->
-<!--                </xpath>-->
+                <xpath expr="//field[@name='name']" position="attributes">
+                   <attribute name="readonly">1</attribute>
+                </xpath>
                 <xpath expr="//sheet/group/group[1]/field[@name='vat']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//sheet/group/group[1]" position="before">
                     <group string="Datos personales" >
+                        <field name="code_contact"/>
                         <field name="name_contact" />
                         <field name="paternal_surname"/>
                         <field name="maternal_surname"/>
                         <field name="vat" string="CI"/>
                         <field name="category_partner_id"/>
+                        <field name="weapon"/>
                     </group>
-                    <separator />
+                    <group string="Tipo de contacto">
+                        <field name="guarantor" />
+                        <field name="partner" />
+                    </group>
 
                 </xpath>
 
