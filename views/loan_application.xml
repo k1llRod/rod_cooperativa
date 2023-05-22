@@ -9,7 +9,6 @@
                 <tree>
                     <field name="name"/>
                     <field name="partner_id"/>
-                    <field name="net_salary"/>
                     <field name="letter_of_request"/>
                     <field name="contact_request"/>
                     <field name="last_copy_paid_slip"/>
@@ -19,7 +18,7 @@
                     <field name="guarantor"/>
                     <field name="code_loan"/>
                     <field name="amount_loan" widget="monetary"/>
-                    <field name="state"/>
+                    <field name="state" decoration-info="state == 'draft'" decoration-success="state == 'progress'" widget="badge"/>
                 </tree>
             </field>
         </record>
@@ -32,9 +31,9 @@
             <field name="arch" type="xml">
                 <form string="Solicitud de presupuesto" class="oe_left oe_edit_only oe_form_required">
                     <header>
-                        <button name="verification_pass" string="Verificación" type="object" />
+                        <button name="verification_pass" string="Verificación" type="object" attrs="{'invisible':[('state','!=','init')]}" />
                         <button name="approve_loan" string="Aprobar prestamo" type="object" attrs="{'invisible': [('state','=','init')]}"/>
-                        <button name="return_application" string="Devolver" type="object" />
+                        <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
@@ -58,30 +57,31 @@
                         <group>
                             <group>
 
-                                <field name="partner_id"/>
+                                <field name="partner_id" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="ci_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
                                 <field name="category_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
-                                <field name="type_loan"/>
+                                <field name="type_loan" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
 <!--                                <field name="category_loan"/>-->
-                                <field name="guarantor" domain="[('id','!=',partner_id),('guarantor','=',True)]" attrs="{'invisible':[('type_loan', '!=', 'regular')]}"/>
-                                <field name="months_quantity"/>
-                                <field name="amount_loan_dollars" widget="monetary"/>
+                                <field name="guarantor" domain="[('id','!=',partner_id),('guarantor','=',True)]" attrs="{'invisible':[('type_loan', '!=', 'regular')],
+                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}" />
+                                <field name="months_quantity" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="amount_loan_dollars" widget="monetary" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="amount_loan" widget="monetary"/>
-                                <field name="date_application"/>
+                                <field name="date_application" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="date_approval" attrs="{'readonly': [('state','!=','init')],
                                                                     'invisible': [('state','=','init')]}"/>
-                                <field name="monthly_interest" readonly="1" invisible="1"/>
-                                <field name="contingency_fund" readonly="1" invisible="1"/>
-                                <field name="index_loan" readonly="1" invisible="1"/>
-                                <field name="fixed_fee" readonly="1" invisible="1"/>
-                                <field name="amount_min_def" readonly="1" invisible="1"/>
+                                <field name="monthly_interest" readonly="1" />
+                                <field name="contingency_fund" readonly="1" />
+                                <field name="index_loan" readonly="1" />
+                                <field name="fixed_fee" readonly="1" />
+                                <field name="amount_min_def" readonly="1" />
                             </group>
                             <group>
-                                <field name="letter_of_request"/>
-                                <field name="contact_request"/>
-                                <field name="last_copy_paid_slip"/>
-                                <field name="ci_fothocopy"/>
-                                <field name="photocopy_military_ci"/>
+                                <field name="letter_of_request" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="contact_request" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="last_copy_paid_slip" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="ci_fothocopy" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="photocopy_military_ci" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                             </group>
 
                         </group>

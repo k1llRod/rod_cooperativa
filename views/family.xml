@@ -1,0 +1,50 @@
+<odoo>
+    <data>
+        <!-- Vista Árbol de Modelo Family -->
+
+        <record model="ir.ui.view" id="family_tree_id">
+            <field name="name">family.tree</field>
+            <field name="model">family</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                    <field name="kinship"/>
+                    <field name="date_of_birth"/>
+                    <field name="nro_celular" />
+                    <field name="partner_id" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Formulario Family  -->
+
+        <record model="ir.ui.view" id="family_form_id">
+            <field name="name">family.form</field>
+            <field name="model">family</field>
+            <field name="arch" type="xml">
+                <form string="Nuevo familiar" class="oe_left oe_edit_only oe_form_required">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="partner_id" readonly="1" invisible="1"/>
+                                <field name="name" />
+                                <field name="kinship"/>
+                                <field name="date_of_birth"/>
+                                <field name="nro_celular" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Accion para visualizar Family -->
+
+        <record id="action_family" model="ir.actions.act_window">
+            <field name="name">Familiar</field>
+            <field name="res_model">family</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

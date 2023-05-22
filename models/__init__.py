@@ -7,3 +7,4 @@ from . import loan_application
 from . import partner_category
 from . import res_config_settings
 from . import loan_payment
+from . import family

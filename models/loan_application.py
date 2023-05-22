@@ -22,7 +22,6 @@ class LoanApplication(models.Model):
         ('done', 'Concluido'),
         ('cancel', 'Cancelado')
     ], string='Estado', default='init')
-    net_salary = fields.Float(string='Salario neto')
     type_loan = fields.Selection([('regular','Regular'), ('emergency','Emergencia')], string='Tipo de prestamo')
     partner_id = fields.Many2one('res.partner', string='Socio solicitante', tracking=True)
     category_partner = fields.Char(string='Categoria de socio', related='partner_id.category_partner_id.name', store=True)
@@ -43,8 +42,8 @@ class LoanApplication(models.Model):
     amount_loan_max_dollars = fields.Float(string='Monto maximo de prestamo (dolares)', )
     # monthly_interest = fields.Float(string='Interes mensual %', compute='_compute_interest_monthly')
     # contingency_fund = fields.Float(string='Fondo de contingencia %', compute='_compute_interest_monthly')
-    index_loan = fields.Float(string='Indice de prestamo')
-    fixed_fee = fields.Float(string='Cuota fija')
+    index_loan = fields.Float(string='Indice de prestamo', compute='_compute_index_loan_fixed_fee')
+    fixed_fee = fields.Float(string='Cuota fija', compute='_compute_index_loan_fixed_fee')
     date_application = fields.Date(string='Fecha de solicitud', default=fields.Date.today())
     date_approval = fields.Date(string='Fecha de aprobacion')
     # amount_min_def = fields.Float(string='Min. Defensa %', currency_field='company_currency_id',compute='_compute_min_def')
@@ -78,8 +77,8 @@ class LoanApplication(models.Model):
 
     #Valores por default y constantes
     value_dolar = fields.Float(default=_compute_set_dollar)
-    contingency_fund = fields.Float(string='Fondo de contingencia %', default= lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest')))
-    monthly_interest = fields.Float(string='Indice de prestamo', default=lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund')))
+    contingency_fund = fields.Float(string='Fondo de contingencia %', default= lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund')))
+    monthly_interest = fields.Float(string='Indice de prestamo por mes', default=lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest')))
     amount_min_def = fields.Float(string='Min. Defensa %', default=lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.percentage_min_def')), digits=(6, 3))
 
     #Relacion a los pagos
@@ -92,12 +91,10 @@ class LoanApplication(models.Model):
             rec.amount_loan = rec.amount_loan_dollars * rec.value_dolar
 
     def approve_loan(self):
-        return 1
-    def verification_pass(self):
-        self.state = 'verificate'
+        self.progress()
         for rec in self:
             if rec.letter_of_request == False: raise ValidationError('Falta carta de solicitud')
-            if rec.contact_request == False: raise ValidationError('Falta solicitud de prestamo')   
+            if rec.contact_request == False: raise ValidationError('Falta solicitud de prestamo')
             if rec.last_copy_paid_slip == False: raise ValidationError('Falta ultima copia de boleta de pago')
             if rec.ci_fothocopy == False: raise ValidationError('Falta fotocopia de CI')
             if rec.photocopy_military_ci == False: raise ValidationError('Falta fotocopia de carnet militar')
@@ -123,6 +120,12 @@ class LoanApplication(models.Model):
                     'percentage_amount_min_def': percentage_amount_min_def,
                     'state': 'earring',
                 })
+    def verification_pass(self):
+        self.state = 'verificate'
+    def progress(self):
+        self.state = 'progress'
+        self.date_approval = fields.Date.today()
+
     def return_application(self):
         self.state = 'init'
 
@@ -132,3 +135,17 @@ class LoanApplication(models.Model):
         vals['name'] = name
         res = super(LoanApplication, self).create(vals)
         return res
+
+    @api.onchange('type_loan')
+    def _onchage_type_loan(self):
+        if self.type_loan == 'emergency':
+            self.guarantor = False
+            self.months_quantity = 0
+
+    #Asignar datos del socio, cantidad de meses
+    @api.onchange('partner_id')
+    def _onchange_partner_id(self):
+        for rec in self:
+            rec.months_quantity = rec.partner_id.category_partner_id.months
+            rec.amount_loan_dollars = rec.partner_id.category_partner_id.limit_amount_dollars
+

@@ -15,21 +15,73 @@
                 <xpath expr="//sheet/group/group[1]" position="before">
                     <group string="Datos personales" >
                         <field name="code_contact"/>
+                        <field name="ci_cossmil"/>
+                        <field name="ci_military"/>
                         <field name="name_contact" />
                         <field name="paternal_surname"/>
                         <field name="maternal_surname"/>
-                        <field name="vat" string="CI"/>
+                        <field name="vat" string="CI" required="True"/>
                         <field name="category_partner_id"/>
                         <field name="weapon"/>
+                        <field name="graduation_year"/>
+                        <field name="specialty"/>
+                        <field name="allergies"/>
+                        <field name="type_blood"/>
                     </group>
                     <group string="Tipo de contacto">
                         <field name="guarantor" />
+<!--                        <field name="guarantor_count"/>-->
                         <field name="partner" />
                     </group>
 
                 </xpath>
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button type="object" icon="fa-user" class="oe_stat_button" name="action_view_guarantor">
+                        <div class="o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="guarantor_count"/>
+                            </span>
+                            <span class="o_stat_text">Garante</span>
+                        </div>
+                    </button>
+                </xpath>
 
+<!--                Agregar campos de parentesco -->
+                <xpath expr="//sheet/notebook/page[1]" position="attributes">
+                    <attribute name="autofocus">False</attribute>
+<!--                    <attribute name="invisible">1</attribute>-->
+                </xpath>
+                <xpath expr="//sheet/notebook/page[1]" autofocus="autofocus" position="before">
+                    <page string="Familiares" name="family_ids">
+                        <field name="family_id"/>
+                    </page>
+                </xpath>
+
+<!--                <xpath expr="//sheet/group/group/div/field[@name='city']" position="attributes">-->
+<!--                    <attribute name="invisible">1</attribute>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//sheet/group/group/div/field[@name='state_id']" position="attributes">-->
+<!--                    <attribute name="invisible">1</attribute>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//sheet/group/group/div/field[@name='zip']" position="attributes">-->
+<!--                    <attribute name="invisible">1</attribute>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//sheet/group/group/div/field[@name='country_id']" position="attributes">-->
+<!--                    <attribute name="default">29</attribute>-->
+<!--                </xpath>-->
             </field>
         </record>
+
+<!--        <record model="ir.ui.view" id="partner_view_buttons_inh">-->
+<!--            <field name="name">partner.view.buttons.inh</field>-->
+<!--            <field name="model">res.partner</field>-->
+<!--            <field name="inherit_id" ref="account.partner_view_buttons"/>-->
+<!--            <field name="priority" eval="11"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <xpath expr="//button[@name='action_view_partner_invoices']" position="attributes">-->
+<!--                   <attribute name="invisible">1</attribute>-->
+<!--                </xpath>-->
+<!--            </field>-->
+<!--        </record>-->
     </data>
 </odoo>

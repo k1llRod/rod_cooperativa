@@ -6,8 +6,7 @@
             <field name="name">loan.payment.tree</field>
             <field name="model">loan.payment</field>
             <field name="arch" type="xml">
-                <tree>
-                    <field name="name"/>
+                <tree create="false" delete="false" edit="false">
                     <field name="date"/>
                     <field name="capital_index_initial" optional="hidden"/>
                     <field name="interest"/>
@@ -20,7 +19,7 @@
                     <field name="loan_application_ids" optional="hidden"/>
                     <field name="type_payment" />
                     <field name="amount_total" />
-                    <field name="state"/>
+                    <field name="state" decoration-info="state == 'init' or state == 'in_queue'" decoration-success="state == 'progress' or state == 'done'" widget="badge"/>
                 </tree>
             </field>
         </record>

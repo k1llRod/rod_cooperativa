@@ -6,7 +6,7 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     name = fields.Char(string='Nombre', store=True)
-    code_contact = fields.Char(string='Código de contacto')
+    code_contact = fields.Char(string='Código de socio / Boleta de pago')
     guarantor = fields.Boolean(string='Garante')
     partner = fields.Boolean(string='Socio')
     degree = fields.Selection([('primary', 'Primaria'), ('secondary', 'Secundaria'), ('university', 'Universitario')], string='Grado')
@@ -24,6 +24,12 @@ class ResPartner(models.Model):
                                ('Ingenieria','Ingenieria')], string='Arma', default='Artilleria')
     #categoria de socio
     category_partner_id = fields.Many2one('partner.category', string='Categoría de socio')
+    ci_cossmil = fields.Char(string='C.I. COSSMIL Nro.')
+    ci_military = fields.Char(string='C.I. MILITAR Nro.')
+    graduation_year = fields.Integer(string='Año de graduación')
+    specialty = fields.Char(string='Especialidad')
+    allergies = fields.Char(string='Alergias')
+    type_blood = fields.Char(string='Tipo de sangre')
 
     @api.onchange('name_contact', 'paternal_surname', 'maternal_surname')
     def _onchange_name(self):
@@ -58,15 +64,39 @@ class ResPartner(models.Model):
         return partners_ids
 
 
-    # @api.depends('name_contact', 'paternal_surname', 'maternal_surname')
-    # def _compute_name(self):
-    #     for partner in self:
-    #         if partner.name_contact:
-    #             partner.name = partner.name_contact
-    #         if partner.paternal_surname:
-    #             partner.name = partner.paternal_surname + ' ' + partner.name
-    #         if partner.maternal_surname:
-    #             partner.name = partner.maternal_surname + ' ' + partner.name
+    #Funcion para contar cuantos garantias dio el contacto
+    guarantor_count = fields.Integer(compute='_compute_guarantor_count', string='Garantías asignadas')
+
+    @api.depends('guarantor')
+    def _compute_guarantor_count(self):
+        loan = self.env['loan.application'].search([]).filtered(lambda x:x.guarantor.id == self.id)
+        self.guarantor_count = len(loan)
+
+    def action_view_guarantor(self):
+        self.ensure_one()
+        action = self.env["ir.actions.actions"]._for_xml_id("rod_cooperativa.action_loan_application")
+        action['domain'] = [
+            ('guarantor.id', '=', self.id),
+        ]
+        return action
+
+    def action_view_partner_invoices(self):
+        return True
+
+    #Campo por default Pais
+    country_id = fields.Many2one('res.country', string='País', default=29)
+
+    @api.onchange('state_id')
+    def _onchange_state_id(self):
+        for partner in self:
+            if partner.state_id:
+                partner.zip = partner.state_id.code
+
+    #Parentesco
+    # def _compute_my_field(self):
+    #     for record in self:
+    #         record.family_id = [(0, 0, {'partner_id': record.id})]
+    family_id = fields.One2many('family', 'partner_id', string='Familiares')
 
 
 
