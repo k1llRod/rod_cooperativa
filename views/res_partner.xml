@@ -6,6 +6,11 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//sheet" position="before">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                </xpath>
                 <xpath expr="//field[@name='name']" position="attributes">
                    <attribute name="readonly">1</attribute>
                 </xpath>
@@ -17,6 +22,7 @@
                         <field name="code_contact"/>
                         <field name="ci_cossmil"/>
                         <field name="ci_military"/>
+                        <field name="partner_status"/>
                         <field name="name_contact" />
                         <field name="paternal_surname"/>
                         <field name="maternal_surname"/>
@@ -24,11 +30,12 @@
                         <field name="category_partner_id"/>
                         <field name="weapon"/>
                         <field name="graduation_year"/>
+                        <field name="year_service"/>
                         <field name="specialty"/>
                         <field name="allergies"/>
                         <field name="type_blood"/>
                     </group>
-                    <group string="Tipo de contacto">
+                    <group string="Tipo de socio">
                         <field name="guarantor" />
 <!--                        <field name="guarantor_count"/>-->
                         <field name="partner" />
@@ -56,6 +63,8 @@
                         <field name="family_id"/>
                     </page>
                 </xpath>
+
+
 
 <!--                <xpath expr="//sheet/group/group/div/field[@name='city']" position="attributes">-->
 <!--                    <attribute name="invisible">1</attribute>-->

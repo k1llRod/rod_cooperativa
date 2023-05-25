@@ -30,7 +30,23 @@ class ResPartner(models.Model):
     specialty = fields.Char(string='Especialidad')
     allergies = fields.Char(string='Alergias')
     type_blood = fields.Char(string='Tipo de sangre')
+    partner_status = fields.Selection([('activate', 'Servicio activo'),
+                                       ('active_reserve', 'Reserva activa'),
+                                       ('passive_reserve_a', 'Reserva pasivo "A"'),
+                                       ('passive_reserve_b', 'Reserva pasivo "B"')],
+                                      string='Sitiación de socio')
+    state = fields.Selection([('draft', 'Borrador'), ('verificate', 'Verificación'), ('activate', 'Socio activo'),
+                              ('rejected', 'Rechazado')],
+                             string='Estado', default='draft')
+    year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
 
+    @api.depends('graduation_year')
+    def _compute_year_service(self):
+        for partner in self:
+            if partner.graduation_year:
+                partner.year_service = datetime.now().year - partner.graduation_year
+            else:
+                partner.year_service = 0
     @api.onchange('name_contact', 'paternal_surname', 'maternal_surname')
     def _onchange_name(self):
         for partner in self:
