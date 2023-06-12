@@ -12,8 +12,8 @@
                     <field name="letter_of_request"/>
                     <field name="contact_request"/>
                     <field name="last_copy_paid_slip"/>
-                    <field name="ci_fothocopy"/>
-                    <field name="photocopy_military_ci"/>
+<!--                    <field name="ci_fothocopy"/>-->
+<!--                    <field name="photocopy_military_ci"/>-->
 <!--                    <field name="type_of_loan"/>-->
                     <field name="guarantor"/>
                     <field name="code_loan"/>
@@ -80,8 +80,8 @@
                                 <field name="letter_of_request" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="contact_request" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="last_copy_paid_slip" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
-                                <field name="ci_fothocopy" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
-                                <field name="photocopy_military_ci" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+<!--                                <field name="ci_fothocopy" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>-->
+<!--                                <field name="photocopy_military_ci" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>-->
                             </group>
 
                         </group>

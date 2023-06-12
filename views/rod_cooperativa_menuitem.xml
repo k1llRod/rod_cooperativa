@@ -2,14 +2,33 @@
 <odoo>
   <data>
       <!-- Top menu item -->
-      <menuitem name="Cooperativa de ahorro y credito" id="rod_cooperativa.menu_root" sequence="100"/>
+      <menuitem name="Creditos"
+                id="rod_cooperativa.menu_root"
+                sequence="100"
+                web_icon="rod_cooperativa,static/description/coaa.png" />
       <!-- menu categories -->
-      <menuitem id="rod_cooperativa.rod_cooperativa_prestamos" name="Prestamos" parent="rod_cooperativa.menu_root" sequence="1" action="rod_cooperativa.action_loan_application"/>
-      <menuitem id="rod_cooperativa.rod_cooperativa_configuration" name="Configuración" parent="rod_cooperativa.menu_root" sequence="2" action="rod_cooperativa.action_loan_application"/>
+      <menuitem id="rod_cooperativa.rod_cooperativa_prestamos"
+                name="Prestamos"
+                parent="rod_cooperativa.menu_root"
+                sequence="1"
+                action="rod_cooperativa.action_loan_application"/>
+      <menuitem id="rod_cooperativa.rod_cooperativa_configuration"
+                name="Configuración"
+                parent="rod_cooperativa.menu_root"
+                sequence="2"
+                action="rod_cooperativa.action_loan_application"/>
 
-      <menuitem id="rod_cooperativa.rod_cooperativa_settings" name="Ajustes" parent="rod_cooperativa.rod_cooperativa_configuration" sequence="1" action="rod_cooperativa.action_cooperativa_configuration"/>
-<!--      <menuitem id="rod_cooperativa.rod_cooperativa_type_loan" name="Tabla de tipos de prestamo" parent="rod_cooperativa.rod_cooperativa_configuration" sequence="2" action="rod_cooperativa.action_type_loan"/>-->
-      <menuitem id="rod_cooperativa.rod_cooperativa_partner_category" name="Categoria de socios" parent="rod_cooperativa.rod_cooperativa_configuration" sequence="2" action="rod_cooperativa.action_partner_category"/>
+      <menuitem id="rod_cooperativa.rod_cooperativa_settings"
+                name="Ajustes"
+                parent="rod_cooperativa.rod_cooperativa_configuration"
+                sequence="1"
+                action="rod_cooperativa.action_cooperativa_configuration"/>
+      <!--      <menuitem id="rod_cooperativa.rod_cooperativa_type_loan" name="Tabla de tipos de prestamo" parent="rod_cooperativa.rod_cooperativa_configuration" sequence="2" action="rod_cooperativa.action_type_loan"/>-->
+      <menuitem id="rod_cooperativa.rod_cooperativa_partner_category"
+                name="Categoria de socios"
+                parent="rod_cooperativa.rod_cooperativa_configuration"
+                sequence="2"
+                action="rod_cooperativa.action_partner_category"/>
 
   </data>
 </odoo>

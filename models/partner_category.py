@@ -12,11 +12,11 @@ class TypeLoan(models.Model):
     limit_amount = fields.Float(string='Monto limite en bolivianos', compute='_compute_limit_amount_dollars', store=True)
     limit_amount_dollars = fields.Float(string='Monto limite en dolares')
 
-    @api.depends('limit_amount')
+    @api.depends('limit_amount_dollars')
     def _compute_limit_amount_dollars(self):
         for record in self:
             dollar = self.env['res.currency'].search([('name', '=', 'USD')], limit=1)
-            record.limit_amount_dollars = record.limit_amount * round(dollar.inverse_rate, 2)
+            record.limit_amount = record.limit_amount_dollars * round(dollar.inverse_rate, 2)
 
 
 

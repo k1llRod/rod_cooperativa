@@ -11,8 +11,10 @@ class ResConfigSettings(models.TransientModel):
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
         res.update(
-            monthly_interest=float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest')),
-            contingency_fund=float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund')),
+            monthly_interest=float(
+                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest')),
+            contingency_fund=float(
+                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund')),
             percentage_min_def = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.percentage_min_def'))
         )
         return res

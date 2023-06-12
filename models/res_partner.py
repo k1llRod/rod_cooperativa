@@ -6,16 +6,18 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     name = fields.Char(string='Nombre', store=True)
-    code_contact = fields.Char(string='Código de socio / Boleta de pago')
+    code_contact = fields.Char(string='Código de socio / Boleta de pago', require=True)
     guarantor = fields.Boolean(string='Garante')
-    partner = fields.Boolean(string='Socio')
+    partner = fields.Boolean(string='Socio', default=True)
     degree = fields.Selection([('primary', 'Primaria'), ('secondary', 'Secundaria'), ('university', 'Universitario')], string='Grado')
     ballot_balance = fields.Integer(string='Saldo boleta')
 
-    name_contact = fields.Char(string='Nombre')
-    paternal_surname = fields.Char(string='Apellido paterno')
-    maternal_surname = fields.Char(string='Apellido materno')
-    marital_status = fields.Selection([('single', 'Soltero'), ('married', 'Casado'), ('divorced', 'Divorciado'), ('widower', 'Viudo')], string='Estado civil')
+    name_contact = fields.Char(string='Nombre', require=True)
+    paternal_surname = fields.Char(string='Apellido paterno', require=True)
+    maternal_surname = fields.Char(string='Apellido materno', require=True)
+    marital_status = fields.Selection(
+        [('single', 'Soltero'), ('married', 'Casado'), ('divorced', 'Divorciado'), ('widower', 'Viudo')],
+        string='Estado civil', default='single', require=True)
     weapon = fields.Selection([('Artilleria', 'Artilleria'),
                                ('Infanteria', 'Infanteria'),
                                ('Caballeria', 'Caballeria'),
@@ -23,23 +25,23 @@ class ResPartner(models.Model):
                                ('Logística','Logística'),
                                ('Ingenieria','Ingenieria')], string='Arma', default='Artilleria')
     #categoria de socio
-    category_partner_id = fields.Many2one('partner.category', string='Categoría de socio')
+    category_partner_id = fields.Many2one('partner.category', string='Grado')
     ci_cossmil = fields.Char(string='C.I. COSSMIL Nro.')
     ci_military = fields.Char(string='C.I. MILITAR Nro.')
-    graduation_year = fields.Integer(string='Año de graduación')
+    graduation_year = fields.Integer(string='Año de egreso')
     specialty = fields.Char(string='Especialidad')
     allergies = fields.Char(string='Alergias')
     type_blood = fields.Char(string='Tipo de sangre')
-    partner_status = fields.Selection([('activate', 'Servicio activo'),
-                                       ('active_reserve', 'Reserva activa'),
-                                       ('passive_reserve_a', 'Reserva pasivo "A"'),
-                                       ('passive_reserve_b', 'Reserva pasivo "B"')],
-                                      string='Sitiación de socio')
-    state = fields.Selection([('draft', 'Borrador'), ('verificate', 'Verificación'), ('activate', 'Socio activo'),
-                              ('rejected', 'Rechazado')],
-                             string='Estado', default='draft')
+    partner_status = fields.Selection([('active', 'Activo'),
+                                       ('passive', 'Pasiva'),
+                                       ('leave', 'Baja')],string="Situación de socio")
+
+    partner_status_especific = fields.Selection([], string='Situación de socio')
+
     year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
 
+    ci_photocopy = fields.Boolean(string='Fotocopia de C.I.')
+    photocopy_military_ci = fields.Boolean(string='Fotocopia de carnet milita')
     @api.depends('graduation_year')
     def _compute_year_service(self):
         for partner in self:
@@ -114,7 +116,16 @@ class ResPartner(models.Model):
     #         record.family_id = [(0, 0, {'partner_id': record.id})]
     family_id = fields.One2many('family', 'partner_id', string='Familiares')
 
-
+    @api.onchange('partner_status')
+    def _onchange_partner_status(self):
+        if self.partner_status == 'active':
+            self.partner_status_especific = [('active_service', 'Servicio activo'), ('letter_a', 'Letra "A" de disponibilidad')]
+        elif self.partner_status == 'passive':
+            self.partner_status_especific = [('passive_reserve_a', 'Reserva pasivo "A"'), ('passive_reserve_b', 'Reserva pasivo "B"')]
+        elif self.partner_status == 'leave':
+            self.partner_status_especific = [('leave', 'Baja')]
+        else:
+            self.partner_status_especific = []  # No hay opciones adicionales
 
 
 

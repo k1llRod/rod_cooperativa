@@ -6,11 +6,11 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//sheet" position="before">
-                    <header>
-                        <field name="state" widget="statusbar"/>
-                    </header>
-                </xpath>
+<!--                <xpath expr="//sheet" position="before">-->
+<!--                    <header>-->
+<!--                        <field name="state" widget="statusbar"/>-->
+<!--                    </header>-->
+<!--                </xpath>-->
                 <xpath expr="//field[@name='name']" position="attributes">
                    <attribute name="readonly">1</attribute>
                 </xpath>
@@ -23,10 +23,11 @@
                         <field name="ci_cossmil"/>
                         <field name="ci_military"/>
                         <field name="partner_status"/>
+                        <field name="partner_status_especific"/>
                         <field name="name_contact" />
                         <field name="paternal_surname"/>
                         <field name="maternal_surname"/>
-                        <field name="vat" string="CI" required="True"/>
+                        <field name="vat" string="CI" required="True" placeholder="Ejemplo 6543210"/>
                         <field name="category_partner_id"/>
                         <field name="weapon"/>
                         <field name="graduation_year"/>
@@ -34,11 +35,17 @@
                         <field name="specialty"/>
                         <field name="allergies"/>
                         <field name="type_blood"/>
+                        <field name="marital_status"/>
                     </group>
                     <group string="Tipo de socio">
-                        <field name="guarantor" />
-<!--                        <field name="guarantor_count"/>-->
-                        <field name="partner" />
+                        <group>
+                            <field name="guarantor"/>
+                            <field name="partner"/>
+                        </group>
+                        <group string="Respaldos">
+                            <field name="ci_photocopy"/>
+                            <field name="photocopy_military_ci"/>
+                        </group>
                     </group>
 
                 </xpath>
@@ -62,6 +69,9 @@
                     <page string="Familiares" name="family_ids">
                         <field name="family_id"/>
                     </page>
+                </xpath>
+                <xpath expr="//field[@name='company_type']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
 
 
