@@ -36,7 +36,11 @@ class ResPartner(models.Model):
                                        ('passive', 'Pasiva'),
                                        ('leave', 'Baja')],string="Situación de socio")
 
-    partner_status_especific = fields.Selection([], string='Situación de socio')
+    partner_status_especific = fields.Selection([('active_service', 'Servicio activo'),
+                                                 ('letter_a', 'Letra "A" de disponibilidad'),
+                                                 ('passive_reserve_a', 'Reserva pasivo "A"'),
+                                                 ('passive_reserve_b', 'Reserva pasivo "B"'),
+                                                 ('leave', 'Baja')], string='Situación de socio')
 
     year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
 
