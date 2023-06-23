@@ -2,6 +2,7 @@ from odoo import api, fields, models, tools, _
 from datetime import datetime, timedelta
 from odoo.exceptions import UserError, ValidationError
 
+
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
@@ -9,7 +10,8 @@ class ResPartner(models.Model):
     code_contact = fields.Char(string='Código de socio / Boleta de pago', require=True)
     guarantor = fields.Boolean(string='Garante')
     partner = fields.Boolean(string='Socio', default=True)
-    degree = fields.Selection([('primary', 'Primaria'), ('secondary', 'Secundaria'), ('university', 'Universitario')], string='Grado')
+    degree = fields.Selection([('primary', 'Primaria'), ('secondary', 'Secundaria'), ('university', 'Universitario')],
+                              string='Grado')
     ballot_balance = fields.Integer(string='Saldo boleta')
 
     name_contact = fields.Char(string='Nombre', require=True)
@@ -21,10 +23,10 @@ class ResPartner(models.Model):
     weapon = fields.Selection([('Artilleria', 'Artilleria'),
                                ('Infanteria', 'Infanteria'),
                                ('Caballeria', 'Caballeria'),
-                               ('Comunicaciones','Comunicaciones'),
-                               ('Logística','Logística'),
-                               ('Ingenieria','Ingenieria')], string='Arma', default='Artilleria')
-    #categoria de socio
+                               ('Comunicaciones', 'Comunicaciones'),
+                               ('Logística', 'Logística'),
+                               ('Ingenieria', 'Ingenieria')], string='Arma', default='Artilleria')
+    # categoria de socio
     category_partner_id = fields.Many2one('partner.category', string='Grado')
     ci_cossmil = fields.Char(string='C.I. COSSMIL Nro.')
     ci_military = fields.Char(string='C.I. MILITAR Nro.')
@@ -34,18 +36,19 @@ class ResPartner(models.Model):
     type_blood = fields.Char(string='Tipo de sangre')
     partner_status = fields.Selection([('active', 'Activo'),
                                        ('passive', 'Pasiva'),
-                                       ('leave', 'Baja')],string="Situación de socio")
+                                       ('leave', 'Baja')], string="Situación de socio", compute='_onchange_partner_status')
 
     partner_status_especific = fields.Selection([('active_service', 'Servicio activo'),
-                                                 ('letter_a', 'Letra "A" de disponibilidad'),
-                                                 ('passive_reserve_a', 'Reserva pasivo "A"'),
-                                                 ('passive_reserve_b', 'Reserva pasivo "B"'),
+                                                ('letter_a', 'Letra "A" de disponibilidad'),
+                                                ('passive_reserve_a', 'Reserva pasivo "A"'),
+                                                ('passive_reserve_b', 'Reserva pasivo "B"'),
                                                  ('leave', 'Baja')], string='Situación de socio')
 
     year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
 
     ci_photocopy = fields.Boolean(string='Fotocopia de C.I.')
     photocopy_military_ci = fields.Boolean(string='Fotocopia de carnet milita')
+
     @api.depends('graduation_year')
     def _compute_year_service(self):
         for partner in self:
@@ -53,6 +56,7 @@ class ResPartner(models.Model):
                 partner.year_service = datetime.now().year - partner.graduation_year
             else:
                 partner.year_service = 0
+
     @api.onchange('name_contact', 'paternal_surname', 'maternal_surname')
     def _onchange_name(self):
         for partner in self:
@@ -85,13 +89,12 @@ class ResPartner(models.Model):
             partners_ids = self._search(args, limit=limit, access_rights_uid=name_get_uid)
         return partners_ids
 
-
-    #Funcion para contar cuantos garantias dio el contacto
+    # Funcion para contar cuantos garantias dio el contacto
     guarantor_count = fields.Integer(compute='_compute_guarantor_count', string='Garantías asignadas')
 
     @api.depends('guarantor')
     def _compute_guarantor_count(self):
-        loan = self.env['loan.application'].search([]).filtered(lambda x:x.guarantor.id == self.id)
+        loan = self.env['loan.application'].search([]).filtered(lambda x: x.guarantor.id == self.id)
         self.guarantor_count = len(loan)
 
     def action_view_guarantor(self):
@@ -105,7 +108,7 @@ class ResPartner(models.Model):
     def action_view_partner_invoices(self):
         return True
 
-    #Campo por default Pais
+    # Campo por default Pais
     country_id = fields.Many2one('res.country', string='País', default=29)
 
     @api.onchange('state_id')
@@ -114,22 +117,21 @@ class ResPartner(models.Model):
             if partner.state_id:
                 partner.zip = partner.state_id.code
 
-    #Parentesco
+    # Parentesco
     # def _compute_my_field(self):
     #     for record in self:
     #         record.family_id = [(0, 0, {'partner_id': record.id})]
     family_id = fields.One2many('family', 'partner_id', string='Familiares')
 
-    @api.onchange('partner_status')
+    @api.onchange('partner_status_especific')
+    @api.depends('partner_status_especific')
     def _onchange_partner_status(self):
-        if self.partner_status == 'active':
-            self.partner_status_especific = [('active_service', 'Servicio activo'), ('letter_a', 'Letra "A" de disponibilidad')]
-        elif self.partner_status == 'passive':
-            self.partner_status_especific = [('passive_reserve_a', 'Reserva pasivo "A"'), ('passive_reserve_b', 'Reserva pasivo "B"')]
-        elif self.partner_status == 'leave':
-            self.partner_status_especific = [('leave', 'Baja')]
-        else:
-            self.partner_status_especific = []  # No hay opciones adicionales
-
-
-
+        if self.partner_status_especific == 'active_service' or self.partner_status_especific == 'letter_a':
+            self.partner_status = 'active'
+        if self.partner_status_especific == 'passive_reserve_a' or self.partner_status_especific == 'passive_reserve_b':
+            self.partner_status = 'passive'
+        if self.partner_status_especific == 'leave':
+            self.partner_status = 'leave'
+        if  self.partner_status_especific == False:
+            self.partner_status = False
+#
