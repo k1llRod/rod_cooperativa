@@ -14,7 +14,7 @@ class ResPartner(models.Model):
                               string='Grado')
     ballot_balance = fields.Integer(string='Saldo boleta')
 
-    name_contact = fields.Char(string='Nombre', require=True)
+    name_contact = fields.Char(string='Nombres', require=True)
     paternal_surname = fields.Char(string='Apellido paterno', require=True)
     maternal_surname = fields.Char(string='Apellido materno', require=True)
     marital_status = fields.Selection(
