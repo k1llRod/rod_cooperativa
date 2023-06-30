@@ -126,12 +126,13 @@ class ResPartner(models.Model):
     @api.onchange('partner_status_especific')
     @api.depends('partner_status_especific')
     def _onchange_partner_status(self):
-        if self.partner_status_especific == 'active_service' or self.partner_status_especific == 'letter_a':
-            self.partner_status = 'active'
-        if self.partner_status_especific == 'passive_reserve_a' or self.partner_status_especific == 'passive_reserve_b':
-            self.partner_status = 'passive'
-        if self.partner_status_especific == 'leave':
-            self.partner_status = 'leave'
-        if  self.partner_status_especific == False:
-            self.partner_status = False
+        for record in self:
+            if record.partner_status_especific == 'active_service' or record.partner_status_especific == 'letter_a':
+                record.partner_status = 'active'
+            if record.partner_status_especific == 'passive_reserve_a' or record.partner_status_especific == 'passive_reserve_b':
+                record.partner_status = 'passive'
+            if record.partner_status_especific == 'leave':
+                record.partner_status = 'leave'
+            if record.partner_status_especific == False:
+                record.partner_status = False
 #

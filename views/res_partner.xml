@@ -98,16 +98,32 @@
             </field>
         </record>
 
-<!--        <record model="ir.ui.view" id="partner_view_buttons_inh">-->
-<!--            <field name="name">partner.view.buttons.inh</field>-->
-<!--            <field name="model">res.partner</field>-->
-<!--            <field name="inherit_id" ref="account.partner_view_buttons"/>-->
-<!--            <field name="priority" eval="11"/>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <xpath expr="//button[@name='action_view_partner_invoices']" position="attributes">-->
-<!--                   <attribute name="invisible">1</attribute>-->
-<!--                </xpath>-->
-<!--            </field>-->
-<!--        </record>-->
+        <record model="ir.ui.view" id="res_partner_tree_inh">
+            <field name="name">res.partner.tree.inh</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="replace">
+                    <tree string="Partners">
+                        <field name="paternal_surname"/>
+                        <field name="maternal_surname"/>
+                        <field name="name_contact" />
+                        <field name="vat" string="CI" />
+                        <field name="code_contact"/>
+                        <field name="ci_cossmil"/>
+                        <field name="ci_military"/>
+                        <field name="partner_status"/>
+                        <field name="partner_status_especific"/>
+                        <field name="category_partner_id" optional="hide"/>
+                        <field name="weapon" optional="hide"/>
+                        <field name="graduation_year" optional="hide"/>
+                        <field name="year_service" optional="hide"/>
+                        <field name="specialty" optional="hide"/>
+                        <field name="allergies" optional="hide"/>
+                        <field name="type_blood" optional="hide"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
