@@ -78,6 +78,7 @@
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='company_type']" position="attributes">
+                    <attribute name="default">person</attribute>
                     <attribute name="invisible">1</attribute>
                 </xpath>
 

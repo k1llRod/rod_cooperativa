@@ -47,7 +47,12 @@ class ResPartner(models.Model):
     year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
 
     ci_photocopy = fields.Boolean(string='Fotocopia de C.I.')
-    photocopy_military_ci = fields.Boolean(string='Fotocopia de carnet milita')
+    photocopy_military_ci = fields.Boolean(string='Fotocopia de carnet militar')
+
+    #campo base res.partner
+    company_type = fields.Selection(string='Company Type',
+                                    selection=[('person', 'Individual'), ('company', 'Company')],
+                                    compute='_compute_company_type', inverse='_write_company_type', default='person')
 
     @api.depends('graduation_year')
     def _compute_year_service(self):
