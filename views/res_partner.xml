@@ -6,32 +6,32 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-<!--                <xpath expr="//sheet" position="before">-->
-<!--                    <header>-->
-<!--                        <field name="state" widget="statusbar"/>-->
-<!--                    </header>-->
-<!--                </xpath>-->
+                <!--                <xpath expr="//sheet" position="before">-->
+                <!--                    <header>-->
+                <!--                        <field name="state" widget="statusbar"/>-->
+                <!--                    </header>-->
+                <!--                </xpath>-->
                 <xpath expr="//field[@name='name']" position="attributes">
-                   <attribute name="readonly">0</attribute>
+                    <attribute name="readonly">0</attribute>
                 </xpath>
                 <xpath expr="//field[@name='parent_id']" position="attributes">
-                   <attribute name="invisible">1</attribute>
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='type']" position="attributes">
-                   <attribute name="invisible">1</attribute>
+                    <attribute name="invisible">1</attribute>
                 </xpath>
 
                 <xpath expr="//sheet/group/group[1]/field[@name='vat']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//sheet/group/group[1]" position="before">
-                    <group string="Datos personales" >
+                    <group string="Datos personales">
                         <field name="code_contact"/>
                         <field name="ci_cossmil"/>
                         <field name="ci_military"/>
                         <field name="partner_status"/>
                         <field name="partner_status_especific"/>
-                        <field name="name_contact" />
+                        <field name="name_contact"/>
                         <field name="paternal_surname"/>
                         <field name="maternal_surname"/>
                         <field name="vat" string="CI" required="True" placeholder="Ejemplo 6543210"/>
@@ -39,6 +39,8 @@
                         <field name="weapon"/>
                         <field name="graduation_year"/>
                         <field name="year_service"/>
+                        <field name="date_birthday"/>
+                        <field name="years_completed"/>
                         <field name="specialty"/>
                         <field name="allergies"/>
                         <field name="type_blood"/>
@@ -52,6 +54,7 @@
                         <group string="Respaldos">
                             <field name="ci_photocopy"/>
                             <field name="photocopy_military_ci"/>
+                            <field name="affliation"/>
                         </group>
                     </group>
 
@@ -67,10 +70,10 @@
                     </button>
                 </xpath>
 
-<!--                Agregar campos de parentesco -->
+                <!--                Agregar campos de parentesco -->
                 <xpath expr="//sheet/notebook/page[1]" position="attributes">
                     <attribute name="autofocus">False</attribute>
-<!--                    <attribute name="invisible">1</attribute>-->
+                    <!--                    <attribute name="invisible">1</attribute>-->
                 </xpath>
                 <xpath expr="//sheet/notebook/page[1]" autofocus="autofocus" position="before">
                     <page string="Familiares" name="family_ids">
@@ -82,20 +85,6 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
-
-
-<!--                <xpath expr="//sheet/group/group/div/field[@name='city']" position="attributes">-->
-<!--                    <attribute name="invisible">1</attribute>-->
-<!--                </xpath>-->
-<!--                <xpath expr="//sheet/group/group/div/field[@name='state_id']" position="attributes">-->
-<!--                    <attribute name="invisible">1</attribute>-->
-<!--                </xpath>-->
-<!--                <xpath expr="//sheet/group/group/div/field[@name='zip']" position="attributes">-->
-<!--                    <attribute name="invisible">1</attribute>-->
-<!--                </xpath>-->
-<!--                <xpath expr="//sheet/group/group/div/field[@name='country_id']" position="attributes">-->
-<!--                    <attribute name="default">29</attribute>-->
-<!--                </xpath>-->
             </field>
         </record>
 
@@ -108,8 +97,8 @@
                     <tree string="Partners">
                         <field name="paternal_surname"/>
                         <field name="maternal_surname"/>
-                        <field name="name_contact" />
-                        <field name="vat" string="CI" />
+                        <field name="name_contact"/>
+                        <field name="vat" string="CI"/>
                         <field name="code_contact"/>
                         <field name="ci_cossmil"/>
                         <field name="ci_military"/>
@@ -122,9 +111,43 @@
                         <field name="specialty" optional="hide"/>
                         <field name="allergies" optional="hide"/>
                         <field name="type_blood" optional="hide"/>
+<!--                        <field name="state"/>-->
                     </tree>
                 </xpath>
             </field>
         </record>
+
+        <record model="ir.actions.server" id="action_res_partners">
+            <field name="name">Reporte de pagos</field>
+            <field name="model_id" ref="rod_cooperativa.model_res_partner"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = model._init_partners()
+            </field>
+        </record>
+        <record id="res_partner_view_search_cooperativa" model="ir.ui.view">
+            <field name="name">res.partner.view.search.inherit.cooperativa</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="replace">
+                    <search string="Buscar socios">
+                        <field name="code_contact"/>
+                        <field name="vat" string="C.I."/>
+                        <field name="name"/>
+                    </search>
+                </xpath>
+                <!--                <xpath expr="//field[@name='parent_id']" position="replace">-->
+                <!--                    <field name="code_contact"/>-->
+                <!--                </xpath>-->
+            </field>
+        </record>
+        <menuitem name="Socios cooperativa"
+                id="contacts.menu_contacts"
+                sequence="102"
+                web_icon="rod_cooperativa_aportes,static/description/coaa.png"/>
+
+
     </data>
 </odoo>

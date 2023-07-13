@@ -40,15 +40,18 @@ class ResPartner(models.Model):
 
     partner_status_especific = fields.Selection([('active_service', 'Servicio activo'),
                                                 ('letter_a', 'Letra "A" de disponibilidad'),
-                                                ('passive_reserve_a', 'Reserva pasivo "A"'),
-                                                ('passive_reserve_b', 'Reserva pasivo "B"'),
+                                                 ('reserve_active', 'Reserva activa'),
+                                                ('passive_reserve_a', 'Categoria "A"'),
+                                                ('passive_reserve_b', 'Categoria "B"'),
                                                  ('leave', 'Baja')], string='Situación de socio')
 
     year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
 
     ci_photocopy = fields.Boolean(string='Fotocopia de C.I.')
     photocopy_military_ci = fields.Boolean(string='Fotocopia de carnet militar')
-
+    affliation = fields.Boolean(string='Formulario de afiliación')
+    date_birthday = fields.Date(string='Fecha de nacimiento')
+    years_completed = fields.Integer(string='Años cumplidos', compute='_compute_years_completed', store=True)
     #campo base res.partner
     company_type = fields.Selection(string='Company Type',
                                     selection=[('person', 'Individual'), ('company', 'Company')],
@@ -61,6 +64,14 @@ class ResPartner(models.Model):
                 partner.year_service = datetime.now().year - partner.graduation_year
             else:
                 partner.year_service = 0
+
+    @api.depends('date_birthday')
+    def _compute_years_completed(self):
+        for partner in self:
+            if partner.date_birthday:
+                partner.years_completed = datetime.now().year - partner.date_birthday.year
+            else:
+                partner.years_completed = 0
 
     @api.onchange('name_contact', 'paternal_surname', 'maternal_surname')
     def _onchange_name(self):
@@ -132,7 +143,7 @@ class ResPartner(models.Model):
     @api.depends('partner_status_especific')
     def _onchange_partner_status(self):
         for record in self:
-            if record.partner_status_especific == 'active_service' or record.partner_status_especific == 'letter_a':
+            if record.partner_status_especific == 'active_service' or record.partner_status_especific == 'letter_a' or record.partner_status_especific == 'reserve_active':
                 record.partner_status = 'active'
             if record.partner_status_especific == 'passive_reserve_a' or record.partner_status_especific == 'passive_reserve_b':
                 record.partner_status = 'passive'
@@ -140,4 +151,17 @@ class ResPartner(models.Model):
                 record.partner_status = 'leave'
             if record.partner_status_especific == False:
                 record.partner_status = False
+
+    def _init_partners(self):
+        view_id = self.env.ref('rod_cooperativa.res_partner_tree_inh').id
+        search_id = self.env.ref('rod_cooperativa.view_res_partner_filter_inherit').id
+        return {
+            'name': 'Socios',
+            'res_model': 'res.partner',
+            'type': 'ir.actions.act_window',
+            # 'view_id': view_id,
+            'view_mode': 'tree,kanban',
+            'search_view_id': search_id,
+            'domain': [],
+        }
 #
