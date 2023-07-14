@@ -31,7 +31,12 @@ class ResPartner(models.Model):
     ci_cossmil = fields.Char(string='C.I. COSSMIL Nro.')
     ci_military = fields.Char(string='C.I. MILITAR Nro.')
     graduation_year = fields.Integer(string='Año de egreso')
-    specialty = fields.Char(string='Especialidad')
+    specialty = fields.Selection([('DAEN', 'DAEN'),
+                                  ('DAENMG', 'DAENMG'),
+                                  ('DEM', 'DEM'),
+                                  ('DIM', 'DIM'),
+                                  ('OEME', 'OEME'),
+                                  ('PROF', 'PROF')], string='Especialidad')
     allergies = fields.Char(string='Alergias')
     type_blood = fields.Char(string='Tipo de sangre')
     partner_status = fields.Selection([('active', 'Activo'),
