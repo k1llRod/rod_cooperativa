@@ -11,8 +11,8 @@
                 <!--                        <field name="state" widget="statusbar"/>-->
                 <!--                    </header>-->
                 <!--                </xpath>-->
-                <xpath expr="//field[@name='name']" position="attributes">
-                    <attribute name="readonly">0</attribute>
+                <xpath expr="//field[@name='name'][2]" position="replace">
+                    <field name="name" placeholder="p. ej. JUAN PEREZ" required="1" attrs="{'readonly': [('name_contact','=', False)]}"/>
                 </xpath>
                 <xpath expr="//field[@name='parent_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -26,7 +26,7 @@
                 </xpath>
                 <xpath expr="//sheet/group/group[1]" position="before">
                     <group string="Datos personales">
-                        <field name="code_contact"/>
+                        <field name="code_contact" default_focus="1" required="1"/>
                         <field name="ci_cossmil"/>
                         <field name="ci_military"/>
                         <field name="partner_status"/>
