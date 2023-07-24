@@ -41,7 +41,7 @@ class ResPartner(models.Model):
     type_blood = fields.Char(string='Tipo de sangre')
     partner_status = fields.Selection([('active', 'Activo'),
                                        ('passive', 'Pasiva'),
-                                       ('leave', 'Baja')], string="Situacion", compute='_onchange_partner_status', store=True)
+                                       ('leave', 'Baja')], string="Situacion general", compute='_onchange_partner_status', store=True)
 
     partner_status_especific = fields.Selection([('active_service', 'Servicio activo'),
                                                  ('letter_a', 'Letra "A" de disponibilidad'),
