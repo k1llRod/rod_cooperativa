@@ -41,13 +41,13 @@ class ResPartner(models.Model):
     type_blood = fields.Char(string='Tipo de sangre')
     partner_status = fields.Selection([('active', 'Activo'),
                                        ('passive', 'Pasiva'),
-                                       ('leave', 'Baja')], string="Situación de socio", compute='_onchange_partner_status')
+                                       ('leave', 'Baja')], string="Situacion", compute='_onchange_partner_status', store=True)
 
     partner_status_especific = fields.Selection([('active_service', 'Servicio activo'),
-                                                ('letter_a', 'Letra "A" de disponibilidad'),
+                                                 ('letter_a', 'Letra "A" de disponibilidad'),
                                                  ('reserve_active', 'Reserva activa'),
-                                                ('passive_reserve_a', 'Categoria "A"'),
-                                                ('passive_reserve_b', 'Categoria "B"'),
+                                                 ('passive_reserve_a', 'Categoria "A"'),
+                                                 ('passive_reserve_b', 'Categoria "B"'),
                                                  ('leave', 'Baja')], string='Situación de socio')
 
     year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
@@ -57,7 +57,7 @@ class ResPartner(models.Model):
     affliation = fields.Boolean(string='Formulario de afiliación')
     date_birthday = fields.Date(string='Fecha de nacimiento')
     years_completed = fields.Integer(string='Años cumplidos', compute='_compute_years_completed', store=True)
-    #campo base res.partner
+    # campo base res.partner
     company_type = fields.Selection(string='Company Type',
                                     selection=[('person', 'Individual'), ('company', 'Company')],
                                     compute='_compute_company_type', inverse='_write_company_type', default='person')
@@ -144,7 +144,7 @@ class ResPartner(models.Model):
     #         record.family_id = [(0, 0, {'partner_id': record.id})]
     family_id = fields.One2many('family', 'partner_id', string='Familiares')
 
-    @api.onchange('partner_status_especific')
+    # @api.onchange('partner_status_especific')
     @api.depends('partner_status_especific')
     def _onchange_partner_status(self):
         for record in self:
@@ -169,4 +169,4 @@ class ResPartner(models.Model):
             'search_view_id': search_id,
             'domain': [],
         }
-#
+
