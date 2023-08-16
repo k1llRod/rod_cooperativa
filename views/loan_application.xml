@@ -41,6 +41,16 @@
                             <button name="button_value_dolar" class="oe_stat_button" type="object" icon="fa-usd">
                                 <div class="o_field_widget o_stat_info">
                                     <span class="o_stat_value">
+                                        <field string=" " name="value_partner_total_contribution" widget="statinfo"/>
+                                    </span>
+                                    <span class="o_stat_text">
+                                        Total Aportes
+                                    </span>
+                                </div>
+                            </button>
+                            <button name="button_value_dolar" class="oe_stat_button" type="object" icon="fa-usd">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
                                         <field string=" " name="value_dolar" widget="statinfo"/>
                                     </span>
                                     <span class="o_stat_text">
@@ -48,6 +58,7 @@
                                     </span>
                                 </div>
                             </button>
+
                         </div>
                         <div class="oe_title">
                             <h1>

@@ -41,7 +41,8 @@ class ResPartner(models.Model):
     type_blood = fields.Char(string='Tipo de sangre')
     partner_status = fields.Selection([('active', 'Activo'),
                                        ('passive', 'Pasiva'),
-                                       ('leave', 'Baja')], string="Situacion general", compute='_onchange_partner_status', store=True)
+                                       ('leave', 'Baja')], string="Situacion general",
+                                      compute='_onchange_partner_status', store=True)
 
     partner_status_especific = fields.Selection([('active_service', 'Servicio activo'),
                                                  ('letter_a', 'Letra "A" de disponibilidad'),
@@ -170,3 +171,18 @@ class ResPartner(models.Model):
             'domain': [],
         }
 
+    def init_loan(self):
+        partner_payroll = self.env['partner.payroll'].create({'partner_id': self.id,
+                                                              'date_registration': datetime.now(),
+                                                              'total_contribution': 0,
+                                                              'advanced_payments': 0,
+                                                              'state': 'draft'})
+        view_id = self.env.ref('rod_cooperativa_aportes.action_partner_payroll')
+        return {
+            'name': 'Detalle del Registro',
+            'type': 'ir.actions.act_window',
+            'res_model': 'partner.payroll',
+            'res_id': partner_payroll.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }

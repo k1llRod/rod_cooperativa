@@ -67,7 +67,7 @@ class LoanApplication(models.Model):
         try:
             interest = (self.monthly_interest + self.contingency_fund)/100
             index_quantity = (1-(1+interest)**(-self.months_quantity))
-            self.index_loan = interest/index_quantity
+            self.index_loan = interest/index_quantity if index_quantity != 0 else 0
             self.fixed_fee = self.amount_loan_dollars * self.index_loan
         except:
             self.index_loan = 0
@@ -83,6 +83,10 @@ class LoanApplication(models.Model):
 
     #Relacion a los pagos
     loan_payment_ids = fields.One2many('loan.payment', 'loan_application_ids', string='Pagos')
+    def _default_total_contribution(self):
+        return 100
+    value_partner_total_contribution = fields.Float(string='Total aportes', default=_default_total_contribution, readonly=True)
+
 
     #Conversion dolares a boliviamos
     @api.depends('amount_loan_dollars')

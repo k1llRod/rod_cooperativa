@@ -70,6 +70,7 @@
                     </button>
                 </xpath>
 
+
                 <!--                Agregar campos de parentesco -->
                 <xpath expr="//sheet/notebook/page[1]" position="attributes">
                     <attribute name="autofocus">False</attribute>
