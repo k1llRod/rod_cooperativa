@@ -48,7 +48,7 @@
                         <field name="type_blood"/>
                         <field name="marital_status"/>
                         <field name="street" string="Ubicacion"/>
-                        <field name="street2" string="Ubicacion 2"/>
+<!--                        <field name="street2" string="Ubicacion 2"/>-->
                         <field name="phone" string="Telefono"/>
                         <field name="mobile" string="Móvil"/>
                         <field name="email"/>
