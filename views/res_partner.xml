@@ -35,6 +35,8 @@
                         <field name="paternal_surname"/>
                         <field name="maternal_surname"/>
                         <field name="vat" string="CI" required="True" placeholder="Ejemplo 6543210"/>
+                        <field name="state_id" string="Lugar de nacimiento"/>
+                        <field name="zip" string="Ext"/>
                         <field name="category_partner_id"/>
                         <field name="weapon"/>
                         <field name="graduation_year"/>
@@ -45,9 +47,15 @@
                         <field name="allergies"/>
                         <field name="type_blood"/>
                         <field name="marital_status"/>
+                        <field name="street" string="Ubicacion"/>
+                        <field name="street2" string="Ubicacion 2"/>
+                        <field name="phone" string="Telefono"/>
+                        <field name="mobile" string="Móvil"/>
+                        <field name="email"/>
+
                     </group>
-                    <group string="Tipo de socio">
-                        <group>
+                    <group>
+                        <group string="Tipo de socio">
                             <field name="guarantor"/>
                             <field name="partner"/>
                         </group>
@@ -57,6 +65,7 @@
                             <field name="affliation"/>
                         </group>
                     </group>
+
 
                 </xpath>
                 <xpath expr="//div[@name='button_box']" position="inside">
@@ -85,6 +94,16 @@
                     <attribute name="default">person</attribute>
                     <attribute name="invisible">1</attribute>
                 </xpath>
+<!--                <xpath expr="//sheet/group/group[2]" position="attributes">-->
+<!--                    <attribute name="invisible">1</attribute>-->
+<!--                </xpath>-->
+                <xpath expr="//sheet/group/group[3]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//sheet/group/group[4]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
 
             </field>
         </record>
