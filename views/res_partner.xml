@@ -62,6 +62,7 @@
                         <group string="Documentos de respaldo">
                             <field name="ci_photocopy"/>
                             <field name="photocopy_military_ci"/>
+                            <field name="photocopy_cossmil_ci"/>
                             <field name="affliation"/>
                         </group>
                     </group>

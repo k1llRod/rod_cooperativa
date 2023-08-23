@@ -56,6 +56,7 @@ class ResPartner(models.Model):
     ci_photocopy = fields.Boolean(string='Fotocopia de C.I.')
     photocopy_military_ci = fields.Boolean(string='Fotocopia de carnet militar')
     affliation = fields.Boolean(string='Formulario de afiliación')
+    photocopy_cossmil_ci = fields.Boolean(string='Fotocopia de carnet COSSMIL')
     date_birthday = fields.Date(string='Fecha de nacimiento')
     years_completed = fields.Integer(string='Años cumplidos', compute='_compute_years_completed', store=True)
     # campo base res.partner
