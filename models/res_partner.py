@@ -7,9 +7,9 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     name = fields.Char(string='Nombre', store=True)
-    code_contact = fields.Char(string='Código de socio / Boleta de pago', require=True)
+    code_contact = fields.Char(string='Código de asociado / Boleta de pago', require=True)
     guarantor = fields.Boolean(string='Garante')
-    partner = fields.Boolean(string='Socio', default=True)
+    partner = fields.Boolean(string='Asociado', default=True)
     degree = fields.Selection([('primary', 'Primaria'), ('secondary', 'Secundaria'), ('university', 'Universitario')],
                               string='Grado')
     ballot_balance = fields.Integer(string='Saldo boleta')
@@ -28,8 +28,8 @@ class ResPartner(models.Model):
                                ('Ingenieria', 'Ingenieria')], string='Arma', default='Artilleria')
     # categoria de socio
     category_partner_id = fields.Many2one('partner.category', string='Grado')
-    ci_cossmil = fields.Char(string='C.I. COSSMIL Nro.')
-    ci_military = fields.Char(string='C.I. MILITAR Nro.')
+    ci_cossmil = fields.Char(string='C. COSSMIL Nro.')
+    ci_military = fields.Char(string='C. MILITAR Nro.')
     graduation_year = fields.Integer(string='Año de egreso')
     specialty = fields.Selection([('DAEN', 'DAEN'),
                                   ('DAENMG', 'DAENMG'),
@@ -40,16 +40,16 @@ class ResPartner(models.Model):
     allergies = fields.Char(string='Alergias')
     type_blood = fields.Char(string='Tipo de sangre')
     partner_status = fields.Selection([('active', 'Activo'),
-                                       ('passive', 'Pasiva'),
+                                       ('active_reserve', 'Reserva activa'),
+                                       ('passive', 'Servicio pasivo'),
                                        ('leave', 'Baja')], string="Situacion general",
                                       compute='_onchange_partner_status', store=True)
 
     partner_status_especific = fields.Selection([('active_service', 'Servicio activo'),
-                                                 ('letter_a', 'Letra "A" de disponibilidad'),
-                                                 ('reserve_active', 'Reserva activa'),
-                                                 ('passive_reserve_a', 'Categoria "A"'),
-                                                 ('passive_reserve_b', 'Categoria "B"'),
-                                                 ('leave', 'Baja')], string='Situación de socio')
+                                                 ('guest','Invitado'),
+                                                 ('passive_reserve_a', 'Pasivo categoria "A"'),
+                                                 ('passive_reserve_b', 'Pasivo categoria "B"'),
+                                                 ('leave', 'Baja')], string='Tipo de asociado')
 
     year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
 

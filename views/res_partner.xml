@@ -47,19 +47,19 @@
                         <field name="allergies"/>
                         <field name="type_blood"/>
                         <field name="marital_status"/>
-                        <field name="street" string="Ubicacion"/>
+                        <field name="street" string="Dirección"/>
 <!--                        <field name="street2" string="Ubicacion 2"/>-->
                         <field name="phone" string="Telefono"/>
-                        <field name="mobile" string="Móvil"/>
+                        <field name="mobile" string="Celular"/>
                         <field name="email"/>
 
                     </group>
                     <group>
-                        <group string="Tipo de socio">
+                        <group string="Tipo de asociado">
                             <field name="guarantor"/>
                             <field name="partner"/>
                         </group>
-                        <group string="Respaldos">
+                        <group string="Documentos de respaldos">
                             <field name="ci_photocopy"/>
                             <field name="photocopy_military_ci"/>
                             <field name="affliation"/>
@@ -152,7 +152,7 @@
             <field name="inherit_id" ref="base.view_res_partner_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//search" position="replace">
-                    <search string="Buscar socios">
+                    <search string="Buscar asociados">
                         <field name="code_contact"/>
                         <field name="vat" string="C.I."/>
                         <field name="name"/>
@@ -163,7 +163,7 @@
                 <!--                </xpath>-->
             </field>
         </record>
-        <menuitem name="Socios cooperativa"
+        <menuitem name="Asociados cooperativa"
                 id="contacts.menu_contacts"
                 sequence="102"
                 web_icon="rod_cooperativa_aportes,static/description/coaa.png"/>
