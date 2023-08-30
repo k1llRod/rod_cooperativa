@@ -100,8 +100,8 @@ class LoanApplication(models.Model):
             if rec.letter_of_request == False: raise ValidationError('Falta carta de solicitud')
             if rec.contact_request == False: raise ValidationError('Falta solicitud de prestamo')
             if rec.last_copy_paid_slip == False: raise ValidationError('Falta ultima copia de boleta de pago')
-            if rec.ci_fothocopy == False: raise ValidationError('Falta fotocopia de CI')
-            if rec.photocopy_military_ci == False: raise ValidationError('Falta fotocopia de carnet militar')
+            # if rec.ci_fothocopy == False: raise ValidationError('Falta fotocopia de CI')
+            # if rec.photocopy_military_ci == False: raise ValidationError('Falta fotocopia de carnet militar')
 
             for i in range(1, rec.months_quantity+1):
                 percentage_amount_min_def = rec.fixed_fee * rec.amount_min_def
