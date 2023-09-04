@@ -67,14 +67,13 @@
                         </div>
                         <group>
                             <group>
-
-                                <field name="partner_id" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="partner_id" readonly="1"/>
                                 <field name="ci_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
                                 <field name="category_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
                                 <field name="type_loan" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
 <!--                                <field name="category_loan"/>-->
                                 <field name="guarantor" domain="[('id','!=',partner_id),('guarantor','=',True)]" attrs="{'invisible':[('type_loan', '!=', 'regular')],
-                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}" />
+                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}" widget="many2many_tags"/>
                                 <field name="months_quantity" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="amount_loan_dollars" widget="monetary" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="amount_loan" widget="monetary"/>

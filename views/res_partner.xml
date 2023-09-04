@@ -175,6 +175,8 @@
                 <!--                </xpath>-->
             </field>
         </record>
+
+
         <menuitem name="Asociados cooperativa"
                 id="contacts.menu_contacts"
                 sequence="102"

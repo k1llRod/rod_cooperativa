@@ -32,11 +32,11 @@ class LoanApplication(models.Model):
     # ci_photocopy = fields.Boolean(string='Fotocopia de CI', tracking=True)
     # photocopy_military_ci = fields.Boolean(string='Fotocopia de Carnet militar',  tracking=True)
     # category_loan = fields.Many2one('type.loan', string='Categoria', tracking=True)
-    guarantor = fields.Many2one('res.partner', string='Garante')
+    guarantor = fields.Many2many('res.partner', string='Garante', tracking=True)
     code_loan = fields.Char(string='Codigo de prestamo')
     amount_loan = fields.Float(string='Monto de prestamo (Bolivianos)', compute='_compute_change_dollars_bolivian')
     amount_loan_dollars = fields.Float(string='Monto de prestamo (dolares)')
-    months_quantity = fields.Integer(string='Cantidad de meses')
+    months_quantity = fields.Integer(string='Cantidad de meses', tracking=True)
     #valores calculados para prestamos
     amount_loan_max = fields.Float(string='Monto maximo de prestamo (Bolivianos)',  compute='_compute_set_amount')
     amount_loan_max_dollars = fields.Float(string='Monto maximo de prestamo (dolares)', )
@@ -83,9 +83,12 @@ class LoanApplication(models.Model):
 
     #Relacion a los pagos
     loan_payment_ids = fields.One2many('loan.payment', 'loan_application_ids', string='Pagos')
-    def _default_total_contribution(self):
-        return 100
-    value_partner_total_contribution = fields.Float(string='Total aportes', default=_default_total_contribution, readonly=True)
+
+    value_partner_total_contribution = fields.Float(string='Total aportes', compute='compute_total_contribution')
+
+    def compute_total_contribution(self):
+        value = self.env['partner.payroll'].search([('partner_id','=',self.partner_id.id)])
+        self.value_partner_total_contribution = round(value.contribution_total,2)
 
 
     #Conversion dolares a boliviamos
@@ -137,7 +140,22 @@ class LoanApplication(models.Model):
     def create(self, vals):
         name = self.env['ir.sequence'].next_by_code('loan.application')
         vals['name'] = name
+        if vals.get('guarantor', False):
+            for rec in vals.get('guarantor')[0][0]:
+                name_guarantor = self.env['res.partner'].browse(rec).name
+                self.message_post(body="Se agrego al garante "+name_guarantor)
         res = super(LoanApplication, self).create(vals)
+        return res
+
+    def write(self, vals):
+        if vals.get('guarantor', False):
+            message = '<ul>'
+            for rec in vals.get('guarantor')[0][2]:
+                name_guarantor = self.env['res.partner'].browse(rec).name
+                message += f"<li>{name_guarantor}</li>"
+            message += '</ul>'
+            self.message_post(body="Garantes asignados: " + message)
+        res = super(LoanApplication, self).write(vals)
         return res
 
     @api.onchange('type_loan')
@@ -152,4 +170,5 @@ class LoanApplication(models.Model):
         for rec in self:
             rec.months_quantity = rec.partner_id.category_partner_id.months
             rec.amount_loan_dollars = rec.partner_id.category_partner_id.limit_amount_dollars
+
 

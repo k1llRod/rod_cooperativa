@@ -117,7 +117,8 @@ class ResPartner(models.Model):
 
     @api.depends('guarantor')
     def _compute_guarantor_count(self):
-        loan = self.env['loan.application'].search([]).filtered(lambda x: x.guarantor.id == self.id)
+        loan = self.env['loan.application'].search([('guarantor','=',self.id)])
+        # loan = self.env['loan.application'].search([]).filtered(lambda x: x.guarantor.id == self.id)
         self.guarantor_count = len(loan)
 
     def action_view_guarantor(self):
@@ -172,18 +173,18 @@ class ResPartner(models.Model):
             'domain': [],
         }
 
-    def init_loan(self):
-        partner_payroll = self.env['partner.payroll'].create({'partner_id': self.id,
-                                                              'date_registration': datetime.now(),
-                                                              'total_contribution': 0,
-                                                              'advanced_payments': 0,
-                                                              'state': 'draft'})
-        view_id = self.env.ref('rod_cooperativa_aportes.action_partner_payroll')
-        return {
-            'name': 'Detalle del Registro',
-            'type': 'ir.actions.act_window',
-            'res_model': 'partner.payroll',
-            'res_id': partner_payroll.id,
-            'view_mode': 'form',
-            'target': 'current',
-        }
+    # def init_loan(self):
+    #     partner_payroll = self.env['partner.payroll'].create({'partner_id': self.id,
+    #                                                           'date_registration': datetime.now(),
+    #                                                           'total_contribution': 0,
+    #                                                           'advanced_payments': 0,
+    #                                                           'state': 'draft'})
+    #     view_id = self.env.ref('rod_cooperativa_aportes.action_partner_payroll')
+    #     return {
+    #         'name': 'Detalle del Registro',
+    #         'type': 'ir.actions.act_window',
+    #         'res_model': 'partner.payroll',
+    #         'res_id': partner_payroll.id,
+    #         'view_mode': 'form',
+    #         'target': 'current',
+    #     }
