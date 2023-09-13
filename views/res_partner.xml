@@ -158,23 +158,23 @@
                 action = model._init_partners()
             </field>
         </record>
-        <record id="res_partner_view_search_cooperativa" model="ir.ui.view">
-            <field name="name">res.partner.view.search.inherit.cooperativa</field>
-            <field name="model">res.partner</field>
-            <field name="inherit_id" ref="base.view_res_partner_filter"/>
-            <field name="arch" type="xml">
-                <xpath expr="//search" position="replace">
-                    <search string="Buscar asociados">
-                        <field name="code_contact"/>
-                        <field name="vat" string="C.I."/>
-                        <field name="name"/>
-                    </search>
-                </xpath>
-                <!--                <xpath expr="//field[@name='parent_id']" position="replace">-->
-                <!--                    <field name="code_contact"/>-->
-                <!--                </xpath>-->
-            </field>
-        </record>
+<!--        <record id="res_partner_view_search_cooperativa" model="ir.ui.view">-->
+<!--            <field name="name">res.partner.view.search.inherit.cooperativa</field>-->
+<!--            <field name="model">res.partner</field>-->
+<!--            <field name="inherit_id" ref="base.view_res_partner_filter"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <xpath expr="//search" position="replace">-->
+<!--                    <search string="Buscar asociados">-->
+<!--                        <field name="code_contact"/>-->
+<!--                        <field name="vat" string="C.I."/>-->
+<!--                        <field name="name"/>-->
+<!--                    </search>-->
+<!--                </xpath>-->
+<!--                &lt;!&ndash;                <xpath expr="//field[@name='parent_id']" position="replace">&ndash;&gt;-->
+<!--                &lt;!&ndash;                    <field name="code_contact"/>&ndash;&gt;-->
+<!--                &lt;!&ndash;                </xpath>&ndash;&gt;-->
+<!--            </field>-->
+<!--        </record>-->
 
 
         <menuitem name="Asociados cooperativa"
