@@ -106,7 +106,7 @@ class ResPartner(models.Model):
         if name:
             positive_operators = ['=', 'ilike', '=ilike', 'like', '=like']
             partners_ids = []
-            args = ['|', ('name', operator, name), ('vat', operator, name)] + args
+            args = ['|','|',('name', operator, name), ('vat', operator, name), ('code_contact',operator, name)] + args
             partners_ids = self._search(args, limit=limit, access_rights_uid=name_get_uid)
         else:
             partners_ids = self._search(args, limit=limit, access_rights_uid=name_get_uid)
@@ -117,9 +117,10 @@ class ResPartner(models.Model):
 
     @api.depends('guarantor')
     def _compute_guarantor_count(self):
-        loan = self.env['loan.application'].search([('guarantor','=',self.id)])
+        loan = self.env['loan.application'].search([('guarantor_one','=',self.id)])
+        loan1 = self.env['loan.application'].search([('guarantor_two', '=', self.id)])
         # loan = self.env['loan.application'].search([]).filtered(lambda x: x.guarantor.id == self.id)
-        self.guarantor_count = len(loan)
+        self.guarantor_count = len(loan) + len(loan1)
 
     def action_view_guarantor(self):
         self.ensure_one()

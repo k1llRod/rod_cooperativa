@@ -24,7 +24,8 @@ class LoanApplication(models.Model):
     ], string='Estado', default='init')
     type_loan = fields.Selection([('regular','Regular'), ('emergency','Emergencia')], string='Tipo de prestamo')
     partner_id = fields.Many2one('res.partner', string='Socio solicitante', tracking=True)
-    category_partner = fields.Char(string='Categoria de socio', related='partner_id.category_partner_id.name', store=True)
+    code_contact = fields.Char(string='Codigo de socio', related='partner_id.code_contact', store=True)
+    category_partner = fields.Char(string='Grado', related='partner_id.category_partner_id.name', store=True)
     ci_partner = fields.Char(string='Carnet de identidad', related='partner_id.vat', store=True)
     letter_of_request = fields.Boolean(string='Carta de solicitud', tracking=True)
     contact_request = fields.Boolean(string='Solicitud de prestamo', tracking=True)
@@ -32,7 +33,10 @@ class LoanApplication(models.Model):
     # ci_photocopy = fields.Boolean(string='Fotocopia de CI', tracking=True)
     # photocopy_military_ci = fields.Boolean(string='Fotocopia de Carnet militar',  tracking=True)
     # category_loan = fields.Many2one('type.loan', string='Categoria', tracking=True)
-    guarantor = fields.Many2many('res.partner', string='Garante', tracking=True)
+    guarantor_one = fields.Many2one('res.partner', string='Garante 1', tracking=True)
+    guarantor_two = fields.Many2one('res.partner', string='Garante 2', tracking=True)
+    code_garantor_one = fields.Char(string='Codigo de garante 1', related='guarantor_one.code_contact', store=True)
+    code_garantor_two = fields.Char(string='Codigo de garante 2', related='guarantor_two.code_contact', store=True)
     code_loan = fields.Char(string='Codigo de prestamo')
     amount_loan = fields.Float(string='Monto de prestamo (Bolivianos)', compute='_compute_change_dollars_bolivian')
     amount_loan_dollars = fields.Float(string='Monto de prestamo (dolares)')
@@ -42,11 +46,38 @@ class LoanApplication(models.Model):
     amount_loan_max_dollars = fields.Float(string='Monto maximo de prestamo (dolares)', )
     # monthly_interest = fields.Float(string='Interes mensual %', compute='_compute_interest_monthly')
     # contingency_fund = fields.Float(string='Fondo de contingencia %', compute='_compute_interest_monthly')
-    index_loan = fields.Float(string='Indice de prestamo', compute='_compute_index_loan_fixed_fee')
-    fixed_fee = fields.Float(string='Cuota fija', compute='_compute_index_loan_fixed_fee')
+    index_loan = fields.Float(string='Indice de prestamo ($)', compute='_compute_index_loan_fixed_fee')
+    index_loan_bs = fields.Float(string='Indice de prestamo (Bs)')
+    fixed_fee = fields.Float(string='Cuota fija ($)', compute='_compute_index_loan_fixed_fee')
+    fixed_fee_bs = fields.Float(string='Cuota fija (Bs)', compute='_compute_index_loan_fixed_fee_bs')
     date_application = fields.Date(string='Fecha de solicitud', default=fields.Date.today())
     date_approval = fields.Date(string='Fecha de aprobacion')
+    with_guarantor = fields.Boolean(string='Con garantes')
+    signature_recognition = fields.Boolean(string='Reconocimiento de firmas')
+    contract = fields.Boolean(string='Contrato')
+    surplus_days = fields.Integer(string='Dias excedentes', compute='_compute_surplus_days')
+    interest_month_surpluy = fields.Float(string='Interes mensual excedente', compute='_compute_surplus_days')
+    reason_loan = fields.Text(string='Motivo del prestamo')
+    number_account = fields.Char(string='Numero de cuenta')
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
+    currency_id = fields.Many2one('res.currency', string='Moneda', related='company_id.currency_id')
+    currency_id_dollar = fields.Many2one('res.currency', string='Moneda en Dólares', default=lambda self: self.env.ref('base.USD'))
+    turn_name = fields.Char(string='Girar a', tracking=True)
+    account_deposit = fields.Char(string='Cuenta de deposito', tracking=True)
+
     # amount_min_def = fields.Float(string='Min. Defensa %', currency_field='company_currency_id',compute='_compute_min_def')
+    @api.depends('date_approval')
+    def _compute_surplus_days(self):
+        for record in self:
+            if record.date_approval:
+                last_day = calendar.monthrange(record.date_approval.year, record.date_approval.month)[1]
+                point_day = last_day - record.date_approval.day
+                record.surplus_days = point_day
+                calculte_interest = record.amount_loan_dollars * (record.monthly_interest / 100)
+                record.interest_month_surpluy = (calculte_interest / last_day) * point_day / record.months_quantity
+            else:
+                record.surplus_days = 0
+                record.interest_month_surpluy = 0
     def _compute_min_def(self):
         self.amount_min_def = self.fixed_fee * round(float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.percentage_min_def')),4)
 
@@ -78,7 +109,7 @@ class LoanApplication(models.Model):
     #Valores por default y constantes
     value_dolar = fields.Float(default=_compute_set_dollar)
     contingency_fund = fields.Float(string='Fondo de contingencia %', default= lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund')))
-    monthly_interest = fields.Float(string='Indice de prestamo por mes', default=lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest')))
+    monthly_interest = fields.Float(string='Indice de prestamo por mes %', default=lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest')))
     amount_min_def = fields.Float(string='Min. Defensa %', default=lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.percentage_min_def')), digits=(6, 3))
 
     #Relacion a los pagos
@@ -98,7 +129,6 @@ class LoanApplication(models.Model):
             rec.amount_loan = rec.amount_loan_dollars * rec.value_dolar
 
     def approve_loan(self):
-        self.progress()
         for rec in self:
             if rec.letter_of_request == False: raise ValidationError('Falta carta de solicitud')
             if rec.contact_request == False: raise ValidationError('Falta solicitud de prestamo')
@@ -112,7 +142,6 @@ class LoanApplication(models.Model):
                     capital_init = rec.amount_loan_dollars
                     date_payment = datetime.today()
                 else:
-
                     capital_init = rec.loan_payment_ids[i-2].balance_capital
                     date_payment = rec.loan_payment_ids[i-2].date
                     date_payment = date_payment + relativedelta(months=+1)
@@ -127,11 +156,12 @@ class LoanApplication(models.Model):
                     'percentage_amount_min_def': percentage_amount_min_def,
                     'state': 'earring',
                 })
+            self.progress()
     def verification_pass(self):
         self.state = 'verificate'
     def progress(self):
         self.state = 'progress'
-        self.date_approval = fields.Date.today()
+        # self.date_approval = fields.Date.today()
 
     def return_application(self):
         self.state = 'init'
@@ -171,4 +201,7 @@ class LoanApplication(models.Model):
             rec.months_quantity = rec.partner_id.category_partner_id.months
             rec.amount_loan_dollars = rec.partner_id.category_partner_id.limit_amount_dollars
 
-
+    @api.depends('fixed_fee')
+    def _compute_index_loan_fixed_fee_bs(self):
+        for rec in self:
+            rec.fixed_fee_bs = rec.fixed_fee * rec.value_dolar

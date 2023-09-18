@@ -7,18 +7,22 @@
             <field name="model">loan.payment</field>
             <field name="arch" type="xml">
                 <tree create="false" delete="false" edit="false">
+                    <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
+                    <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
                     <field name="date"/>
                     <field name="capital_index_initial" optional="hidden"/>
                     <field name="interest"/>
                     <field name="interest_base" optional="hidden"/>
                     <field name="res_social" optional="hidden"/>
-                    <field name="capital_initial" optional="hidden"/>
-                    <field name="balance_capital"/>
-                    <field name="mount"/>
+                    <field name="capital_initial" optional="hidden" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                    <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                    <field name="mount" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                    <field name="interest_month_surpluy"/>
                     <field name="percentage_amount_min_def" optional="hidden"/>
                     <field name="loan_application_ids" optional="hidden"/>
                     <field name="type_payment" />
-                    <field name="amount_total" />
+                    <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                    <field name="amount_total_bs" widget="monetary"/>
                     <field name="state" decoration-info="state == 'init' or state == 'in_queue'" decoration-success="state == 'progress' or state == 'done'" widget="badge"/>
                 </tree>
             </field>

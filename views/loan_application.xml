@@ -15,7 +15,8 @@
 <!--                    <field name="ci_fothocopy"/>-->
 <!--                    <field name="photocopy_military_ci"/>-->
 <!--                    <field name="type_of_loan"/>-->
-                    <field name="guarantor"/>
+                    <field name="guarantor_one"/>
+                    <field name="guarantor_two"/>
                     <field name="code_loan"/>
                     <field name="amount_loan" widget="monetary"/>
                     <field name="state" decoration-info="state == 'draft'" decoration-success="state == 'progress'" widget="badge"/>
@@ -68,30 +69,48 @@
                         <group>
                             <group>
                                 <field name="partner_id" readonly="1"/>
+                                <field name="code_contact"/>
                                 <field name="ci_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
                                 <field name="category_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
-                                <field name="type_loan" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+
 <!--                                <field name="category_loan"/>-->
-                                <field name="guarantor" domain="[('id','!=',partner_id),('guarantor','=',True)]" attrs="{'invisible':[('type_loan', '!=', 'regular')],
-                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}" widget="many2many_tags"/>
+                                <field name="guarantor_one" domain="[('id','!=',partner_id),('guarantor','=',True)]" attrs="{'invisible':[('type_loan', '!=', 'regular')],
+                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="code_garantor_one"/>
+                                <field name="guarantor_two" domain="[('id','!=',partner_id),('guarantor','=',True)]" attrs="{'invisible':[('type_loan', '!=', 'regular')],
+                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
+                                <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
+                                <field name="code_garantor_two"/>
                                 <field name="months_quantity" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
-                                <field name="amount_loan_dollars" widget="monetary" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="amount_loan_dollars" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="amount_loan" widget="monetary"/>
                                 <field name="date_application" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
-                                <field name="date_approval" attrs="{'readonly': [('state','!=','init')],
-                                                                    'invisible': [('state','=','init')]}"/>
+<!--                                <field name="date_approval" attrs="{'readonly': [('state','!=','init')],-->
+<!--                                                                    'invisible': [('state','=','init')]}"/>-->
+                                <field name="date_approval"/>
                                 <field name="monthly_interest" readonly="1" />
                                 <field name="contingency_fund" readonly="1" />
-                                <field name="index_loan" readonly="1" />
-                                <field name="fixed_fee" readonly="1" />
+                                <field name="index_loan" readonly="1" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+<!--                                <field name="index_loan_bs" readonly="1" widget="monetary" />-->
                                 <field name="amount_min_def" readonly="1" />
+                                <field name="fixed_fee" readonly="1" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                                <field name="fixed_fee_bs" readonly="1" widget="monetary"/>
+
+                                <field name="surplus_days"/>
+                                <field name="interest_month_surpluy"/>
+                                <field name="reason_loan"/>
+                                <field name="turn_name"/>
+                                <field name="account_deposit"/>
                             </group>
-                            <group>
+                            <group string="Anexos">
+                                <field name="type_loan" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="with_guarantor"/>
                                 <field name="letter_of_request" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="contact_request" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="last_copy_paid_slip" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
-<!--                                <field name="ci_fothocopy" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>-->
-<!--                                <field name="photocopy_military_ci" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>-->
+                                <field name="signature_recognition" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="contract" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                             </group>
 
                         </group>

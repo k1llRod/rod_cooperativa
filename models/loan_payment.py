@@ -12,12 +12,22 @@ class LoanPayment(models.Model):
     capital_index_initial = fields.Float(string='Capital')
     mount = fields.Float(string='Cuota fija')
     interest = fields.Float(string='Interes', compute='_compute_interest', store=True)
-    interest_base = fields.Float(string='INT 0.7', compute='_compute_interest', store=True)
-    res_social = fields.Float(string='Res Social', compute='_compute_interest', store=True)
+    interest_base = fields.Float(string='0.7%', compute='_compute_interest', store=True)
+    res_social = fields.Float(string='F.C. 0.04%', compute='_compute_interest', store=True)
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_interest', store=True)
     percentage_amount_min_def = fields.Float(string='%MINDEF')
-    amount_total = fields.Float(string='D/MINDEF', compute='_compute_interest', store=True)
+    interest_month_surpluy = fields.Float(string='M/E', related='loan_application_ids.interest_month_surpluy')
+    amount_total = fields.Float(string='D/MINDEF $', compute='_compute_interest', store=True)
+    amount_total_bs = fields.Float(string='D/MINDEF Bs', compute='_change_amount_total_bs', store=True)
     state = fields.Selection([('earring', 'Pendiente'), ('paid', 'Pagado')], string='Estado', default='draft')
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
+    currency_id = fields.Many2one('res.currency', string='Moneda', related='loan_application_ids.currency_id')
+    currency_id_dollar = fields.Many2one('res.currency', string='Moneda en Dólares',
+                                         default=lambda self: self.env.ref('base.USD'))
+    @api.depends('amount_total')
+    def _change_amount_total_bs(self):
+        for rec in self:
+            rec.amount_total_bs = rec.amount_total * rec.currency_id_dollar.inverse_rate
 
     # @api.depends('mount')
     # def _compute_interest(self):
