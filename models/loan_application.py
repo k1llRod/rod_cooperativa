@@ -30,8 +30,9 @@ class LoanApplication(models.Model):
     letter_of_request = fields.Boolean(string='Carta de solicitud', tracking=True)
     contact_request = fields.Boolean(string='Solicitud de prestamo', tracking=True)
     last_copy_paid_slip = fields.Boolean(string='Ultima copia de boleta de pago', tracking=True)
-    # ci_photocopy = fields.Boolean(string='Fotocopia de CI', tracking=True)
-    # photocopy_military_ci = fields.Boolean(string='Fotocopia de Carnet militar',  tracking=True)
+    ci_photocopy = fields.Boolean(string='Fotocopia de CI', tracking=True)
+    photocopy_military_ci = fields.Boolean(string='Fotocopia de Carnet militar',  tracking=True)
+    # photocopy_payment_slip = fields.Boolean(string='Fotocopia de boleta de pago', tracking=True)
     # category_loan = fields.Many2one('type.loan', string='Categoria', tracking=True)
     guarantor_one = fields.Many2one('res.partner', string='Garante 1', tracking=True)
     guarantor_two = fields.Many2one('res.partner', string='Garante 2', tracking=True)
@@ -52,7 +53,7 @@ class LoanApplication(models.Model):
     fixed_fee_bs = fields.Float(string='Cuota fija (Bs)', compute='_compute_index_loan_fixed_fee_bs')
     date_application = fields.Date(string='Fecha de solicitud', default=fields.Date.today())
     date_approval = fields.Date(string='Fecha de aprobacion')
-    with_guarantor = fields.Boolean(string='Con garantes')
+    with_guarantor = fields.Selection(string='Tipo de prestamo regular', selection=[('loan_guarantor', 'Prestamo regular con garantes'), ('no_loan_guarantor', 'Prestamo regular sin garantes')])
     signature_recognition = fields.Boolean(string='Reconocimiento de firmas')
     contract = fields.Boolean(string='Contrato')
     surplus_days = fields.Integer(string='Dias excedentes', compute='_compute_surplus_days')
@@ -64,7 +65,7 @@ class LoanApplication(models.Model):
     currency_id_dollar = fields.Many2one('res.currency', string='Moneda en Dólares', default=lambda self: self.env.ref('base.USD'))
     turn_name = fields.Char(string='Girar a', tracking=True)
     account_deposit = fields.Char(string='Cuenta de deposito', tracking=True)
-
+    special_case = fields.Boolean(string='Caso especial', default=False)
     # amount_min_def = fields.Float(string='Min. Defensa %', currency_field='company_currency_id',compute='_compute_min_def')
     @api.depends('date_approval')
     def _compute_surplus_days(self):
@@ -140,7 +141,16 @@ class LoanApplication(models.Model):
                 percentage_amount_min_def = rec.fixed_fee * rec.amount_min_def
                 if len(rec.loan_payment_ids) == 0:
                     capital_init = rec.amount_loan_dollars
-                    date_payment = datetime.today()
+                    # date_payment = datetime.today()
+                    date_payment = rec.date_approval
+                    if rec.special_case == True:
+                        if date_payment.day >= 1 and date_payment.day <= 15:
+                            date_payment = rec.date_approval
+                        else:
+                            raise ValidationError('La solicitud de prestamo esta fuera de rango')
+                    else:
+                        date_payment = date_payment.replace(day=1)
+                        date_payment = date_payment.replace(month=date_payment.month + 1)
                 else:
                     capital_init = rec.loan_payment_ids[i-2].balance_capital
                     date_payment = rec.loan_payment_ids[i-2].date
@@ -191,8 +201,11 @@ class LoanApplication(models.Model):
     @api.onchange('type_loan')
     def _onchage_type_loan(self):
         if self.type_loan == 'emergency':
-            self.guarantor = False
+            # self.guarantor = False
             self.months_quantity = 0
+            self.with_guarantor = ''
+            self.guarantor_one = False
+            self.guarantor_two = False
 
     #Asignar datos del socio, cantidad de meses
     @api.onchange('partner_id')
@@ -205,3 +218,12 @@ class LoanApplication(models.Model):
     def _compute_index_loan_fixed_fee_bs(self):
         for rec in self:
             rec.fixed_fee_bs = rec.fixed_fee * rec.value_dolar
+    def return_draft(self):
+        self.state = 'init'
+
+    @api.onchange('with_guarantor')
+    def _onchange_with_guarantor(self):
+        if self.with_guarantor == 'no_loan_guarantor':
+            self.signature_recognition = False
+            self.guarantor_one = False
+            self.guarantor_two = False

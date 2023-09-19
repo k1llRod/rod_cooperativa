@@ -174,6 +174,20 @@ class ResPartner(models.Model):
             'domain': [],
         }
 
+    def init_loan_emergency(self):
+        loan_application = self.env['loan.application'].create({'partner_id': self.id,
+                                                                'date_application': datetime.now(),
+                                                                'type_loan': 'emergency',
+                                                                })
+        return {
+            'name': 'Detalle del prestamo',
+            'type': 'ir.actions.act_window',
+            'res_model': 'loan.application',
+            'res_id': loan_application.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
     # def init_loan(self):
     #     partner_payroll = self.env['partner.payroll'].create({'partner_id': self.id,
     #                                                           'date_registration': datetime.now(),
