@@ -46,7 +46,7 @@ class LoanPayment(models.Model):
             rec.capital_index_initial = round(rec.mount - rec.interest,2)
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
             rec.res_social = rec.capital_initial * round((contingency_found/100),4)
-            rec.amount_total = rec.mount + rec.percentage_amount_min_def
+            rec.amount_total = rec.mount + rec.percentage_amount_min_def + rec.interest_month_surpluy
 
 
 
