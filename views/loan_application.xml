@@ -9,14 +9,16 @@
                 <tree>
                     <field name="name"/>
                     <field name="partner_id"/>
-                    <field name="letter_of_request"/>
-                    <field name="contact_request"/>
-                    <field name="last_copy_paid_slip"/>
+                    <field name="type_loan"/>
+                    <field name="letter_of_request" optional="hidden"/>
+                    <field name="contact_request" optional="hidden"/>
+                    <field name="last_copy_paid_slip" optional="hidden"/>
 <!--                    <field name="ci_fothocopy"/>-->
 <!--                    <field name="photocopy_military_ci"/>-->
 <!--                    <field name="type_of_loan"/>-->
-                    <field name="guarantor"/>
-                    <field name="code_loan"/>
+                    <field name="guarantor_one" optional="show"/>
+                    <field name="guarantor_two" optional="show"/>
+                    <field name="code_loan" optional="hidden"/>
                     <field name="amount_loan" widget="monetary"/>
                     <field name="state" decoration-info="state == 'draft'" decoration-success="state == 'progress'" widget="badge"/>
                 </tree>
@@ -34,10 +36,21 @@
                         <button name="verification_pass" string="Verificación" type="object" attrs="{'invisible':[('state','!=','init')]}" />
                         <button name="approve_loan" string="Aprobar prestamo" type="object" attrs="{'invisible': [('state','=','init')]}"/>
                         <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>
+                        <button name="return_draft" string="Borrador" type="object"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
+                            <button name="button_value_dolar" class="oe_stat_button" type="object" icon="fa-usd">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field string=" " name="value_partner_total_contribution" widget="statinfo"/>
+                                    </span>
+                                    <span class="o_stat_text">
+                                        Total Aportes
+                                    </span>
+                                </div>
+                            </button>
                             <button name="button_value_dolar" class="oe_stat_button" type="object" icon="fa-usd">
                                 <div class="o_field_widget o_stat_info">
                                     <span class="o_stat_value">
@@ -48,6 +61,7 @@
                                     </span>
                                 </div>
                             </button>
+
                         </div>
                         <div class="oe_title">
                             <h1>
@@ -56,32 +70,56 @@
                         </div>
                         <group>
                             <group>
-
-                                <field name="partner_id" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+<!--                                <field name="type_loan" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done'),('state','=','init')]}"/>-->
+                                <field name="type_loan" readonly="1"/>
+                                <field name="with_guarantor" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')],
+                                                                    'invisible': [('type_loan','=','emergency')]}"/>
+                                <field name="partner_id" readonly="1"/>
+                                <field name="code_contact"/>
                                 <field name="ci_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
                                 <field name="category_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
-                                <field name="type_loan" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+
 <!--                                <field name="category_loan"/>-->
-                                <field name="guarantor" domain="[('id','!=',partner_id),('guarantor','=',True)]" attrs="{'invisible':[('type_loan', '!=', 'regular')],
-                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}" />
+                                <field name="guarantor_one" domain="[('id','!=',partner_id),('guarantor','=',True)]" attrs="{'invisible':['|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor')],
+                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="code_garantor_one" attrs="{'invisible':['|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor')]}"/>
+                                <field name="guarantor_two" domain="[('id','!=',partner_id),('guarantor','=',True)]" attrs="{'invisible':['|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor')],
+                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="code_garantor_two" attrs="{'invisible':['|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor')]}"/>
+                                <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
+                                <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="months_quantity" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
-                                <field name="amount_loan_dollars" widget="monetary" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="amount_loan_dollars" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="amount_loan" widget="monetary"/>
                                 <field name="date_application" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
-                                <field name="date_approval" attrs="{'readonly': [('state','!=','init')],
-                                                                    'invisible': [('state','=','init')]}"/>
+<!--                                <field name="date_approval" attrs="{'readonly': [('state','!=','init')],-->
+<!--                                                                    'invisible': [('state','=','init')]}"/>-->
+                                <field name="date_approval"/>
                                 <field name="monthly_interest" readonly="1" />
                                 <field name="contingency_fund" readonly="1" />
-                                <field name="index_loan" readonly="1" />
-                                <field name="fixed_fee" readonly="1" />
+                                <field name="index_loan" readonly="1" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+<!--                                <field name="index_loan_bs" readonly="1" widget="monetary" />-->
                                 <field name="amount_min_def" readonly="1" />
+                                <field name="fixed_fee" readonly="1" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                                <field name="fixed_fee_bs" readonly="1" widget="monetary"/>
+
+                                <field name="surplus_days"/>
+                                <field name="interest_month_surpluy"/>
+                                <field name="reason_loan"/>
+                                <field name="turn_name"/>
+                                <field name="account_deposit"/>
+                                <field name="special_case"/>
                             </group>
-                            <group>
+                            <group string="Anexos">
                                 <field name="letter_of_request" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="contact_request" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="last_copy_paid_slip" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
-<!--                                <field name="ci_fothocopy" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>-->
-<!--                                <field name="photocopy_military_ci" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>-->
+                                <field name="signature_recognition" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')],
+                                                                    'invisible':[('with_guarantor','=','no_loan_guarantor')]}"/>
+                                <field name="contract" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+                                <field name="ci_photocopy"/>
+                                <field name="photocopy_military_ci" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
+
                             </group>
 
                         </group>

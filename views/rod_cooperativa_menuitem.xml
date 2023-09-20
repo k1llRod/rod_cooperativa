@@ -2,7 +2,7 @@
 <odoo>
   <data>
       <!-- Top menu item -->
-      <menuitem name="Creditos"
+      <menuitem name="Prestamos"
                 id="rod_cooperativa.menu_root"
                 sequence="100"
                 web_icon="rod_cooperativa,static/description/coaa.png" />
