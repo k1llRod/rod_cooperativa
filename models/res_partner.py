@@ -49,7 +49,7 @@ class ResPartner(models.Model):
                                                  ('guest','Invitado'),
                                                  ('passive_reserve_a', 'Pasivo categoria "A"'),
                                                  ('passive_reserve_b', 'Pasivo categoria "B"'),
-                                                 ('leave', 'Baja')], string='Tipo de asociado')
+                                                 ('leave', 'Baja')], string='Tipo de asociado', store=True)
 
     year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
 
