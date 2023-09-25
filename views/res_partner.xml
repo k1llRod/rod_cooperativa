@@ -168,6 +168,29 @@
                         <field name="code_contact"/>
                         <field name="vat" string="C.I."/>
                         <field name="name"/>
+                        <group expand="0" string="Group By">
+                            <filter string="Tipos de asociados"
+                                name="group_partner_status"
+                                context="{'group_by': 'partner_status_especific'}"/>
+                            <filter string="Estado de asociados"
+                                name="group_partner_status"
+                                context="{'group_by': 'state'}"/>
+                            <separator />
+                            <filter string="Por año de egreso"
+                                name="group_partner_status"
+                                context="{'group_by': 'graduation_year'}"/>
+                            <filter string="Por años de servicio"
+                                name="group_partner_status"
+                                context="{'group_by': 'year_service'}"/>
+                            <separator string="test"/>
+                            <filter string="Por especialidad"
+                                name="group_partner_speciality"
+                                context="{'group_by':'specialty'}"/>
+                            <separator />
+                            <filter string="Lugar de nacimiento"
+                                name="group_state_id"
+                                context="{'group_by':'state_id'}"/>
+                        </group>
                     </search>
                 </xpath>
                 <!--                <xpath expr="//field[@name='parent_id']" position="replace">-->
