@@ -187,6 +187,8 @@ class ResPartner(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+    def action_partner_coap(self):
+        return True
 
     # def init_loan(self):
     #     partner_payroll = self.env['partner.payroll'].create({'partner_id': self.id,

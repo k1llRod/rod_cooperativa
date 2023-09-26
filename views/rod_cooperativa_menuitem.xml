@@ -4,7 +4,7 @@
       <!-- Top menu item -->
       <menuitem name="Prestamos"
                 id="rod_cooperativa.menu_root"
-                sequence="100"
+                sequence="3"
                 web_icon="rod_cooperativa,static/description/coaa.png" />
       <!-- menu categories -->
       <menuitem id="rod_cooperativa.rod_cooperativa_prestamos"
@@ -30,5 +30,15 @@
                 sequence="2"
                 action="rod_cooperativa.action_partner_category"/>
 
+<!--      ICONO ASOCIADOS-->
+<!--      <menuitem name="Socios"-->
+<!--                id="rod_cooperativa.menu_root_partner_coa"-->
+<!--                sequence="1"-->
+<!--                web_icon="rod_cooperativa,static/description/coaa.png" />-->
+<!--      <menuitem id="rod_cooperativa.rod_cooperativa_socios"-->
+<!--                name="Socios"-->
+<!--                parent="rod_cooperativa.menu_root_partner_coa"-->
+<!--                sequence="1"-->
+<!--                action="rod_cooperativa.action_partner_coa"/>-->
   </data>
 </odoo>
