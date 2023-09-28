@@ -112,7 +112,7 @@ class LoanApplication(models.Model):
     contingency_fund = fields.Float(string='Fondo de contingencia %', default= lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund')))
     monthly_interest = fields.Float(string='Indice de prestamo por mes %', default=lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest')))
     amount_min_def = fields.Float(string='Min. Defensa %', default=lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.percentage_min_def')), digits=(6, 3))
-
+    commission_min_def = fields.Float(string='Comision Min. Defensa %', default=lambda self: float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.percentage_commission_min_def')), digits=(6, 3))
     #Relacion a los pagos
     loan_payment_ids = fields.One2many('loan.payment', 'loan_application_ids', string='Pagos')
 
@@ -138,6 +138,9 @@ class LoanApplication(models.Model):
             # if rec.photocopy_military_ci == False: raise ValidationError('Falta fotocopia de carnet militar')
 
             for i in range(1, rec.months_quantity+1):
+                commission_min_def = float(
+                    self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.commission_min_def'))
+                amount_commission = (commission_min_def / 100) * rec.fixed_fee
                 percentage_amount_min_def = rec.fixed_fee * rec.amount_min_def
                 if len(rec.loan_payment_ids) == 0:
                     capital_init = rec.amount_loan_dollars
@@ -164,6 +167,7 @@ class LoanApplication(models.Model):
                     'mount': rec.fixed_fee,
                     'loan_application_ids': rec.id,
                     'percentage_amount_min_def': percentage_amount_min_def,
+                    'commission_min_def': amount_commission,
                     'state': 'earring',
                 })
             self.progress()
@@ -227,3 +231,17 @@ class LoanApplication(models.Model):
             self.signature_recognition = False
             self.guarantor_one = False
             self.guarantor_two = False
+
+    def refinance(self):
+        data = {'capital_rest': self.ids,
+                'interest_days_rest': self.ids,
+                }
+        return {
+            'name': 'Formulario de refinanciamiento',
+            'type': 'ir.actions.act_window',
+            'res_model': 'form.refinance',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new',
+            'context': data,
+        }

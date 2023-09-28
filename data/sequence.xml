@@ -8,5 +8,11 @@
             <field name="prefix">COA4</field>
             <field name="padding">4</field>
         </record>
+        <record id="seq_loan_payment" model="ir.sequence">
+            <field name="name">Secuencia de pago de prestamos</field>
+            <field name="code">loan.payment</field>
+            <field name="prefix">PRESCOA</field>
+            <field name="padding">4</field>
+        </record>
     </data>
 </odoo>

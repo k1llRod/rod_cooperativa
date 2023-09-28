@@ -34,7 +34,8 @@
                 <form string="Solicitud de presupuesto" class="oe_left oe_edit_only oe_form_required">
                     <header>
                         <button name="verification_pass" string="Verificación" type="object" attrs="{'invisible':[('state','!=','init')]}" />
-                        <button name="approve_loan" string="Aprobar prestamo" type="object" attrs="{'invisible': [('state','=','init')]}"/>
+                        <button name="approve_loan" string="Aprobar prestamo" type="object" attrs="{'invisible': [('state','!=','init')]}"/>
+                        <button name="refinance" string="Refinanciar" type="object" />
                         <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>
                         <button name="return_draft" string="Borrador" type="object"/>
                         <field name="state" widget="statusbar"/>

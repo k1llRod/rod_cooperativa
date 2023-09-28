@@ -7,7 +7,7 @@ class ResConfigSettings(models.TransientModel):
     contingency_fund = fields.Float(string='Fondo de contingencia %', digits=(6, 3))
     percentage_min_def = fields.Float(string='Porcentaje Min. Defensa %', digits=(6, 3))
     insurance_relief = fields.Float(string='Seguro de desgravamen %', digits=(6, 3))
-
+    commission_min_def = fields.Float(string='Comisión Min. Defensa %', digits=(6, 3))
     @api.model
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
@@ -19,8 +19,9 @@ class ResConfigSettings(models.TransientModel):
             percentage_min_def=float(
                 self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.percentage_min_def')),
             insurance_relief=float(
-                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.insurance_relief'))
-
+                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.insurance_relief')),
+            commission_min_def=float(
+                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.commission_min_def'))
         )
         return res
 
@@ -32,5 +33,6 @@ class ResConfigSettings(models.TransientModel):
                                                          str(self.percentage_min_def))
         self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.insurance_relief',
                                                          str(self.insurance_relief))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.commission_min_def', str(self.commission_min_def))
 
     #crear get y set

@@ -33,6 +33,7 @@
         'security/ir.model.access.csv',
         'data/sequence.xml',
         'views/rod_cooperativa_menuitem.xml',
+        'wizard/form_refinance.xml',
     ],
 
 }

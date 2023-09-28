@@ -15,10 +15,12 @@ class LoanPayment(models.Model):
     interest_base = fields.Float(string='0.7%', compute='_compute_interest', store=True)
     res_social = fields.Float(string='F.C. 0.04%', compute='_compute_interest', store=True)
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_interest', store=True)
-    percentage_amount_min_def = fields.Float(string='%MINDEF')
+    percentage_amount_min_def = fields.Float(string='%MINDEF', compute='_compute_interest', store=True)
+    commission_min_def = fields.Float(string='Comisión MINDEF')
     interest_month_surpluy = fields.Float(string='M/E', related='loan_application_ids.interest_month_surpluy')
     amount_total = fields.Float(string='D/MINDEF $', compute='_compute_interest', store=True)
     amount_total_bs = fields.Float(string='D/MINDEF Bs', compute='_change_amount_total_bs', store=True)
+    amount_returned_coa = fields.Float(string='Monto devuelto COA')
     state = fields.Selection([('earring', 'Pendiente'), ('paid', 'Pagado')], string='Estado', default='draft')
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
     currency_id = fields.Many2one('res.currency', string='Moneda', related='loan_application_ids.currency_id')
@@ -38,7 +40,6 @@ class LoanPayment(models.Model):
     def _compute_interest(self):
         percentage_interest = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest'))
         contingency_found = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund'))
-
         interest = (percentage_interest + contingency_found)/100
         for rec in self:
             rec.interest = rec.capital_initial * interest
@@ -47,10 +48,9 @@ class LoanPayment(models.Model):
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
             rec.res_social = rec.capital_initial * round((contingency_found/100),4)
             rec.amount_total = rec.mount + rec.percentage_amount_min_def + rec.interest_month_surpluy
-
-
-
-
+            rec.amount_returned_coa = (rec.amount_total - rec.commission_min_def) * rec.currency_id_dollar.inverse_rate
+    def open_loan_payment(self):
+        a = 1
 
 
 

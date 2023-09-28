@@ -48,6 +48,17 @@
                             </div>
                             <div class="o_setting_right_pane">
                                 <div class="content-group mt16">
+                                    <label string="Comision al ministerio de defensa %" for="percentage_min_def"/>
+                                    <div class="text-muted">
+                                        Establecer el porcentaje.
+                                    </div>
+                                    <div>
+                                        <field name="commission_min_def" colspan="4" nolabel="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <div class="content-group mt16">
                                     <label string="Seguro de desgravamen" for="insurance_relief"/>
                                     <div class="text-muted">
                                         Establecer el porcentaje.

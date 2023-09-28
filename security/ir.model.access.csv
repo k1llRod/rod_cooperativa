@@ -3,3 +3,5 @@ access_loan_application,loan.application,model_loan_application,base.group_user,
 access_partner_category,partner.category,model_partner_category,base.group_user,1,1,1,1
 access_loan_payment,loan.payment,model_loan_payment,base.group_user,1,1,1,1
 access_family,family.family,model_family,base.group_user,1,1,1,1
+
+access_form_refinance_admin,form.refinance,model_form_refinance,base.group_user,1,1,1,1
