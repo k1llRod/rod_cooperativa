@@ -57,7 +57,8 @@ class LoanApplication(models.Model):
     signature_recognition = fields.Boolean(string='Reconocimiento de firmas')
     contract = fields.Boolean(string='Contrato')
     surplus_days = fields.Integer(string='Dias excedentes', compute='_compute_surplus_days')
-    interest_month_surpluy = fields.Float(string='Interes mensual excedente', compute='_compute_surplus_days')
+    interest_month_surpluy = fields.Float(string='Interes mensual excedente', compute='_compute_surplus_days', store=True)
+    total_interest_month_surpluy = fields.Float(string='Total interes mensual excedente', compute='_compute_total_interest_month_surpluy', store=True)
     reason_loan = fields.Text(string='Motivo del prestamo')
     number_account = fields.Char(string='Numero de cuenta')
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
@@ -66,13 +67,16 @@ class LoanApplication(models.Model):
     turn_name = fields.Char(string='Girar a', tracking=True)
     account_deposit = fields.Char(string='Cuenta de deposito', tracking=True)
     special_case = fields.Boolean(string='Caso especial', default=False)
+    refinance_loan_id = fields.Many2one('loan.application', string='Refinanciamiento')
+    balance_capital = fields.Float(string='Saldo capital', compute='_compute_balance_capital', store=True)
+    balance_total_interest_month = fields.Float(string='Saldo total interes mensual', compute='_compute_balance_capital', store=True)
     # amount_min_def = fields.Float(string='Min. Defensa %', currency_field='company_currency_id',compute='_compute_min_def')
     @api.depends('date_approval')
     def _compute_surplus_days(self):
         for record in self:
             if record.date_approval:
                 last_day = calendar.monthrange(record.date_approval.year, record.date_approval.month)[1]
-                point_day = last_day - record.date_approval.day
+                point_day = last_day - record.date_approval.day_compute_index_loan_fixed_fee
                 record.surplus_days = point_day
                 calculte_interest = record.amount_loan_dollars * (record.monthly_interest / 100)
                 record.interest_month_surpluy = (calculte_interest / last_day) * point_day / record.months_quantity
@@ -168,7 +172,7 @@ class LoanApplication(models.Model):
                     'loan_application_ids': rec.id,
                     'percentage_amount_min_def': percentage_amount_min_def,
                     'commission_min_def': amount_commission,
-                    'state': 'earring',
+                    'state': 'draft',
                 })
             self.progress()
     def verification_pass(self):
@@ -233,9 +237,7 @@ class LoanApplication(models.Model):
             self.guarantor_two = False
 
     def refinance(self):
-        data = {'capital_rest': self.ids,
-                'interest_days_rest': self.ids,
-                }
+        id = self.id
         return {
             'name': 'Formulario de refinanciamiento',
             'type': 'ir.actions.act_window',
@@ -243,5 +245,24 @@ class LoanApplication(models.Model):
             'view_mode': 'form',
             'view_type': 'form',
             'target': 'new',
-            'context': data,
+            'context': {
+                'default_capital_initial': self.amount_loan_dollars,
+                'default_data_loan_id': id,
+                'default_capital_rest': self.balance_capital,
+                'default_interest_days_rest': self.balance_total_interest_month,
+                'default_quantity_month_initial': self.months_quantity,
+            },
         }
+    @api.depends('loan_payment_ids.state')
+    def _compute_balance_capital(self):
+        for rec in self:
+            if len(rec.loan_payment_ids.filtered(lambda x:x.state == 'transfer')) > 0:
+                rec.balance_capital = rec.loan_payment_ids.filtered(lambda x:x.state == 'transfer')[-1].balance_capital
+                rec.balance_total_interest_month = rec.total_interest_month_surpluy - sum(rec.loan_payment_ids.filtered(lambda x:x.state == 'transfer').mapped('interest_month_surpluy'))
+            else:
+                rec.balance_capital = rec.amount_loan_dollars
+                rec.balance_total_interest_month = rec.interest_month_surpluy
+
+    def _compute_total_interest_month_surpluy(self):
+        for rec in self:
+            rec.total_interest_month_surpluy = rec.interest_month_surpluy * rec.months_quantity

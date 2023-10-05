@@ -6,12 +6,21 @@
             <field name="arch" type="xml">
                 <form string="Formulario de refinanciamiento">
                     <group>
-                        <field name="name" />
-                        <field name="capital_rest" readonly="1"/>
-                        <field name="interest_days_rest" readonly="1"/>
-                        <field name="amount_refinance" />
-                        <field name="month_refinance" />
-                        <field name="date_refinance"/>
+                        <group string="Datos para refinanciamiento">
+                            <field name="name" invisible="1"/>
+                            <field name="data_loan_id" readonly="1"/>
+                            <field name="capital_initial" readonly="1"/>
+                            <field name="quantity_month_initial" readonly="1"/>
+                            <field name="capital_rest" readonly="1"/>
+                            <field name="interest_days_rest" readonly="1"/>
+                            <field name="amount_refinance" />
+                            <field name="month_refinance" />
+                            <field name="amount_delivered"/>
+                            <field name="date_refinance"/>
+                        </group>
+                        <group string="Calculo aproximado">
+
+                        </group>
                     </group>
                     <footer>
                         <button name="init_refinance" string="Confirmar" type="object" class="oe_highlight"/>

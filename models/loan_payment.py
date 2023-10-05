@@ -1,8 +1,10 @@
 from odoo import api, fields, models, tools, _
+from odoo.exceptions import ValidationError
 
 class LoanPayment(models.Model):
     _name = 'loan.payment'
     _description = 'Pagos de prestamos'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Codigo de pago', required=True)
     loan_application_ids = fields.Many2one('loan.application', string='Solicitud de prestamo', required=True)
@@ -21,11 +23,14 @@ class LoanPayment(models.Model):
     amount_total = fields.Float(string='D/MINDEF $', compute='_compute_interest', store=True)
     amount_total_bs = fields.Float(string='D/MINDEF Bs', compute='_change_amount_total_bs', store=True)
     amount_returned_coa = fields.Float(string='Monto devuelto COA')
-    state = fields.Selection([('earring', 'Pendiente'), ('paid', 'Pagado')], string='Estado', default='draft')
+    state = fields.Selection(
+        [('draft', 'Borrador'), ('transfer', 'Transferencia bancaria'), ('ministry_defense', 'Ministerio de defensa')],
+        default='draft', tracking=True)
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
     currency_id = fields.Many2one('res.currency', string='Moneda', related='loan_application_ids.currency_id')
     currency_id_dollar = fields.Many2one('res.currency', string='Moneda en Dólares',
                                          default=lambda self: self.env.ref('base.USD'))
+
     @api.depends('amount_total')
     def _change_amount_total_bs(self):
         for rec in self:
@@ -49,8 +54,21 @@ class LoanPayment(models.Model):
             rec.res_social = rec.capital_initial * round((contingency_found/100),4)
             rec.amount_total = rec.mount + rec.percentage_amount_min_def + rec.interest_month_surpluy
             rec.amount_returned_coa = (rec.amount_total - rec.commission_min_def) * rec.currency_id_dollar.inverse_rate
-    def open_loan_payment(self):
-        a = 1
+    def open_loan_payment(self, context=None):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Model Title',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': self._name,
+            'res_id': self.id,
+            'target': 'current',
+        }
+
+    def confirm_payment(self):
+        for record in self:
+            if record.state == 'draft':
+                record.write({'state': 'transfer'})
 
 
 
