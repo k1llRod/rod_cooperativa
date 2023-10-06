@@ -64,7 +64,7 @@
                             </button>
 
                         </div>
-                        <widget name="web_ribbon" text="Refinanciado"/>
+                        <widget name="web_ribbon" text="Refinanciado" attrs="{'invisible': [('state', '!=' ,'refinanced')]}"/>
 <!--                        <widget name="web_ribbon" title="Paid" attrs="{'invisible': ['|', ('payment_state', '!=', 'paid'), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))]}"/>-->
 <!--                        <widget name="web_ribbon" title="In Payment" attrs="{'invisible': ['|', ('payment_state', '!=', 'in_payment'), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))]}"/>-->
 <!--                        <widget name="web_ribbon" title="Partial" attrs="{'invisible': ['|', ('payment_state', '!=', 'partial'), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))]}"/>-->
@@ -82,6 +82,8 @@
                                 <field name="with_guarantor" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')],
                                                                     'invisible': [('type_loan','=','emergency')]}"/>
                                 <field name="partner_id" readonly="1"/>
+                                <field name="refinance_loan_id" readonly="1"/>
+                                <field name="amount_devolution" readonly="1"/>
                                 <field name="category_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
                                 <field name="code_contact"/>
                                 <field name="ci_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>

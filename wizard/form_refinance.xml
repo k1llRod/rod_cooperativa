@@ -19,6 +19,13 @@
                             <field name="date_refinance"/>
                         </group>
                         <group string="Calculo aproximado">
+                            <field name="monthly_interest" readonly="1"/>
+                            <field name="contingency_fund" readonly="1"/>
+                            <field name="amount_min_def" readonly="1"/>
+<!--                            <field name="commission_min_def"/>-->
+                            <field name="fixed_fee"/>
+<!--                            <field name="index_loan"/>-->
+<!--                            <field name="index_loan_bs"/>-->
 
                         </group>
                     </group>
