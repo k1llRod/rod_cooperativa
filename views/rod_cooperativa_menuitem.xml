@@ -6,16 +6,29 @@
                 id="rod_cooperativa.menu_root"
                 sequence="3"
                 web_icon="rod_cooperativa,static/description/coaa.png" />
+
       <!-- menu categories -->
       <menuitem id="rod_cooperativa.rod_cooperativa_prestamos"
                 name="Prestamos"
                 parent="rod_cooperativa.menu_root"
                 sequence="1"
                 action="rod_cooperativa.action_loan_application"/>
+
+      <menuitem id="rod_cooperativa.rod_cooperativa_loan_report"
+                name="Reportes"
+                parent="rod_cooperativa.menu_root"
+                sequence="2"/>
+
+      <menuitem id="rod_cooperativa.rod_cooperativa_loan_report_table"
+                name="Tabla de pagos"
+                parent="rod_cooperativa.rod_cooperativa_loan_report"
+                sequence="1"
+                action="rod_cooperativa.action_loan_payment"/>
+
       <menuitem id="rod_cooperativa.rod_cooperativa_configuration"
                 name="Configuración"
                 parent="rod_cooperativa.menu_root"
-                sequence="2"
+                sequence="4"
                 action="rod_cooperativa.action_loan_application"/>
 
       <menuitem id="rod_cooperativa.rod_cooperativa_settings"

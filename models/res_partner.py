@@ -38,7 +38,7 @@ class ResPartner(models.Model):
                                   ('OEME', 'OEME'),
                                   ('PROF', 'PROF')], string='Especialidad')
     allergies = fields.Char(string='Alergias')
-    type_blood = fields.Char(string='Tipo de sangre')
+    type_blood = fields.Char(string='Grupo sanguineo')
     partner_status = fields.Selection([('active', 'Activo'),
                                        ('active_reserve', 'Reserva activa'),
                                        ('passive', 'Servicio pasivo'),
@@ -57,12 +57,19 @@ class ResPartner(models.Model):
     photocopy_military_ci = fields.Boolean(string='Fotocopia de carnet militar')
     affliation = fields.Boolean(string='Formulario de afiliación')
     photocopy_cossmil_ci = fields.Boolean(string='Fotocopia de carnet COSSMIL')
+    linkrage_request = fields.Boolean(string='Solicitud de vinculación')
     date_birthday = fields.Date(string='Fecha de nacimiento')
-    years_completed = fields.Integer(string='Años cumplidos', compute='_compute_years_completed', store=True)
+    years_completed = fields.Integer(string='Edad', compute='_compute_years_completed', store=True)
     # campo base res.partner
     company_type = fields.Selection(string='Company Type',
                                     selection=[('person', 'Individual'), ('company', 'Company')],
                                     compute='_compute_company_type', inverse='_write_company_type', default='person')
+    force_organization = fields.Selection([('ejercito', 'Ejercito'),
+                                           ('armada_boliviana', 'Armada Boliviana'),
+                                           ('aerea', 'Fuerza Aerea'),
+                                           ('comando_jefe', 'Comando en jefe'),
+                                           ('ministerio_defensa', 'Ministerio de defensa')], string='Fuerza / org', default='ejercito')
+
 
     @api.depends('graduation_year')
     def _compute_year_service(self):
@@ -117,16 +124,20 @@ class ResPartner(models.Model):
 
     @api.depends('guarantor')
     def _compute_guarantor_count(self):
-        loan = self.env['loan.application'].search([('guarantor_one','=',self.id)])
-        loan1 = self.env['loan.application'].search([('guarantor_two', '=', self.id)])
+        guarantor_one = self.env['loan.application'].search([('guarantor_one','=',self.id)])
+        guarantor_two = self.env['loan.application'].search([('guarantor_two', '=', self.id)])
+        loan = len(guarantor_one) if guarantor_one else 0
+        loan1 = len(guarantor_two) if guarantor_two else 0
         # loan = self.env['loan.application'].search([]).filtered(lambda x: x.guarantor.id == self.id)
-        self.guarantor_count = len(loan) + len(loan1)
+        self.guarantor_count = loan + loan1
 
     def action_view_guarantor(self):
         self.ensure_one()
         action = self.env["ir.actions.actions"]._for_xml_id("rod_cooperativa.action_loan_application")
         action['domain'] = [
-            ('guarantor.id', '=', self.id),
+            '|',
+            ('guarantor_one.id', '=', self.id),
+            ('guarantor_two.id', '=', self.id)
         ]
         return action
 
@@ -189,6 +200,10 @@ class ResPartner(models.Model):
         }
     def action_partner_coap(self):
         return True
+
+    def update_destination(self):
+        payroll = self.env['payroll.payments'].search([('partner_status_especific', '=', 'active_service')])
+
 
     # def init_loan(self):
     #     partner_payroll = self.env['partner.payroll'].create({'partner_id': self.id,

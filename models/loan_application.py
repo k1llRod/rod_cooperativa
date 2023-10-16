@@ -20,9 +20,9 @@ class LoanApplication(models.Model):
         ('verificate', 'Verificación'),
         ('progress', 'En Proceso'),
         ('done', 'Concluido'),
-        # ('refinanced', 'Refinanciado'),
+        ('refinanced', 'Refinanciado'),
         ('cancel', 'Cancelado')
-    ], string='Estado', default='init')
+    ], string='Estado', default='init', tracking=True)
     type_loan = fields.Selection([('regular','Regular'), ('emergency','Emergencia')], string='Tipo de prestamo')
     partner_id = fields.Many2one('res.partner', string='Socio solicitante', tracking=True)
     code_contact = fields.Char(string='Codigo de socio', related='partner_id.code_contact', store=True)
@@ -142,7 +142,7 @@ class LoanApplication(models.Model):
             if rec.last_copy_paid_slip == False: raise ValidationError('Falta ultima copia de boleta de pago')
             # if rec.ci_fothocopy == False: raise ValidationError('Falta fotocopia de CI')
             # if rec.photocopy_military_ci == False: raise ValidationError('Falta fotocopia de carnet militar')
-
+            rec.date_approval = fields.Date.today()
             for i in range(1, rec.months_quantity+1):
                 commission_min_def = float(
                     self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.commission_min_def'))
@@ -269,3 +269,16 @@ class LoanApplication(models.Model):
     def _compute_total_interest_month_surpluy(self):
         for rec in self:
             rec.total_interest_month_surpluy = rec.interest_month_surpluy * rec.months_quantity
+
+    @api.onchange('guarantor_one','guarantor_two' )
+    def _onchange_guarantor_one(self):
+        if self.guarantor_one and self.guarantor_two:
+            if self.guarantor_one == self.guarantor_two:
+                raise ValidationError('No puede seleccionar el mismo garante')
+        if self.guarantor_one == self.partner_id:
+            raise ValidationError('No puede seleccionar el mismo socio como garante')
+        if self.guarantor_one.guarantor_count == 3:
+            raise ValidationError('El garante ya tiene 3 prestamos')
+        if self.guarantor_two.guarantor_count == 3:
+            raise ValidationError('El garante ya tiene 3 prestamos')
+

@@ -36,7 +36,7 @@
                         <field name="maternal_surname"/>
                         <field name="vat" string="CI" required="True" placeholder="Ejemplo 6543210"/>
                         <field name="state_id" string="Lugar de nacimiento"/>
-                        <field name="zip" string="Ext"/>
+                        <field name="zip" string="Extensión"/>
                         <field name="category_partner_id"/>
                         <field name="weapon"/>
                         <field name="graduation_year"/>
@@ -44,10 +44,12 @@
                         <field name="date_birthday"/>
                         <field name="years_completed"/>
                         <field name="specialty"/>
+                        <field name="force_organization"/>
                         <field name="allergies"/>
                         <field name="type_blood"/>
                         <field name="marital_status"/>
                         <field name="street" string="Dirección"/>
+                        <field name="city" string="Destino"/>
 <!--                        <field name="street2" string="Ubicacion 2"/>-->
                         <field name="phone" string="Telefono"/>
                         <field name="mobile" string="Celular"/>
@@ -64,6 +66,7 @@
                             <field name="photocopy_military_ci"/>
                             <field name="photocopy_cossmil_ci"/>
                             <field name="affliation"/>
+                            <field name="linkrage_request"/>
                         </group>
                     </group>
 
@@ -127,6 +130,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="replace">
                     <tree string="Partners">
+                        <header>
+                            <button name="update_destination" type="object" string="Actualizar destino" class="oe_highlight"/>
+                        </header>
                         <field name="paternal_surname"/>
                         <field name="maternal_surname"/>
                         <field name="name_contact"/>
