@@ -6,11 +6,10 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <!--                <xpath expr="//sheet" position="before">-->
-                <!--                    <header>-->
-                <!--                        <field name="state" widget="statusbar"/>-->
-                <!--                    </header>-->
-                <!--                </xpath>-->
+<!--                <xpath expr="//div[@name='button_box']" position="before">-->
+<!--                    <widget name="web_ribbon" text="Activo" />-->
+<!--                    <widget name="web_ribbon" text="Baja" bg_color="bg-danger" />-->
+<!--                </xpath>-->
                 <xpath expr="//field[@name='name'][2]" position="replace">
                     <field name="name" placeholder="p. ej. JUAN PEREZ" required="1" attrs="{'readonly': [('name_contact','=', False)]}"/>
                 </xpath>
@@ -66,7 +65,7 @@
                             <field name="photocopy_military_ci"/>
                             <field name="photocopy_cossmil_ci"/>
                             <field name="affliation"/>
-                            <field name="linkrage_request"/>
+<!--                            <field name="linkrage_request"/>-->
                         </group>
                     </group>
 
@@ -118,8 +117,6 @@
                 <xpath expr="//sheet/group/group[4]" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-
-
             </field>
         </record>
 
