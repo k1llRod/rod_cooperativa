@@ -57,7 +57,7 @@ class ResPartner(models.Model):
     photocopy_military_ci = fields.Boolean(string='Fotocopia de carnet militar')
     affliation = fields.Boolean(string='Formulario de afiliación')
     photocopy_cossmil_ci = fields.Boolean(string='Fotocopia de carnet COSSMIL')
-    linkrage_request = fields.Boolean(string='Solicitud de vinculación')
+    # linkrage_request = fields.Boolean(string='Solicitud de vinculación')
     date_birthday = fields.Date(string='Fecha de nacimiento')
     years_completed = fields.Integer(string='Edad', compute='_compute_years_completed', store=True)
     # campo base res.partner

@@ -27,13 +27,13 @@
         'views/res_config_settings.xml',
         'views/loan_application.xml',
         'views/partner_category.xml',
-        'views/res_partner.xml',
         'views/loan_payments.xml',
         'views/family.xml',
         'security/ir.model.access.csv',
         'data/sequence.xml',
         'views/rod_cooperativa_menuitem.xml',
         'wizard/form_refinance.xml',
+        'views/res_partner.xml',
     ],
 
 }
