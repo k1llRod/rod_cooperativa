@@ -25,10 +25,28 @@
                 sequence="1"
                 action="rod_cooperativa.action_loan_payment"/>
 
+      <menuitem id="rod_cooperativa.rod_cooperativa_ministry_registry_filing_cabinet"
+                name="Archivador"
+                parent="rod_cooperativa.menu_root"
+                sequence="3"/>
+
+      <menuitem id="rod_cooperativa.rod_cooperativa_bulk_upload"
+                name="Carga masiva"
+                parent="rod_cooperativa.rod_cooperativa_ministry_registry_filing_cabinet"
+                sequence="1"
+                action="rod_cooperativa.action_loan_payment"/>
+
+      <menuitem id="rod_cooperativa.rod_cooperativa_generate_loan_report"
+                name="Generar reporte"
+                parent="rod_cooperativa.rod_cooperativa_ministry_registry_filing_cabinet"
+                sequence="2"
+                action="rod_cooperativa.action_loan_payment"/>
+
+
       <menuitem id="rod_cooperativa.rod_cooperativa_configuration"
                 name="Configuración"
                 parent="rod_cooperativa.menu_root"
-                sequence="4"
+                sequence="5"
                 action="rod_cooperativa.action_loan_application"/>
 
       <menuitem id="rod_cooperativa.rod_cooperativa_settings"

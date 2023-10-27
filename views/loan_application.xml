@@ -96,7 +96,7 @@
                                                                                                                 'required': [('with_guarantor','=','loan_guarantor')]}"
                                         />
                             </group>
-                            <group>
+                            <group string="Respaldos">
                                 <field name="letter_of_request"
                                        attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <field name="contact_request"
@@ -160,6 +160,7 @@
                             <group string="Valores">
                                 <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="balance_total_interest_month" />
+
                             </group>
                         </group>
                          <notebook>

@@ -43,7 +43,7 @@
                         <field name="date_birthday"/>
                         <field name="years_completed"/>
                         <field name="specialty"/>
-                        <field name="force_organization"/>
+<!--                        <field name="force_organization"/>-->
                         <field name="allergies"/>
                         <field name="type_blood"/>
                         <field name="marital_status"/>

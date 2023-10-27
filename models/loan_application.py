@@ -73,6 +73,28 @@ class LoanApplication(models.Model):
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_balance_capital', store=True)
     balance_total_interest_month = fields.Float(string='Saldo total interes mensual', compute='_compute_balance_capital', store=True)
     # amount_min_def = fields.Float(string='Min. Defensa %', currency_field='company_currency_id',compute='_compute_min_def')
+    pending_payment = fields.Integer(string='Pendiente de pago', compute='_compute_pending_payment')
+    alert_pending_payment = fields.Boolean(string='Alerta de pago', compute='_compute_pending_payment')
+
+    @api.depends('loan_payment_ids')
+    def _compute_pending_payment(self):
+        for rec in self:
+            if rec.state == 'progress':
+                rec.pending_payment = len(rec.loan_payment_ids.filtered(lambda x:x.state == 'draft'))
+                if rec.pending_payment > 0:
+                    rec.alert_pending_payment = True
+                else:
+                    rec.alert_pending_payment = False
+            if len(rec.loan_payment_ids) > 0:
+                rec.pending_payment = len(rec.loan_payment_ids.filtered(lambda x:x.state == 'draft'))
+                if rec.pending_payment > 0:
+                    rec.alert_pending_payment = True
+                else:
+                    rec.alert_pending_payment = False
+            else:
+                rec.pending_payment = 0
+                rec.alert_pending_payment = False
+
     @api.depends('date_approval')
     def _compute_surplus_days(self):
         for record in self:

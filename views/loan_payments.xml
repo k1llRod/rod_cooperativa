@@ -11,22 +11,21 @@
                     <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                     <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
                     <field name="date"/>
-                    <field name="capital_index_initial" optional="hidden"/>
-                    <field name="interest" sum="Total"/>
-                    <field name="interest_base" optional="hidden"/>
-                    <field name="res_social" optional="hidden"/>
-                    <field name="capital_initial" optional="hidden" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
-                    <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                    <field name="capital_initial" optional="show" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
                     <field name="mount" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
+                    <field name="interest" sum="Total"/>
+                    <field name="commission_min_def" optional="hidden" sum="Total"/>
                     <field name="interest_month_surpluy" sum="Total"/>
                     <field name="percentage_amount_min_def" optional="hidden"/>
-                    <field name="commission_min_def" optional="hidden" sum="Total"/>
-                    <field name="loan_application_ids" optional="hidden"/>
-                    <field name="type_payment" optional="hidden"/>
+                    <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
                     <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
                     <field name="amount_total_bs" widget="monetary" sum="Total"/>
                     <field name="amount_returned_coa" optional="hidden"/>
 
+                    <field name="capital_index_initial" optional="hidden"/>
+                    <field name="interest_base" optional="hidden"/>
+                    <field name="res_social" optional="hidden"/>
+                    <field name="loan_application_ids" invisible="1"/>
                     <field name="state" decoration-info="state == 'init' or state == 'in_queue'" decoration-success="state == 'progress' or state == 'done'" widget="badge"/>
                     <button name="open_loan_payment" type="object" class="oe_highlight"
                                                 icon="fa-eye"/>
