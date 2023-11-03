@@ -171,6 +171,7 @@
                         <field name="code_contact"/>
                         <field name="vat" string="C.I."/>
                         <field name="name"/>
+                        <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
                         <group expand="0" string="Group By">
                             <filter string="Tipos de asociados"
                                 name="group_partner_status"
