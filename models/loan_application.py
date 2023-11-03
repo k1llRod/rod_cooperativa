@@ -75,6 +75,7 @@ class LoanApplication(models.Model):
     # amount_min_def = fields.Float(string='Min. Defensa %', currency_field='company_currency_id',compute='_compute_min_def')
     pending_payment = fields.Integer(string='Pendiente de pago', compute='_compute_pending_payment')
     alert_pending_payment = fields.Boolean(string='Alerta de pago', compute='_compute_pending_payment')
+    pay_slip_balance = fields.Float(string='Saldo boleta de pago')
 
     @api.depends('loan_payment_ids')
     def _compute_pending_payment(self):
@@ -113,6 +114,8 @@ class LoanApplication(models.Model):
     @api.onchange('amount_loan_dollars')
     def _onchange_amount_loan_dollars(self):
         self.fixed_fee = self.amount_loan_dollars * self.index_loan
+        self.pay_slip_balance = self.fixed_fee_bs * (100/40)
+
 
     def _compute_set_dollar(self):
         dollar = self.env['res.currency'].search([('name','=','USD')], limit=1)
@@ -129,6 +132,7 @@ class LoanApplication(models.Model):
             index_quantity = (1-(1+interest)**(-self.months_quantity))
             self.index_loan = interest/index_quantity if index_quantity != 0 else 0
             self.fixed_fee = self.amount_loan_dollars * self.index_loan
+            self.pay_slip_balance = self.fixed_fee_bs * (100/40)
         except:
             self.index_loan = 0
     def button_value_dolar(self):

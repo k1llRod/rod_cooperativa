@@ -10,8 +10,6 @@ class ResPartner(models.Model):
     code_contact = fields.Char(string='Código de asociado / Boleta de pago', require=True)
     guarantor = fields.Boolean(string='Garante')
     partner = fields.Boolean(string='Asociado', default=True)
-    degree = fields.Selection([('primary', 'Primaria'), ('secondary', 'Secundaria'), ('university', 'Universitario')],
-                              string='Grado')
     ballot_balance = fields.Integer(string='Saldo boleta')
 
     name_contact = fields.Char(string='Nombres', require=True)

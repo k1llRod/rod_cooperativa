@@ -203,8 +203,8 @@
         </record>
         <record id="action_partner_coa" model="ir.actions.server">
             <field name="name">Asociados</field>
-            <field name="model_id" ref="rod_cooperativa_aportes.model_res_partner"/>
-            <field name="binding_model_id" ref="rod_cooperativa_aportes.model_res_partner"/>
+            <field name="model_id" ref="res_partner.model_res_partner"/>
+            <field name="binding_model_id" ref="res_partner.model_res_partner"/>
             <field name="state">code</field>
             <field name="code">action = records.action_partner_coa()</field>
         </record>

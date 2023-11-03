@@ -6,13 +6,13 @@
             <field name="name">partner.category.tree</field>
             <field name="model">partner.category</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree editable="bottom">
                     <field name="name"/>
                     <field name="code_loan"/>
                     <field name="months"/>
-                    <field name="limit_amount"/>
-                    <field name="limit_amount_dollars"/>
-<!--                    <field name="amount_month"/>-->
+                    <field name="max_limit_amount_dollars"/>
+                    <field name="max_limit_amount"/>
+
 <!--                    <field name="amount_month_dollars"/>-->
                 </tree>
             </field>
@@ -35,8 +35,8 @@
                             <group>
                                 <field name="code_loan"/>
                                 <field name="months" />
-                                <field name="limit_amount_dollars" widget="monetary"/>
-                                <field name="limit_amount" widget="monetary"/>
+                                <field name="max_limit_amount_dollars" widget="monetary"/>
+                                <field name="max_limit_amount" widget="monetary"/>
 <!--                                <field name="amount_month" />-->
 <!--                                <field name="amount_month_dollars" />-->
                             </group>

@@ -148,7 +148,7 @@
                                 <field name="fixed_fee" readonly="1" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="fixed_fee_bs" readonly="1" widget="monetary"/>
-
+                                <field name="pay_slip_balance" readonly="1"/>
                                 <field name="surplus_days"/>
                                 <field name="interest_month_surpluy"/>
                                 <field name="total_interest_month_surpluy"/>
