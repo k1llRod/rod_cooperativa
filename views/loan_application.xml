@@ -38,6 +38,7 @@
                         <button name="refinance" string="Refinanciar" type="object" attrs="{'invisible': [('state','!=','progress')]}"/>
                         <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>
                         <button name="return_draft" string="Borrador" type="object" attrs="{'invisible': [('state','!=','progress')]}"/>
+                        <button name="reset_payroll" string="Reset" type="object"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>

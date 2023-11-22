@@ -101,7 +101,7 @@ class LoanApplication(models.Model):
         for record in self:
             if record.date_approval:
                 last_day = calendar.monthrange(record.date_approval.year, record.date_approval.month)[1]
-                point_day = last_day - record.date_approval.day
+                point_day = last_day - record.date_application.day
                 record.surplus_days = point_day
                 calculte_interest = record.amount_loan_dollars * (record.monthly_interest / 100)
                 record.interest_month_surpluy = (calculte_interest / last_day) * point_day / record.months_quantity
@@ -168,7 +168,7 @@ class LoanApplication(models.Model):
             if rec.last_copy_paid_slip == False: raise ValidationError('Falta ultima copia de boleta de pago')
             # if rec.ci_fothocopy == False: raise ValidationError('Falta fotocopia de CI')
             # if rec.photocopy_military_ci == False: raise ValidationError('Falta fotocopia de carnet militar')
-            rec.date_approval = fields.Date.today()
+            # rec.date_approval = fields.Date.today()
             for i in range(1, rec.months_quantity+1):
                 commission_min_def = float(
                     self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.commission_min_def'))
@@ -308,3 +308,7 @@ class LoanApplication(models.Model):
         if self.guarantor_two.guarantor_count == 3:
             raise ValidationError('El garante ya tiene 3 prestamos')
 
+    def reset_payroll(self):
+        for rec in self:
+            rec.loan_payment_ids.unlink()
+            rec.state = 'init'
