@@ -17,9 +17,10 @@ class LoanPayment(models.Model):
     interest_base = fields.Float(string='0.7%', compute='_compute_interest', store=True)
     res_social = fields.Float(string='F.C. 0.04%', compute='_compute_interest', store=True)
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_interest', store=True)
-    percentage_amount_min_def = fields.Float(string='%MINDEF', compute='_compute_interest', store=True)
-    commission_min_def = fields.Float(string='Comisión MINDEF')
-    interest_month_surpluy = fields.Float(string='M/E', related='loan_application_ids.interest_month_surpluy')
+    percentage_amount_min_def = fields.Float(string='%MINDEF', compute='_compute_interest', digits=(16, 2), store=True)
+    commission_min_def = fields.Float(string='0.25% MINDEF')
+    coa_commission = fields.Float(string='Comision COA')
+    interest_month_surpluy = fields.Float(string='D/E', related='loan_application_ids.interest_month_surpluy')
     amount_total = fields.Float(string='D/MINDEF $', compute='_compute_interest', store=True)
     amount_total_bs = fields.Float(string='D/MINDEF Bs', compute='_change_amount_total_bs', store=True)
     amount_returned_coa = fields.Float(string='Monto devuelto COA')
@@ -52,7 +53,7 @@ class LoanPayment(models.Model):
             rec.capital_index_initial = round(rec.mount - rec.interest,2)
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
             rec.res_social = rec.capital_initial * round((contingency_found/100),4)
-            rec.amount_total = rec.mount + rec.percentage_amount_min_def + rec.interest_month_surpluy
+            rec.amount_total = round(rec.mount,2) + round(rec.percentage_amount_min_def,2) + round(rec.interest_month_surpluy,2)
             rec.amount_returned_coa = (rec.amount_total - rec.commission_min_def) * rec.currency_id_dollar.inverse_rate
     def open_loan_payment(self, context=None):
         return {

@@ -58,7 +58,7 @@ class LoanApplication(models.Model):
     signature_recognition = fields.Boolean(string='Reconocimiento de firmas')
     contract = fields.Boolean(string='Contrato')
     surplus_days = fields.Integer(string='Dias excedentes', compute='_compute_surplus_days')
-    interest_month_surpluy = fields.Float(string='Interes mensual excedente', compute='_compute_surplus_days', store=True)
+    interest_month_surpluy = fields.Float(string='Interes dias excedente', compute='_compute_surplus_days', store=True)
     total_interest_month_surpluy = fields.Float(string='Total interes mensual excedente', compute='_compute_total_interest_month_surpluy', store=True)
     reason_loan = fields.Text(string='Motivo del prestamo')
     number_account = fields.Char(string='Numero de cuenta')
@@ -173,6 +173,7 @@ class LoanApplication(models.Model):
                 commission_min_def = float(
                     self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.commission_min_def'))
                 amount_commission = (commission_min_def / 100) * rec.fixed_fee
+                coa_commission = (1.25 / 100) * rec.fixed_fee
                 percentage_amount_min_def = rec.fixed_fee * rec.amount_min_def
                 if len(rec.loan_payment_ids) == 0:
                     capital_init = rec.amount_loan_dollars
@@ -200,6 +201,7 @@ class LoanApplication(models.Model):
                     'loan_application_ids': rec.id,
                     'percentage_amount_min_def': percentage_amount_min_def,
                     'commission_min_def': amount_commission,
+                    'coa_commission': coa_commission,
                     'state': 'draft',
                 })
             self.progress()
