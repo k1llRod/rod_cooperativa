@@ -101,7 +101,7 @@ class LoanApplication(models.Model):
         for record in self:
             if record.date_approval:
                 last_day = calendar.monthrange(record.date_approval.year, record.date_approval.month)[1]
-                point_day = last_day - record.date_application.day
+                point_day = last_day - record.date_approval.day
                 record.surplus_days = point_day
                 calculte_interest = record.amount_loan_dollars * (record.monthly_interest / 100)
                 record.interest_month_surpluy = (calculte_interest / last_day) * point_day / record.months_quantity
