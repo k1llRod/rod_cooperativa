@@ -85,6 +85,37 @@
             </field>
         </record>
 
+        <record id="loan_application_view_search_cooperativa" model="ir.ui.view">
+            <field name="name">loan.application.view.search.cooperativa</field>
+            <field name="model">loan.application</field>
+            <!--            <field name="inherit_id" ref="base.view_res_partner_filter"/>-->
+            <field name="arch" type="xml">
+                <search string="Buscar asociados">
+                    <field name="code_contact"/>
+<!--                    <field name="vat" string="C.I."/>-->
+                    <field name="partner_id"/>
+<!--                    <filter name="quantity_capital_initial"-->
+<!--                            string="Capital inicial"-->
+<!--                            domain="[('capital_initial', '!=', 0)]"/>-->
+                    <separator />
+<!--                    <filter name="partner_active_service"-->
+<!--                            string="Asociados servicio activo"-->
+<!--                            domain="[('partner_status_especific', '=', 'active_service')]"/>-->
+<!--                    <filter name="partner_passive_reserve_a"-->
+<!--                            string="Asociados Pasivo categoria 'A'"-->
+<!--                            domain="[('partner_status_especific','=','passive_reserve_a')]"/>-->
+<!--                    <filter name="partner_passive_reserve_b"-->
+<!--                            string="Asociados Pasivo categoria 'B'"-->
+<!--                            domain="[('partner_status_especific','=','passive_reserve_b')]"/>-->
+<!--                    <group expand="0" string="Group By">-->
+<!--                        <filter string="Tipo de asociado"-->
+<!--                                name="group_partner_status"-->
+<!--                                context="{'group_by': 'partner_status_especific'}"/>-->
+<!--                    </group>-->
+                </search>
+            </field>
+        </record>
+
         <!-- Accion para visualizar loan.application -->
 
         <record id="action_loan_payment" model="ir.actions.act_window">

@@ -12,6 +12,7 @@
                     <field name="months"/>
                     <field name="max_limit_amount_dollars"/>
                     <field name="max_limit_amount"/>
+                    <field name="ballot_balance" optional="hide"/>
 
 <!--                    <field name="amount_month_dollars"/>-->
                 </tree>
@@ -37,6 +38,7 @@
                                 <field name="months" />
                                 <field name="max_limit_amount_dollars" widget="monetary"/>
                                 <field name="max_limit_amount" widget="monetary"/>
+                                <field name="ballot_balance"/>
 <!--                                <field name="amount_month" />-->
 <!--                                <field name="amount_month_dollars" />-->
                             </group>

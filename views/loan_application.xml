@@ -162,6 +162,9 @@
                                 <field name="balance_total_interest_month" />
 
                             </group>
+                            <group string="Monto maximo de prestamo">
+                                <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                            </group>
                         </group>
                          <notebook>
                             <page string="Pagos">

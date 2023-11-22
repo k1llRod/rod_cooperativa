@@ -135,6 +135,7 @@
                         <field name="name_contact"/>
                         <field name="vat" string="CI"/>
                         <field name="code_contact"/>
+                        <field name="city"/>
                         <field name="ci_cossmil"/>
                         <field name="ci_military"/>
                         <field name="partner_status"/>
@@ -172,6 +173,16 @@
                         <field name="vat" string="C.I."/>
                         <field name="name"/>
                         <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                        <separator />
+                        <filter name="partner_active_service"
+                                string="Asociados servicio activo"
+                                domain="[('partner_status_especific', '=', 'active_service')]"/>
+                        <filter name="partner_passive_reserve_a"
+                                string="Asociados Pasivo categoria 'A'"
+                                domain="[('partner_status_especific','=','passive_reserve_a')]"/>
+                        <filter name="partner_passive_reserve_b"
+                                string="Asociados Pasivo categoria 'B'"
+                                domain="[('partner_status_especific','=','passive_reserve_b')]"/>
                         <group expand="0" string="Group By">
                             <filter string="Tipos de asociados"
                                 name="group_partner_status"
