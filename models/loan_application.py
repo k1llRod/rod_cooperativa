@@ -172,7 +172,7 @@ class LoanApplication(models.Model):
             for i in range(1, rec.months_quantity+1):
                 commission_min_def = float(
                     self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.commission_min_def'))
-                amount_commission = (commission_min_def / 100) * rec.fixed_fee
+                # amount_commission = (commission_min_def / 100) * rec.amount_total_bs
                 coa_commission = (1.25 / 100) * rec.fixed_fee
                 percentage_amount_min_def = rec.fixed_fee * rec.amount_min_def
                 if len(rec.loan_payment_ids) == 0:
@@ -305,10 +305,10 @@ class LoanApplication(models.Model):
                 raise ValidationError('No puede seleccionar el mismo garante')
         if self.guarantor_one == self.partner_id:
             raise ValidationError('No puede seleccionar el mismo socio como garante')
-        if self.guarantor_one.guarantor_count == 3:
-            raise ValidationError('El garante ya tiene 3 prestamos')
-        if self.guarantor_two.guarantor_count == 3:
-            raise ValidationError('El garante ya tiene 3 prestamos')
+        # if self.guarantor_one.guarantor_count == 3:
+        #     raise ValidationError('El garante ya tiene 3 prestamos')
+        # if self.guarantor_two.guarantor_count == 3:
+        #     raise ValidationError('El garante ya tiene 3 prestamos')
 
     def reset_payroll(self):
         for rec in self:
