@@ -200,7 +200,7 @@ class LoanApplication(models.Model):
                     'mount': rec.fixed_fee,
                     'loan_application_ids': rec.id,
                     'percentage_amount_min_def': percentage_amount_min_def,
-                    'commission_min_def': amount_commission,
+                    # 'commission_min_def': amount_commission,
                     'coa_commission': coa_commission,
                     'state': 'draft',
                 })
