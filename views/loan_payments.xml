@@ -7,6 +7,10 @@
             <field name="model">loan.payment</field>
             <field name="arch" type="xml">
                 <tree editable="bottom" decoration-info="state == 'transfer'">
+                    <field name="loan_application_ids" optional="hide"/>
+                    <field name="partner_id" optional="hide"/>
+                    <field name="type_loan" optional="hide"/>
+                    <field name="with_guarantor" optional="hide"/>
                     <field name="name" optional="hide"/>
                     <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                     <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
@@ -86,14 +90,14 @@
             </field>
         </record>
 
-        <record id="loan_application_view_search_cooperativa" model="ir.ui.view">
-            <field name="name">loan.application.view.search.cooperativa</field>
-            <field name="model">loan.application</field>
+        <record id="loan_payment_view_search_cooperativa" model="ir.ui.view">
+            <field name="name">loan.payment.view.search.cooperativa</field>
+            <field name="model">loan.payment</field>
             <!--            <field name="inherit_id" ref="base.view_res_partner_filter"/>-->
             <field name="arch" type="xml">
                 <search string="Buscar asociados">
                     <field name="code_contact"/>
-<!--                    <field name="vat" string="C.I."/>-->
+                    <field name="ci_partner" string="C.I."/>
                     <field name="partner_id"/>
 <!--                    <filter name="quantity_capital_initial"-->
 <!--                            string="Capital inicial"-->
@@ -108,11 +112,12 @@
 <!--                    <filter name="partner_passive_reserve_b"-->
 <!--                            string="Asociados Pasivo categoria 'B'"-->
 <!--                            domain="[('partner_status_especific','=','passive_reserve_b')]"/>-->
-<!--                    <group expand="0" string="Group By">-->
-<!--                        <filter string="Tipo de asociado"-->
-<!--                                name="group_partner_status"-->
-<!--                                context="{'group_by': 'partner_status_especific'}"/>-->
-<!--                    </group>-->
+                    <group expand="0" string="Group By">
+                        <filter string="Por asociado"
+                                name="group_partner_status"
+                                context="{'group_by': 'partner_id'}"/>
+
+                    </group>
                 </search>
             </field>
         </record>

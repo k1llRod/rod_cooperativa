@@ -8,6 +8,15 @@ class LoanPayment(models.Model):
 
     name = fields.Char(string='Codigo de pago', required=True)
     loan_application_ids = fields.Many2one('loan.application', string='Solicitud de prestamo', required=True)
+    partner_id = fields.Many2one('res.partner', string='Socio', related='loan_application_ids.partner_id', store=True)
+
+    type_loan = fields.Selection([('regular', 'Regular'), ('emergency', 'Emergencia')], string='Tipo de prestamo', related='loan_application_ids.type_loan')
+    with_guarantor = fields.Selection([('loan_guarantor', 'Prestamo regular con garantes'), ('no_loan_guarantor', 'Prestamo regular sin garantes')], string='Tipo de prestamo regular', related='loan_application_ids.with_guarantor')
+    code_contact = fields.Char(string='Codigo de contacto', related='loan_application_ids.code_contact')
+    ci_partner = fields.Char(string='Carnet de identidad', related='loan_application_ids.ci_partner')
+    # partner_status_especific = fields.Selection([('active_service', 'Servicio activo'), ('guest', 'Invitado'),
+    #                                              ('passive_reserve_a','Pasivo categoria "A"'),('passive_reserve_b','Pasivo categoria "B"')
+    #                                              ('leave','Baja')], string='Estatus del socio', related='loan_application_ids.partner_status_especific')
     type_payment = fields.Selection([('1', 'Abono'), ('2', 'Transferencia')], string='Tipo de pago')
     date = fields.Date(string='Fecha de pago', required=True)
     capital_initial = fields.Float(string='Capital inicial')
