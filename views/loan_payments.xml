@@ -15,6 +15,7 @@
                     <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                     <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
                     <field name="date"/>
+                    <field name="period"/>
                     <field name="capital_initial" optional="show" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
                     <field name="mount" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
                     <field name="interest" sum="Total"/>
@@ -59,6 +60,7 @@
                                 <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="date"/>
+                                <field name="period"/>
                                 <field name="capital_index_initial"/>
                                 <field name="interest"/>
                                 <field name="interest_base"/>

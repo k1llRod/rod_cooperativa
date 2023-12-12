@@ -34,6 +34,7 @@
         'views/rod_cooperativa_menuitem.xml',
         'wizard/form_refinance.xml',
         'views/res_partner.xml',
+        'views/nominal_relationship_mindef_loan.xml',
     ],
 
 }

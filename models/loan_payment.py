@@ -19,6 +19,7 @@ class LoanPayment(models.Model):
     #                                              ('leave','Baja')], string='Estatus del socio', related='loan_application_ids.partner_status_especific')
     type_payment = fields.Selection([('1', 'Abono'), ('2', 'Transferencia')], string='Tipo de pago')
     date = fields.Date(string='Fecha de pago', required=True)
+    period = fields.Char(string='Periodo', required=True, compute='_compute_period', store=True)
     capital_initial = fields.Float(string='Capital inicial')
     capital_index_initial = fields.Float(string='Capital')
     mount = fields.Float(string='Cuota fija')
@@ -41,10 +42,10 @@ class LoanPayment(models.Model):
     currency_id_dollar = fields.Many2one('res.currency', string='Moneda en Dólares',
                                          default=lambda self: self.env.ref('base.USD'))
 
-    @api.depends('amount_total')
-    def _change_amount_total_bs(self):
+    @api.depends('date')
+    def _compute_period(self):
         for rec in self:
-            rec.amount_total_bs = round(rec.amount_total,2) * round(rec.currency_id_dollar.inverse_rate,2)
+            rec.period = rec.date.strftime('%m/%Y')
 
     # @api.depends('mount')
     # def _compute_interest(self):
