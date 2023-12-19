@@ -7,3 +7,6 @@ access_family,family.family,model_family,base.group_user,1,1,1,1
 access_form_refinance_admin,form.refinance,model_form_refinance,base.group_user,1,1,1,1
 
 access_nominal_relationship_mindef_loan,nominal.relationship.mindef.loan,model_nominal_relationship_mindef_loan,base.group_user,1,1,1,1
+
+access_homolagate_form_loan,homolagate.form.loan,model_homolagate_form_loan,base.group_user,1,1,1,1
+access_reconcile_loan,reconcile.loan,model_reconcile_loan,base.group_user,1,1,1,1

@@ -7,9 +7,9 @@
             <field name="model">nominal.relationship.mindef.loan</field>
             <field name="arch" type="xml">
                 <tree editable="bottom">
-<!--                    <header>-->
-<!--                        <button name="homologate_data_mindef_loan" string="Homologar" type="object" class="oe_highlight"/>-->
-<!--                    </header>-->
+                    <header>
+                        <button name="homologate_data_mindef_loan" string="Homologar" type="object" class="oe_highlight"/>
+                    </header>
                     <field name="name" optional="hide"/>
                     <field name="management"/>
                     <field name="month"/>
@@ -37,7 +37,9 @@
                     <field name="date_register" optional="hide"/>
                     <field name="date_process" optional="hide"/>
                     <field name="period_process"/>
-                    <field name="state" />
+                    <field name="loan_regular"/>
+                    <field name="loan_emergency"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>

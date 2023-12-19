@@ -338,3 +338,13 @@ class LoanApplication(models.Model):
         for rec in self:
             rec.loan_payment_ids.unlink()
             rec.state = 'init'
+
+    def import_loan(self):
+        return {
+            'name': 'Conciliar pagos de prestamos',
+            'type': 'ir.actions.act_window',
+            'res_model': 'reconcile.loan',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new',
+        }

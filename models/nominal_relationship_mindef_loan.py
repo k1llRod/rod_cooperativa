@@ -34,17 +34,19 @@ class NominalRelationshipMindefLoan(models.Model):
     comision = fields.Float(string='Comision')
     date_register = fields.Date(string='Fecha de registro', default=fields.Date.today())
     date_process = fields.Date(string='Fecha de proceso')
+    loan_regular = fields.Boolean(string='Regular')
+    loan_emergency = fields.Boolean(string='Emergencia')
     period_process = fields.Char(string='Periodo de proceso')
-
-
+    diference = fields.Float(string='Diferencia')
+    observation = fields.Char(string='Observacion')
     state = fields.Selection([('draft', 'Borrador'), ('no_reconciled', 'No conciliado'), ('reconciled', 'Conciliado'),
                               ('observed', 'Observado')], string='Estado')
 
-    def homologate_data_mindef(self):
+    def homologate_data_mindef_loan(self):
         return {
-            'name': 'Homologar información',
+            'name': 'Homologar cuotas de prestamos MINDEF',
             'type': 'ir.actions.act_window',
-            'res_model': 'homolagate.form',
+            'res_model': 'homolagate.form.loan',
             'view_mode': 'form',
             'view_type': 'form',
             'target': 'new',

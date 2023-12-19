@@ -30,11 +30,11 @@
                 parent="rod_cooperativa.menu_root"
                 sequence="3"/>
 
-<!--      <menuitem id="rod_cooperativa.rod_cooperativa_nominal_relationship_mindef_loan"-->
-<!--                name="Carga masiva"-->
-<!--                parent="rod_cooperativa.rod_cooperativa_ministry_registry_filing_cabinet"-->
-<!--                sequence="1"-->
-<!--                action="rod_cooperativa.action_nominal_relationship_mindef_loan"/>-->
+      <menuitem id="rod_cooperativa.rod_cooperativa_nominal_relationship_mindef_loan"
+                name="Carga masiva"
+                parent="rod_cooperativa.rod_cooperativa_ministry_registry_filing_cabinet"
+                sequence="1"
+                action="rod_cooperativa.action_nominal_relationship_mindef_loan"/>
 
       <menuitem id="rod_cooperativa.rod_cooperativa_generate_loan_report"
                 name="Generar reporte"
