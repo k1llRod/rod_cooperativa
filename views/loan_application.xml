@@ -218,6 +218,14 @@
             </field>
         </record>
 
+        <record id="action_approve_loan" model="ir.actions.server">
+            <field name="name">Massive approve loan</field>
+            <field name="model_id" ref="model_loan_application"/>
+            <field name="binding_model_id" ref="model_loan_application"/>
+            <field name="state">code</field>
+            <field name="code">action = records.massive_approve_loan()</field>
+        </record>
+
         <!-- Accion para visualizar loan.application -->
 
         <record id="action_loan_application" model="ir.actions.act_window">

@@ -205,7 +205,7 @@ class LoanApplication(models.Model):
                             raise ValidationError('La solicitud de prestamo esta fuera de rango')
                     else:
                         date_payment = date_payment.replace(day=1)
-                        date_payment = date_payment.replace(month=date_payment.month + 1)
+                        date_payment = date_payment.replace(month=date_payment.month + 1 if date_payment.month < 12 else 1)
                 else:
                     capital_init = rec.loan_payment_ids[i - 2].balance_capital
                     date_payment = rec.loan_payment_ids[i - 2].date
@@ -348,3 +348,6 @@ class LoanApplication(models.Model):
             'view_type': 'form',
             'target': 'new',
         }
+    def massive_approve_loan(self):
+        for rec in self:
+            rec.approve_loan()

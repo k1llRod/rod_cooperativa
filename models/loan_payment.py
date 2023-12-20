@@ -19,7 +19,7 @@ class LoanPayment(models.Model):
     #                                              ('leave','Baja')], string='Estatus del socio', related='loan_application_ids.partner_status_especific')
     type_payment = fields.Selection([('1', 'Abono'), ('2', 'Transferencia')], string='Tipo de pago')
     date = fields.Date(string='Fecha de pago', required=True)
-    period = fields.Char(string='Periodo', required=True, compute='_compute_period', store=True)
+    period = fields.Char(string='Periodo', compute='_compute_period', store=True)
     capital_initial = fields.Float(string='Capital inicial')
     capital_index_initial = fields.Float(string='Capital')
     mount = fields.Float(string='Cuota fija')
