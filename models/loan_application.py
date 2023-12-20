@@ -349,5 +349,8 @@ class LoanApplication(models.Model):
             'target': 'new',
         }
     def massive_approve_loan(self):
-        for rec in self:
-            rec.approve_loan()
+        for r in self:
+            r._compute_index_loan_fixed_fee()
+            r.approve_loan()
+    def massive_verification_pass(self):
+        self.state = 'verificate'
