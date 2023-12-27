@@ -31,7 +31,7 @@ class LoanPayment(models.Model):
     commission_min_def = fields.Float(string='0.25% MINDEF', digits=(16, 2), store=True)
     coa_commission = fields.Float(string='Comision COA')
     interest_month_surpluy = fields.Float(string='D/E',  digits=(16, 2), store=True)
-    amount_total = fields.Float(string='D/MINDEF $', compute='_compute_interest', digits=(16, 2), store=True)
+    amount_total = fields.Float(string='D/MINDEF $', digits=(16, 2))
     amount_total_bs = fields.Float(string='D/MINDEF Bs', compute='_change_amount_total_bs', digits=(16, 2),store=True)
     amount_returned_coa = fields.Float(string='Monto devuelto COA',digits=(16, 2), store=True)
     state = fields.Selection(
