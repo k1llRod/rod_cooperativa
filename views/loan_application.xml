@@ -17,7 +17,7 @@
                     <field name="letter_of_request" optional="hidden"/>
                     <field name="contact_request" optional="hidden"/>
                     <field name="last_copy_paid_slip" optional="hidden"/>
-<!--                    <field name="ci_fothocopy"/>-->
+                    <field name="interest_month_surpluy" invisible="1"/>
 <!--                    <field name="photocopy_military_ci"/>-->
 <!--                    <field name="type_of_loan"/>-->
                     <field name="guarantor_one" optional="show"/>

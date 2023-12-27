@@ -66,7 +66,7 @@ class LoanApplication(models.Model):
     signature_recognition = fields.Boolean(string='Reconocimiento de firmas')
     contract = fields.Boolean(string='Contrato')
     surplus_days = fields.Integer(string='Dias excedentes', compute='_compute_surplus_days')
-    interest_month_surpluy = fields.Float(string='Interes dias excedente', compute='_compute_surplus_days', store=True)
+    interest_month_surpluy = fields.Float(string='Interes dias excedente')
     total_interest_month_surpluy = fields.Float(string='Total interes mensual excedente',
                                                 compute='_compute_total_interest_month_surpluy', store=True)
     reason_loan = fields.Text(string='Motivo del prestamo')
