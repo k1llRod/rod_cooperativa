@@ -42,6 +42,11 @@ class LoanPayment(models.Model):
     currency_id_dollar = fields.Many2one('res.currency', string='Moneda en Dólares',
                                          default=lambda self: self.env.ref('base.USD'))
 
+    @api.depends('amount_total')
+    def _change_amount_total_bs(self):
+        for rec in self:
+            rec.amount_total_bs = rec.amount_total * rec.currency_id_dollar.inverse_rate
+
     @api.depends('date')
     def _compute_period(self):
         for rec in self:
