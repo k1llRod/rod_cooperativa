@@ -90,6 +90,15 @@ class LoanPayment(models.Model):
             if record.state == 'draft':
                 record.write({'state': 'transfer'})
 
+    def confirm_ministry_defense(self):
+        for record in self:
+            if record.state == 'draft':
+                record.write({'state': 'ministry_defense'})
+
+    def draft_massive(self):
+        for record in self:
+            record.write({'state': 'draft'})
+
 
 
 

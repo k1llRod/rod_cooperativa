@@ -32,6 +32,7 @@
                     <field name="mension"/>
                     <field name="name_complete"/>
                     <field name="amount_bs"/>
+                    <field name="tot2"/>
                     <field name="comision"/>
 <!--                    <field name="amount_usd"/>-->
                     <field name="date_register" optional="hide"/>

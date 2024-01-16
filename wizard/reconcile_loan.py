@@ -57,62 +57,30 @@ class ReconcileLoan(models.TransientModel):
         period = self.month + '/' + self.year
         filing_cabinet_ids = self.env['nominal.relationship.mindef.loan'].search(
             [('period_process', '=', period), ('state', '=', 'draft')])
-        partner_loan_ids = self.env['partner.payroll'].search(
-            [('partner_status_especific', '=', 'active_service')])
-        payroll_payments_ids = self.env['payroll.payments']
-        if self.drawback == True:
-            status_dinamic = 'drawback'
+        partner_loan_ids = self.env['loan.application'].search(
+            [('state', '=', 'progress')])
         for partner in partner_loan_ids:
-            # if not partner.payroll_payments_ids.filtered(lambda x:x.period_register == period and (x.state=='ministry_defense' or x.state=='contribution_interest' or x.state=='no_contribution')):
             search_partner = filing_cabinet_ids.filtered(lambda x: x.eit_item == partner.partner_id.code_contact)
             if search_partner:
-                if len(partner.payroll_payments_ids) == 0:
-                    val = {'partner_payroll_id': partner.id,
-                           'payment_date': self.date_payment,
-                           'date_pivote': self.date_field_select,
-                           'income': search_partner.amount_bs,
-                           'income_passive': 0,
-                           'drawback': self.drawback}
+                verify_period = partner.loan_payment_ids.filtered(lambda x:x.period == period)
+                verify_amount_returned_coa = partner.loan_payment_ids.filtered(lambda x:x.amount_returned_coa == 0)
+                if verify_period:
+                    verify_period.commission_min_def = search_partner.comision
+                    # verify_period.amount_returned_coa = search_partner.tot2
+                    verify_period.confirm_ministry_defense()
+                    if verify_amount_returned_coa:
+                        verify_period.amount_returned_coa = search_partner.tot2
+                    search_partner.date_process = self.date_field_select
+                    search_partner.state = 'reconciled'
+                    search_partner.period_process = self.month + '/' + self.year
                 else:
-                    val = {'partner_payroll_id': partner.id,
-                           'payment_date': self.date_payment,
-                           'date_pivote': self.date_field_select,
-                           'income': search_partner.amount_bs,
-                           'income_passive': 0,
-                           'drawback': self.drawback}
-                mo = self.env['payroll.payments'].create(val)
-                partner_id = self.env['res.partner'].search([('id', '=', partner.partner_id.id)])
-                partner_id.city = search_partner.distribution
-                if self.drawback == True: mo.onchange_drawback()
-                mo.ministry_defense()
-                mo.onchange_income()
-                if self.drawback == True:
-                    list = ''
-                    for rec in self.months:
-                        list = rec.name + ',' + list
-                    partner.message_post(body="Reintegro: " + list)
-                    mo.message_post(body="Reintegro: " + list)
-
-                search_partner.date_process = self.date_field_select
-                search_partner.state = 'reconciled'
-                search_partner.period_process = self.month + '/' + self.year
-            else:
-                if partner.date_burn_partner != False and not partner.payroll_payments_ids.filtered(lambda x:x.period_register == period and (x.state=='no_contribution' or x.state=='ministry_defense' or x.state=='contribution_interest')):
-                    val = {'partner_payroll_id': partner.id,
-                           'payment_date': self.date_payment,
-                           'date_pivote': self.date_field_select,
-                           'income': search_partner.amount_bs,
-                           'income_passive': 0,
-                           'drawback': self.drawback}
-                    mo = self.env['payroll.payments'].create(val)
-                    mo.no_contribution()
+                    search_partner.write({'state': 'no_reconciled'})
+                    search_partner.write({'period_process': self.month + '/' + self.year})
+                    search_partner.write({'date_process': self.date_field_select})
+                # mo.ministry_defense()
+                # mo.onchange_income()
         array_no_reconciled = filing_cabinet_ids.filtered(lambda x: x.period_process == period and x.state == 'draft')
         no_reconciled = len(array_no_reconciled)
-        for rec in array_no_reconciled:
-            rec.write({'state': 'no_reconciled'})
-            rec.write({'period_process': self.month + '/' + self.year})
-            rec.write({'date_process': self.date_field_select})
-
         context = {'default_message': 'Se han conciliado ' + str(
             len(filing_cabinet_ids) - no_reconciled) + ' registros de ' + str(len(filing_cabinet_ids))}
         return {

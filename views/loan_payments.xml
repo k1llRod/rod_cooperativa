@@ -51,6 +51,10 @@
                                 class="oe_highlight"
                                 attrs="{'invisible': [('state', '!=', 'draft')]}"
                                 />
+                        <button name="confirm_ministry_defense" string="Por ministerio de defensa" type="object"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('state', '!=', 'draft')]}"
+                                />
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
@@ -122,6 +126,14 @@
                     </group>
                 </search>
             </field>
+        </record>
+
+        <record id="action_draft_massive_loan" model="ir.actions.server">
+            <field name="name">Draft massive loan</field>
+            <field name="model_id" ref="model_loan_payment"/>
+            <field name="binding_model_id" ref="model_loan_payment"/>
+            <field name="state">code</field>
+            <field name="code">action = records.draft_massive()</field>
         </record>
 
         <!-- Accion para visualizar loan.application -->
