@@ -88,7 +88,7 @@ class LoanPayment(models.Model):
                 rec.capital_index_initial = round(rec.mount - rec.interest, 2)
             if rec.loan_application_ids.with_guarantor =='mortgage':
                 rec.interest_mortgage = rec.capital_initial * interest_mortgage
-                rec.interest_base = rec.capital_initial * round((percentage_interest_mortgage/100),3)
+                rec.interest_base_mortgage = rec.capital_initial * round((percentage_interest_mortgage/100),3)
                 rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
             if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':

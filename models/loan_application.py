@@ -146,11 +146,18 @@ class LoanApplication(models.Model):
     @api.onchange('months_quantity')
     def _compute_index_loan_fixed_fee(self):
         try:
-            interest = (self.monthly_interest + self.contingency_fund) / 100
-            index_quantity = (1 - (1 + interest) ** (-self.months_quantity))
-            self.index_loan = interest / index_quantity if index_quantity != 0 else 0
-            self.fixed_fee = self.amount_loan_dollars * self.index_loan
-            self.pay_slip_balance = self.fixed_fee_bs * (100 / 40)
+            if self.with_guarantor == 'loan_guarantor' or self.with_guarantor == 'no_loan_guarantor':
+                interest = (self.monthly_interest + self.contingency_fund) / 100
+                index_quantity = (1 - (1 + interest) ** (-self.months_quantity))
+                self.index_loan = interest / index_quantity if index_quantity != 0 else 0
+                self.fixed_fee = self.amount_loan_dollars * self.index_loan
+                self.pay_slip_balance = self.fixed_fee_bs * (100 / 40)
+            else:
+                interest = (self.monthly_interest_mortgage + self.mortgage_loan) / 100
+                index_quantity = (1 - (1 + interest) ** (-self.months_quantity))
+                self.index_loan = interest / index_quantity if index_quantity != 0 else 0
+                self.fixed_fee = self.amount_loan_dollars * self.index_loan
+                self.pay_slip_balance = self.fixed_fee_bs * (100 / 40)
         except:
             self.index_loan = 0
 
