@@ -26,7 +26,7 @@ class LoanPayment(models.Model):
     interest = fields.Float(string='Interes', compute='_compute_interest', store=True)
     interest_base = fields.Float(string='0.7%', compute='_compute_interest', store=True)
     interest_mortgage = fields.Float(string='Interes H.', compute='_compute_interest', store=True)
-    interest_base_mortgage = fields.Float(string='0.207%', compute='_compute_interest', store=True)
+    interest_base_mortgage = fields.Float(string='0.207%', compute='_compute_interest', digits=(16, 2),store=True)
     res_social = fields.Float(string='F.C. 0.04%', compute='_compute_interest', digits=(16, 2),store=True)
     res_mortgage = fields.Float(string='P.H. 0.04%', compute='_compute_interest', digits=(16, 2),store=True)
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_interest', digits=(16, 2),store=True)
@@ -88,7 +88,7 @@ class LoanPayment(models.Model):
                 rec.capital_index_initial = round(rec.mount - rec.interest, 2)
             if rec.loan_application_ids.with_guarantor =='mortgage':
                 rec.interest_mortgage = rec.capital_initial * interest_mortgage
-                rec.interest_base_mortgage = rec.capital_initial * round((percentage_interest_mortgage/100),3)
+                rec.interest_base_mortgage = rec.capital_initial * (percentage_interest_mortgage/100)
                 rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
             if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
