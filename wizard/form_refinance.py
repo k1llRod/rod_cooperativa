@@ -28,6 +28,7 @@ class FormRefinance(models.TransientModel):
     commission_min_def = fields.Float(string='Comision Min. Defensa %', default=lambda self: float(
         self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.percentage_commission_min_def')),
                                       digits=(6, 3))
+    flag_expansion = fields.Boolean(string='Ampliacion')
     @api.onchange('month_refinance','amount_refinance')
     def _compute_index_loan_fixed_fee(self):
         try:
@@ -51,7 +52,10 @@ class FormRefinance(models.TransientModel):
             'state': 'init',
         })
         if create_loan:
-            self.data_loan_id.state = 'refinanced'
+            if self.flag_expansion == False:
+                self.data_loan_id.state = 'refinanced'
+            else:
+                self.data_loan_id.state = 'expansion'
             return {
                 'type': 'ir.actions.act_window',
                 'name': 'Prestamo',
@@ -64,7 +68,10 @@ class FormRefinance(models.TransientModel):
         else:
             raise ValidationError(_('Error en el proceso de refinanciamiento'))
 
-    @api.depends('amount_refinance')
+    @api.depends('amount_refinance','flag_expansion')
     def _compute_amount_delivered(self):
         for rec in self:
-            rec.amount_delivered = rec.amount_refinance - rec.capital_rest
+            if rec.flag_expansion == False:
+                rec.amount_delivered = rec.amount_refinance - rec.capital_rest - rec.interest_days_rest
+            else:
+                rec.amount_delivered = rec.amount_refinance - rec.capital_rest

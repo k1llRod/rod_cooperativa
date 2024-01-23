@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_pdf_loan_application" model="ir.actions.report">
+        <field name="name">Plan de pagos</field>
+        <field name="model">loan.application</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">rod_cooperativa.report_loan_application</field>
+        <field name="report_file">rod_cooperativa.report.report_loan_application</field>
+        <field name="binding_model_id" ref="model_loan_application"/>
+<!--        <field name="paperformat_id" ref="rod_cooperativa_aportes.paperformat_certificate" />-->
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

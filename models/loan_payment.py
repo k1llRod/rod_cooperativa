@@ -25,7 +25,10 @@ class LoanPayment(models.Model):
     mount = fields.Float(string='Cuota fija')
     interest = fields.Float(string='Interes', compute='_compute_interest', store=True)
     interest_base = fields.Float(string='0.7%', compute='_compute_interest', store=True)
+    interest_mortgage = fields.Float(string='Interes H.', compute='_compute_interest', store=True)
+    interest_base_mortgage = fields.Float(string='0.207%', compute='_compute_interest', store=True)
     res_social = fields.Float(string='F.C. 0.04%', compute='_compute_interest', digits=(16, 2),store=True)
+    res_mortgage = fields.Float(string='P.H. 0.04%', compute='_compute_interest', digits=(16, 2),store=True)
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_interest', digits=(16, 2),store=True)
     percentage_amount_min_def = fields.Float(string='%MINDEF', compute='_compute_interest', digits=(16, 2), store=True)
     commission_min_def = fields.Float(string='0.25% MINDEF', digits=(16, 2), store=True)
@@ -41,8 +44,17 @@ class LoanPayment(models.Model):
     currency_id = fields.Many2one('res.currency', string='Moneda', related='loan_application_ids.currency_id')
     currency_id_dollar = fields.Many2one('res.currency', string='Moneda en Dólares',
                                          default=lambda self: self.env.ref('base.USD'))
+    flag_state = fields.Selection([
+        ('init', 'Inicio'),
+        ('verificate', 'Verificación'),
+        ('progress', 'En Proceso'),
+        ('done', 'Concluido'),
+        ('refinanced', 'Refinanciado'),
+        ('expansion', 'Ampliación'),
+        ('cancel', 'Cancelado')
+    ], string='Flag state', related='loan_application_ids.state')
 
-    @api.depends('amount_total')
+    @api.onchange('amount_total')
     def _change_amount_total_bs(self):
         for rec in self:
             rec.amount_total_bs = rec.amount_total * rec.currency_id_dollar.inverse_rate
@@ -61,19 +73,32 @@ class LoanPayment(models.Model):
     def _compute_interest(self):
         percentage_interest = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest'))
         contingency_found = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund'))
+
         interest = (percentage_interest + contingency_found)/100
-        commission_min_def = float(
-            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.commission_min_def'))
+
+        mortgage_loan = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_loan'))
+        percentage_interest_mortgage = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage'))
+
+        interest_mortgage = (percentage_interest_mortgage + mortgage_loan)/100
+
         for rec in self:
-            rec.interest = rec.capital_initial * interest
-            rec.interest_base = rec.capital_initial * round((percentage_interest/100),3)
-            rec.capital_index_initial = round(rec.mount - rec.interest,2)
+            if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
+                rec.interest = rec.capital_initial * interest
+                rec.interest_base = rec.capital_initial * round((percentage_interest/100),3)
+                rec.capital_index_initial = round(rec.mount - rec.interest, 2)
+            if rec.loan_application_ids.with_guarantor =='mortgage':
+                rec.interest_mortgage = rec.capital_initial * interest_mortgage
+                rec.interest_base = rec.capital_initial * round((percentage_interest_mortgage/100),3)
+                rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
-            rec.res_social = rec.capital_initial * round((contingency_found/100),4)
+            if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
+                rec.res_social = rec.capital_initial * round((contingency_found/100),4)
+            if rec.loan_application_ids.with_guarantor == 'mortgage':
+                rec.res_mortgage = rec.capital_initial * round((mortgage_loan / 100), 4)
             rec.amount_total = round(rec.mount,2) + round(rec.percentage_amount_min_def,2) + round(rec.interest_month_surpluy,2)
-            rec.commission_min_def = round((commission_min_def / 100) * rec.amount_total_bs,2)
-            commision_auxiliar = rec.commission_min_def
-            rec.amount_returned_coa = round(rec.amount_total_bs,2) - commision_auxiliar
+            # rec.commission_min_def = round((commission_min_def / 100) * rec.amount_total_bs,2)
+            # commision_auxiliar = rec.commission_min_def
+            # rec.amount_returned_coa = round(rec.amount_total_bs,2) - commision_auxiliar
     def open_loan_payment(self, context=None):
         return {
             'type': 'ir.actions.act_window',

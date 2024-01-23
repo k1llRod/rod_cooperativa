@@ -21,6 +21,7 @@ class LoanApplication(models.Model):
         ('progress', 'En Proceso'),
         ('done', 'Concluido'),
         ('refinanced', 'Refinanciado'),
+        ('expansion', 'Ampliación'),
         ('cancel', 'Cancelado')
     ], string='Estado', default='init', tracking=True)
     type_loan = fields.Selection([('regular', 'Regular'), ('emergency', 'Emergencia')], string='Tipo de prestamo')
@@ -33,7 +34,7 @@ class LoanApplication(models.Model):
                                                  ('passive_reserve_a', 'Reserva pasivo "A"'),
                                                  ('passive_reserve_b', 'Reserva pasivo "B"'),
                                                  ('leave', 'Baja')], string='Tipo de asociado',
-                                                 related='partner_id.partner_status_especific', store=True)
+                                                related='partner_id.partner_status_especific', store=True)
     letter_of_request = fields.Boolean(string='Carta de solicitud', tracking=True)
     contact_request = fields.Boolean(string='Solicitud de prestamo', tracking=True)
     last_copy_paid_slip = fields.Boolean(string='Ultima copia de boleta de pago', tracking=True)
@@ -62,10 +63,11 @@ class LoanApplication(models.Model):
     date_approval = fields.Date(string='Fecha de aprobacion')
     with_guarantor = fields.Selection(string='Tipo de prestamo regular',
                                       selection=[('loan_guarantor', 'Prestamo regular con garantes'),
-                                                 ('no_loan_guarantor', 'Prestamo regular sin garantes')])
+                                                 ('no_loan_guarantor', 'Prestamo regular sin garantes'),
+                                                 ('mortgage', 'Prestamo hipotecario')])
     signature_recognition = fields.Boolean(string='Reconocimiento de firmas')
     contract = fields.Boolean(string='Contrato')
-    surplus_days = fields.Integer(string='Dias excedentes', compute='_compute_surplus_days')
+    surplus_days = fields.Integer(string='Dias excedentes')
     interest_month_surpluy = fields.Float(string='Interes dias excedente')
     total_interest_month_surpluy = fields.Float(string='Total interes mensual excedente',
                                                 compute='_compute_total_interest_month_surpluy', store=True)
@@ -83,6 +85,8 @@ class LoanApplication(models.Model):
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_balance_capital', store=True)
     balance_total_interest_month = fields.Float(string='Saldo total interes mensual',
                                                 compute='_compute_balance_capital', store=True)
+    balance_total_interest_month_auxiliar = fields.Float(string='Saldo total interes mensual auxiliar')
+    balance_capital_auxiliar = fields.Float(string='Saldo capital auxiliar')
     # amount_min_def = fields.Float(string='Min. Defensa %', currency_field='company_currency_id',compute='_compute_min_def')
     pending_payment = fields.Integer(string='Pendiente de pago', compute='_compute_pending_payment')
     alert_pending_payment = fields.Boolean(string='Alerta de pago', compute='_compute_pending_payment')
@@ -107,7 +111,7 @@ class LoanApplication(models.Model):
                 rec.pending_payment = 0
                 rec.alert_pending_payment = False
 
-    @api.depends('date_approval')
+    @api.onchange('date_approval')
     def _compute_surplus_days(self):
         for record in self:
             if record.date_approval:
@@ -115,7 +119,7 @@ class LoanApplication(models.Model):
                 point_day = last_day - record.date_approval.day
                 record.surplus_days = point_day
                 calculte_interest = record.amount_loan_dollars * (record.monthly_interest / 100)
-                record.interest_month_surpluy = (calculte_interest / last_day) * point_day / record.months_quantity
+                record.interest_month_surpluy = (calculte_interest / last_day) * (point_day / record.months_quantity)
             else:
                 record.surplus_days = 0
                 record.interest_month_surpluy = 0
@@ -165,6 +169,12 @@ class LoanApplication(models.Model):
     commission_min_def = fields.Float(string='Comision Min. Defensa %', default=lambda self: float(
         self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.percentage_commission_min_def')),
                                       digits=(6, 3))
+    mortgage_loan = fields.Float(string='Prestamo hipotecario %', default=lambda self: float(
+        self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_loan')))
+    monthly_interest_mortgage = fields.Float(string='Indice de prestamo hipotecario por mes %',
+                                             default=lambda self: float(
+                                                 self.env['ir.config_parameter'].sudo().get_param(
+                                                     'rod_cooperativa.monthly_interest_mortgage')), digits=(6, 3))
     # Relacion a los pagos
     loan_payment_ids = fields.One2many('loan.payment', 'loan_application_ids', string='Pagos')
 
@@ -205,7 +215,8 @@ class LoanApplication(models.Model):
                             raise ValidationError('La solicitud de prestamo esta fuera de rango')
                     else:
                         date_payment = date_payment.replace(day=1)
-                        date_payment = date_payment.replace(month=date_payment.month + 1 if date_payment.month < 12 else 1)
+                        date_payment = date_payment.replace(
+                            month=date_payment.month + 1 if date_payment.month < 12 else 1)
                 else:
                     capital_init = rec.loan_payment_ids[i - 2].balance_capital
                     date_payment = rec.loan_payment_ids[i - 2].date
@@ -219,6 +230,7 @@ class LoanApplication(models.Model):
                     'mount': rec.fixed_fee,
                     'loan_application_ids': rec.id,
                     'percentage_amount_min_def': percentage_amount_min_def,
+                    'interest_month_surpluy': rec.interest_month_surpluy,
                     # 'commission_min_def': amount_commission,
                     'coa_commission': coa_commission,
                     'state': 'draft',
@@ -290,6 +302,12 @@ class LoanApplication(models.Model):
 
     def refinance(self):
         id = self.id
+        auxiliar = self.balance_total_interest_month
+        auxiliar_balance = self.balance_capital
+        if self.balance_total_interest_month_auxiliar > 0:
+            auxiliar = self.balance_total_interest_month_auxiliar
+        if self.balance_capital_auxiliar > 0:
+            auxiliar_balance = self.balance_capital_auxiliar
         return {
             'name': 'Formulario de refinanciamiento',
             'type': 'ir.actions.act_window',
@@ -300,8 +318,8 @@ class LoanApplication(models.Model):
             'context': {
                 'default_capital_initial': self.amount_loan_dollars,
                 'default_data_loan_id': id,
-                'default_capital_rest': self.balance_capital,
-                'default_interest_days_rest': self.balance_total_interest_month,
+                'default_capital_rest': auxiliar_balance,
+                'default_interest_days_rest': auxiliar,
                 'default_quantity_month_initial': self.months_quantity,
             },
         }
@@ -309,10 +327,14 @@ class LoanApplication(models.Model):
     @api.depends('loan_payment_ids.state')
     def _compute_balance_capital(self):
         for rec in self:
-            if len(rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer')) > 0:
-                rec.balance_capital = rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer')[-1].balance_capital
+            if len(rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense')) > 0:
+                rec.balance_capital = \
+                rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense')[
+                    -1].balance_capital
                 rec.balance_total_interest_month = rec.total_interest_month_surpluy - sum(
-                    rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer').mapped('interest_month_surpluy'))
+                    rec.loan_payment_ids.filtered(
+                        lambda x: x.state == 'transfer' or x.state == 'ministry_defense').mapped(
+                        'interest_month_surpluy'))
             else:
                 rec.balance_capital = rec.amount_loan_dollars
                 rec.balance_total_interest_month = rec.total_interest_month_surpluy
@@ -348,9 +370,11 @@ class LoanApplication(models.Model):
             'view_type': 'form',
             'target': 'new',
         }
+
     def massive_approve_loan(self):
         for r in self:
             r._compute_index_loan_fixed_fee()
             r.approve_loan()
+
     def massive_verification_pass(self):
         self.state = 'verificate'

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_loan_application">
+            <t t-call="web.html_container">
+                <t t-if="o and 'company_id' in o">
+                    <t t-set="company" t-value="o.company_id"></t>
+                </t>
+                <t t-if="not o or not 'company_id' in o">
+                    <t t-set="company" t-value="res_company"></t>
+                </t>
+                <t t-foreach="docs" t-as="o">
+                    <div t-attf-class="o_company_#{company.id}_layout header" t-att-style="report_header_style">
+                    <div class="o_background_header">
+                        <table style="width:100%;font-size:14px;">
+                            <tr>
+                                <td style="width:500px;text-align:center;center;">COOPERATIVA DE
+                                    AHORRO Y CREDITO DE
+                                    VINCULO LABORAL
+                                </td>
+                                <td style="width:160px"></td>
+                                <td>Paginas:
+                                    <span class="topage"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;center;">COA - 4 DE DICIEMBRE R.L.
+                                </td>
+                                <td></td>
+                                <td>Fecha:
+                                    <!--                                    <t t-set="now" t-value="context.get('tz').localize(fields.Datetime.now())" />-->
+                                    <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;">LA PAZ - BOLIVIA</td>
+                                <td></td>
+                                <td>Usuario:
+                                    <span t-esc="user.name"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                    <div>
+                        <br/>
+                        <h3>
+                            <center>PLAN DE PAGOS</center>
+                        </h3>
+                    </div>
+                </div>
+                    <t t-call="web.external_layout">
+                        <div class="page"
+                             t-att-style="'background-image: url(/rod_cooperativa_aportes/static/src/img/background_cooperativa.png);background-repeat:repeat-y; height:850px; background-position-x:center;'">
+                            <div class="body">
+                                <table style="width:100%; font-family:Arial;">
+                                    <tr>
+                                        <td>
+                                            <strong>CODIGO:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.partner_id.code_contact"/>
+                                        </td>
+                                        <td>
+                                            <strong>CELULAR:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-esc="o.partner_id.mobile"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>CEDULA IDENTIDAD:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.partner_id.vat"/>
+                                        </td>
+                                        <td>
+                                            <strong>FECHA DE FILIACION:</strong>
+                                        </td>
+                                        <td>
+
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>ASOCIADO:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.partner_id"/>
+                                        </td>
+                                        <td>
+                                            <strong>SITUACION:</strong>
+                                        </td>
+                                        <td>
+<!--                                            <span t-field="o.partner_status"/>-->
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>GRADO:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.partner_id.category_partner_id"/>
+                                        </td>
+                                        <td>
+                                            <strong>TIPO DE ASOCIADO</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.partner_status_especific"/>
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>AÑO DE EGRESO:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-esc="o.partner_id.graduation_year"></span>
+                                        </td>
+<!--                                        <t t-if="o.partner_id.partner_status == 'passive'">-->
+<!--                                            <td>-->
+<!--                                                <strong>AÑOS DE SERVICIO</strong>-->
+<!--                                                <td>-->
+<!--                                                    <span t-field="o.partner_id.year_service"></span>-->
+<!--                                                </td>-->
+<!--                                            </td>-->
+<!--                                        </t>-->
+                                    </tr>
+                                </table>
+                                <br/>
+                                <table class="table text-center align-middle">
+                                    <thead>
+                                        <tr style="font-size:12px;">
+                                            <th style="width:20px;" class="align-middle">N</th>
+                                            <th style="width:20px;" class="align-middle">C.PAGO</th>
+                                            <th style="width:20px;" class="align-middle">PERIODO</th>
+                                            <th style="width:80px;" class="align-middle">CAP. INICIAL</th>
+                                            <th style="width:80px;" class="align-middle">CUOTA FIJA</th>
+                                            <th style="width:110px" class="align-middle">CAPITAL
+                                            </th>
+                                            <th style=" width:80px;" class="align-middle">0.7%</th>
+                                            <th style=" width:80px;" class="align-middle">0.207%</th>
+                                            <th style=" width:50px;" class="align-middle">F.C.0.04%</th>
+                                            <th style=" width:50px;" class="align-middle">P.H.0.04%</th>
+                                            <th style=" width:40px;" class="align-middle">SALDO CAPITAL</th>
+                                            <th style=" width:40px;" class="align-middle">D/E</th>
+                                            <th style=" width:40px;" class="align-middle">%MINDEF</th>
+                                            <th style=" width:40px;" class="align-middle">D/MINDEF $</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="font-size:12px;">
+                                        <tr t-set="acumulador" t-value="0"/>
+                                        <t t-set="line_number" t-value="0"/>
+                                        <t t-foreach="o.loan_payment_ids" t-as="p">
+                                            <t t-set="line_number" t-value="line_number + 1"/>
+                                            <tr>
+                                                <td class="align-middle">
+                                                    <t t-esc="line_number"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.name"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.period"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.capital_initial"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.mount"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.capital_index_initial"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.interest_base"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.interest_base_mortgage"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.res_social"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.res_mortgage"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.balance_capital"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.interest_month_surpluy"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.percentage_amount_min_def"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.amount_total"/>
+                                                </td>
+                                            </tr>
+
+                                        </t>
+                                    </tbody>
+                                </table>
+                                <br/>
+                            </div>
+                        </div>
+                        <div class="oe_structure"/>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

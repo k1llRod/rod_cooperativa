@@ -146,7 +146,9 @@
                                 <!--                                                                    'invisible': [('state','=','init')]}"/>-->
                                 <field name="date_approval"/>
                                 <field name="monthly_interest" readonly="1"/>
+                                <field name="monthly_interest_mortgage"/>
                                 <field name="contingency_fund" readonly="1"/>
+                                <field name="mortgage_loan" readonly="1"/>
                                 <field name="index_loan" readonly="1" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <!--                                <field name="index_loan_bs" readonly="1" widget="monetary" />-->
@@ -165,7 +167,9 @@
                             </group>
                             <group string="Valores">
                                 <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                                <field name="balance_capital_auxiliar" />
                                 <field name="balance_total_interest_month" />
+                                <field name="balance_total_interest_month_auxiliar"/>
 
                             </group>
                             <group string="Monto maximo de prestamo">
@@ -174,7 +178,7 @@
                         </group>
                          <notebook>
                             <page string="Pagos">
-                                <field name="loan_payment_ids" editable="bottom" />
+                                <field name="loan_payment_ids" editable="bottom" attrs="{'readonly': [('state', '!=', 'progress')]}"/>
                             </page>
                         </notebook>
                     </sheet>

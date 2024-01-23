@@ -6,7 +6,7 @@
             <field name="name">loan.payment.tree</field>
             <field name="model">loan.payment</field>
             <field name="arch" type="xml">
-                <tree editable="bottom" decoration-info="state == 'transfer'">
+                <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense')" >
                     <field name="loan_application_ids" optional="hide"/>
                     <field name="partner_id" optional="hide"/>
                     <field name="type_loan" optional="hide"/>
@@ -20,7 +20,10 @@
                     <field name="mount" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
                     <field name="interest" sum="Total"/>
                     <field name="interest_base" optional="hidden"/>
+                    <field name="interest_mortgage" optional="hidden"/>
+                    <field name="interest_base_mortgage" optional="hidden"/>
                     <field name="res_social" optional="hidden"/>
+                    <field name="res_mortgage" optional="hidden"/>
                     <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
                     <field name="interest_month_surpluy" sum="Total"/>
                     <field name="percentage_amount_min_def" optional="hidden"/>
@@ -49,11 +52,11 @@
                     <header>
                         <button name="confirm_payment" string="Por transferencia bancaria" type="object"
                                 class="oe_highlight"
-                                attrs="{'invisible': [('state', '!=', 'draft')]}"
+                                attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'progress')]}"
                                 />
                         <button name="confirm_ministry_defense" string="Por ministerio de defensa" type="object"
                                 class="oe_highlight"
-                                attrs="{'invisible': [('state', '!=', 'draft')]}"
+                                attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'progress')]}"
                                 />
                         <field name="state" widget="statusbar"/>
                     </header>
@@ -61,6 +64,7 @@
                         <group>
                             <group>
                                 <field name="name"/>
+                                <field name="flag_state"/>
                                 <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="date"/>
@@ -69,6 +73,7 @@
                                 <field name="interest"/>
                                 <field name="interest_base"/>
                                 <field name="res_social"/>
+                                <field name="res_mortgage" />
                                 <field name="capital_initial" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="balance_capital" widget="monetary"

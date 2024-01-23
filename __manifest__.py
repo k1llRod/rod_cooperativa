@@ -37,6 +37,8 @@
         'wizard/homologate_form_loan.xml',
         'wizard/reconcile_loan.xml',
         'views/res_partner.xml',
+        'reports/report.xml',
+        'reports/loan_application_pdf.xml',
     ],
 
 }
