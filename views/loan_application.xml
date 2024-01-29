@@ -191,10 +191,10 @@
                                         <field name="period" />
                                         <field name="capital_initial" />
                                         <field name="capital_index_initial" />
-                                        <field name="interest_base" />
-                                        <field name="interest_mortgage"/>
-                                        <field name="interest_base_mortgage"/>
-                                        <field name="res_social"/>
+                                        <field name="interest_base" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}"/>
+                                        <field name="res_social" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}"/>
+                                        <field name="interest_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}"/>
+                                        <field name="interest_base_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}"/>
                                         <field name="balance_capital"/>
                                         <field name="interest_month_surpluy"/>
                                         <field name="percentage_amount_min_def"/>
