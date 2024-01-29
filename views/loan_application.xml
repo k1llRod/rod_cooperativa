@@ -38,9 +38,9 @@
                 <form string="Solicitud de presupuesto" class="oe_left oe_edit_only oe_form_required">
                     <header>
                         <button name="verification_pass" string="Verificación" type="object" attrs="{'invisible':[('state','!=','init')]}" />
-                        <button name="approve_loan" string="Aprobar prestamo" type="object" attrs="{'invisible': [('state','=','init')]}"/>
+                        <button name="approve_loan" string="Aprobar prestamo" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>
                         <button name="refinance" string="Refinanciar" type="object" attrs="{'invisible': [('state','!=','progress')]}"/>
-                        <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>
+<!--                        <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>-->
                         <button name="return_draft" string="Borrador" type="object" attrs="{'invisible': [('state','!=','progress')]}"/>
                         <button name="reset_payroll" string="Reset" type="object"/>
                         <field name="state" widget="statusbar"/>
@@ -97,9 +97,9 @@
 
                                 <!--                                <field name="category_loan"/>-->
                                 <field name="guarantor_one" required="" domain="[('id','!=',partner_id),('guarantor','=',True)]"
-                                       attrs="{'invisible':['|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor')],
-                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')],
-                                                                                                                'required': [('with_guarantor','=','loan_guarantor')]}"
+                                       attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')],
+                                                                            'readonly': ['|',('state','=','progress'),('state','=','done')],
+                                                                            'required': [('with_guarantor','=','loan_guarantor')]}"
                                         />
                             </group>
                             <group string="Respaldos">
@@ -123,13 +123,13 @@
                         <group style="margin-top:0px;">
                             <group>
                                 <field name="code_garantor_one"
-                                       attrs="{'invisible':['|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor')]}"/>
+                                       attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')]}"/>
                                 <field name="guarantor_two" domain="[('id','!=',partner_id),('guarantor','=',True)]"
-                                       attrs="{'invisible':['|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor')],
+                                       attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')],
                                                                                                                 'readonly': ['|',('state','=','progress'),('state','=','done')],
                                                                                                                 'required': [('with_guarantor','=','loan_guarantor')]}"/>
                                 <field name="code_garantor_two"
-                                       attrs="{'invisible':['|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor')]}"/>
+                                       attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')]}"/>
                                 <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="months_quantity"
@@ -145,10 +145,10 @@
                                 <!--                                <field name="date_approval" attrs="{'readonly': [('state','!=','init')],-->
                                 <!--                                                                    'invisible': [('state','=','init')]}"/>-->
                                 <field name="date_approval"/>
-                                <field name="monthly_interest" readonly="1"/>
-                                <field name="monthly_interest_mortgage"/>
-                                <field name="contingency_fund" readonly="1"/>
-                                <field name="mortgage_loan" readonly="1"/>
+                                <field name="monthly_interest" readonly="1" attrs="{'invisible':[('with_guarantor','=','mortgage')]}"/>
+                                <field name="monthly_interest_mortgage" readonly="1" attrs="{'invisible':[('with_guarantor','!=','mortgage')]}"/>
+                                <field name="contingency_fund" readonly="1" attrs="{'invisible':[('with_guarantor','=','mortgage')]}"/>
+                                <field name="mortgage_loan" readonly="1" attrs="{'invisible':[('with_guarantor','!=','mortgage')]}"/>
                                 <field name="index_loan" readonly="1" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <!--                                <field name="index_loan_bs" readonly="1" widget="monetary" />-->
@@ -178,7 +178,31 @@
                         </group>
                          <notebook>
                             <page string="Pagos">
-                                <field name="loan_payment_ids" editable="bottom" attrs="{'readonly': [('state', '!=', 'progress')]}"/>
+                                <field name="loan_payment_ids" >
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="date" />
+                                        <field name="period" />
+                                        <field name="capital_initial" />
+                                        <field name="capital_index_initial" />
+                                        <field name="interest_base" />
+                                        <field name="interest_mortgage"/>
+                                        <field name="interest_base_mortgage"/>
+                                        <field name="res_social"/>
+                                        <field name="balance_capital"/>
+                                        <field name="interest_month_surpluy"/>
+                                        <field name="percentage_amount_min_def"/>
+                                        <field name="commission_min_def"/>
+                                        <field name="amount_total"/>
+                                        <field name="amount_total_bs"/>
+                                        <field name="state" decoration-info="state == 'init' or state == 'in_queue'"
+                                               decoration-success="state == 'progress' or state == 'done'"
+                                               widget="badge"/>
+                                        <button name="open_loan_payment" type="object" class="oe_highlight"
+                                                icon="fa-eye"/>
+
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>

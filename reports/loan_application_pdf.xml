@@ -75,10 +75,10 @@
                                             <span t-field="o.partner_id.vat"/>
                                         </td>
                                         <td>
-                                            <strong>FECHA DE FILIACION:</strong>
+                                            <strong>FECHA DE APROBACION:</strong>
                                         </td>
                                         <td>
-
+                                            <span t-field="o.date_approval"/>
                                         </td>
 
                                     </tr>
@@ -90,10 +90,10 @@
                                             <span t-field="o.partner_id"/>
                                         </td>
                                         <td>
-                                            <strong>SITUACION:</strong>
+                                            <strong>PLAZO:</strong>
                                         </td>
                                         <td>
-<!--                                            <span t-field="o.partner_status"/>-->
+                                            <span t-field="o.months_quantity"/>
                                         </td>
                                     </tr>
                                     <tr>
@@ -104,28 +104,26 @@
                                             <span t-field="o.partner_id.category_partner_id"/>
                                         </td>
                                         <td>
-                                            <strong>TIPO DE ASOCIADO</strong>
+                                            <strong>TASA DE INTERES</strong>
                                         </td>
                                         <td>
-                                            <span t-field="o.partner_status_especific"/>
+                                            <span t-field="o.monthly_interest_mortgage"/>
                                         </td>
 
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strong>AÑO DE EGRESO:</strong>
+                                            <strong>CELULAR:</strong>
                                         </td>
                                         <td>
-                                            <span t-esc="o.partner_id.graduation_year"></span>
+                                            <span t-esc="o.partner_id.mobile"></span>
                                         </td>
-<!--                                        <t t-if="o.partner_id.partner_status == 'passive'">-->
-<!--                                            <td>-->
-<!--                                                <strong>AÑOS DE SERVICIO</strong>-->
-<!--                                                <td>-->
-<!--                                                    <span t-field="o.partner_id.year_service"></span>-->
-<!--                                                </td>-->
-<!--                                            </td>-->
-<!--                                        </t>-->
+                                        <td>
+                                            <strong>CAPITAL DE PRESTAMO $</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.amount_loan_dollars"></span>
+                                        </td>
                                     </tr>
                                 </table>
                                 <br/>
@@ -137,8 +135,7 @@
                                             <th style="width:20px;" class="align-middle">PERIODO</th>
                                             <th style="width:80px;" class="align-middle">CAP. INICIAL</th>
                                             <th style="width:80px;" class="align-middle">CUOTA FIJA</th>
-                                            <th style="width:110px" class="align-middle">CAPITAL
-                                            </th>
+                                            <th style="width:110px" class="align-middle">CAPITAL</th>
                                             <th style=" width:80px;" class="align-middle">0.7%</th>
                                             <th style=" width:80px;" class="align-middle">0.207%</th>
                                             <th style=" width:50px;" class="align-middle">F.C.0.04%</th>

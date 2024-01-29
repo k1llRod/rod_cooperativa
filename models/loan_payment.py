@@ -96,6 +96,7 @@ class LoanPayment(models.Model):
             if rec.loan_application_ids.with_guarantor == 'mortgage':
                 rec.res_mortgage = rec.capital_initial * round((mortgage_loan / 100), 4)
             rec.amount_total = round(rec.mount,2) + round(rec.percentage_amount_min_def,2) + round(rec.interest_month_surpluy,2)
+            rec._change_amount_total_bs()
             # rec.commission_min_def = round((commission_min_def / 100) * rec.amount_total_bs,2)
             # commision_auxiliar = rec.commission_min_def
             # rec.amount_returned_coa = round(rec.amount_total_bs,2) - commision_auxiliar
