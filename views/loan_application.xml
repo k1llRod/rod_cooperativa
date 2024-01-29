@@ -14,6 +14,12 @@
                     <field name="name"/>
                     <field name="partner_id"/>
                     <field name="type_loan"/>
+                    <field name="with_guarantor"/>
+                    <field name="months_quantity"/>
+                    <field name="amount_loan_dollars"/>
+                    <field name="amount_loan"/>
+                    <field name="date_application"/>
+                    <field name="date_approval"/>
                     <field name="letter_of_request" optional="hidden"/>
                     <field name="contact_request" optional="hidden"/>
                     <field name="last_copy_paid_slip" optional="hidden"/>

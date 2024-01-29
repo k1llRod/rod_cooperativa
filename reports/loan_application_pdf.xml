@@ -136,10 +136,18 @@
                                             <th style="width:80px;" class="align-middle">CAP. INICIAL</th>
                                             <th style="width:80px;" class="align-middle">CUOTA FIJA</th>
                                             <th style="width:110px" class="align-middle">CAPITAL</th>
-                                            <th style=" width:80px;" class="align-middle">0.7%</th>
-                                            <th style=" width:80px;" class="align-middle">0.207%</th>
-                                            <th style=" width:50px;" class="align-middle">F.C.0.04%</th>
-                                            <th style=" width:50px;" class="align-middle">P.H.0.04%</th>
+                                            <t t-if="o.with_guarantor == 'loan_guarantor' or o.with_guarantor == 'no_loan_guarantor'">
+                                                <th style=" width:80px;" class="align-middle">0.7%</th>
+                                            </t>
+                                            <t t-if="o.with_guarantor == 'mortgage'">
+                                                <th style=" width:80px;" class="align-middle">0.207%</th>
+                                            </t>
+                                            <t t-if="o.with_guarantor == 'loan_guarantor' or o.with_guarantor == 'no_loan_guarantor'">
+                                                <th style=" width:50px;" class="align-middle">F.C.0.04%</th>
+                                            </t>
+                                            <t t-if="o.with_guarantor == 'mortgage'">
+                                                <th style=" width:50px;" class="align-middle">P.H.0.04%</th>
+                                            </t>
                                             <th style=" width:40px;" class="align-middle">SALDO CAPITAL</th>
                                             <th style=" width:40px;" class="align-middle">D/E</th>
                                             <th style=" width:40px;" class="align-middle">%MINDEF</th>
@@ -175,18 +183,26 @@
                                                 <td class="align-middle">
                                                     <t t-esc="round(p.capital_index_initial,2)"/>
                                                 </td>
-                                                <td class="align-middle">
-                                                    <t t-esc="p.interest_base"/>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <t t-esc="p.interest_base_mortgage"/>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <t t-esc="p.res_social"/>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <t t-esc="p.res_mortgage"/>
-                                                </td>
+                                                <t t-if="p.with_guarantor == 'loan_guarantor' or p.with_guarantor == 'no_loan_guarantor'">
+                                                    <td class="align-middle">
+                                                        <t t-esc="round(p.interest_base,2)"/>
+                                                    </td>
+                                                </t>
+                                                <t t-if="p.with_guarantor=='mortgage'">
+                                                    <td class="align-middle">
+                                                        <t t-esc="round(p.interest_base_mortgage,2)"/>
+                                                    </td>
+                                                </t>
+                                                <t t-if="p.with_guarantor == 'loan_guarantor' or p.with_guarantor == 'no_loan_guarantor'">
+                                                    <td class="align-middle">
+                                                        <t t-esc="p.res_social"/>
+                                                    </td>
+                                                </t>
+                                                <t t-if="p.with_guarantor == 'mortgage'">
+                                                    <td class="align-middle">
+                                                        <t t-esc="p.res_mortgage"/>
+                                                    </td>
+                                                </t>
                                                 <td class="align-middle">
                                                     <t t-esc="p.balance_capital"/>
                                                 </td>
