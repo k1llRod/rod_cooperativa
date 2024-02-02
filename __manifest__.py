@@ -24,12 +24,13 @@
 
     # always loaded
     'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
         'views/res_config_settings.xml',
         'views/loan_application.xml',
         'views/partner_category.xml',
         'views/loan_payments.xml',
         'views/family.xml',
-        'security/ir.model.access.csv',
         'data/sequence.xml',
         'views/nominal_relationship_mindef_loan.xml',
         'views/rod_cooperativa_menuitem.xml',

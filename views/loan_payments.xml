@@ -53,10 +53,12 @@
                         <button name="confirm_payment" string="Por transferencia bancaria" type="object"
                                 class="oe_highlight"
                                 attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'progress')]}"
+                                groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
                                 />
                         <button name="confirm_ministry_defense" string="Por ministerio de defensa" type="object"
                                 class="oe_highlight"
                                 attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'progress')]}"
+                                groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
                                 />
                         <field name="state" widget="statusbar"/>
                     </header>

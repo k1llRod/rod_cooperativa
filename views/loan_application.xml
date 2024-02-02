@@ -8,8 +8,8 @@
             <field name="arch" type="xml">
                 <tree>
                     <header>
-                        <button name="import_loan" string="Conciliar" class="oe_highlight" type="object"/>
-                        <button name="massive_approve_loan" string="Aprobacion masiva" type="object"/>
+                        <button name="import_loan" string="Conciliar" class="oe_highlight" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
+                        <button name="massive_approve_loan" string="Aprobacion masiva" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
                     </header>
                     <field name="name"/>
                     <field name="partner_id"/>
@@ -43,12 +43,12 @@
             <field name="arch" type="xml">
                 <form string="Solicitud de presupuesto" class="oe_left oe_edit_only oe_form_required">
                     <header>
-                        <button name="verification_pass" string="Verificación" type="object" attrs="{'invisible':[('state','!=','init')]}" />
-                        <button name="approve_loan" string="Aprobar prestamo" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>
-                        <button name="refinance" string="Refinanciar" type="object" attrs="{'invisible': [('state','!=','progress')]}"/>
+                        <button name="verification_pass" string="Verificación" type="object" attrs="{'invisible':[('state','!=','init')]}" groups="rod_cooperativa.group_rod_cooperativa_operator"/>
+                        <button name="approve_loan" string="Aprobar prestamo" type="object" attrs="{'invisible': [('state','!=','verificate')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
+                        <button name="refinance" string="Refinanciar" type="object" attrs="{'invisible': [('state','!=','progress')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
 <!--                        <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>-->
-                        <button name="return_draft" string="Borrador" type="object" attrs="{'invisible': [('state','!=','progress')]}"/>
-                        <button name="reset_payroll" string="Reset" type="object"/>
+                        <button name="return_draft" string="Borrador" type="object" attrs="{'invisible': [('state','!=','progress')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
+                        <button name="reset_payroll" string="Reset" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>

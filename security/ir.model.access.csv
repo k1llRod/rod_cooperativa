@@ -1,12 +1,26 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_loan_application,loan.application,model_loan_application,base.group_user,1,1,1,1
-access_partner_category,partner.category,model_partner_category,base.group_user,1,1,1,1
-access_loan_payment,loan.payment,model_loan_payment,base.group_user,1,1,1,1
+access_administrator_loan_application,loan.application,model_loan_application,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+access_operator_loan_application,loan.application,model_loan_application,rod_cooperativa.group_rod_cooperativa_operator,1,1,0,0
+access_user_loan_application,loan.application,model_loan_application,rod_cooperativa.group_rod_cooperativa_user,1,0,0,0
+
+access_administrator_partner_category,partner.category,model_partner_category,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+access_operator_partner_category,partner.category,model_partner_category,rod_cooperativa.group_rod_cooperativa_operator,1,1,0,0
+access_user_partner_category,partner.category,model_partner_category,rod_cooperativa.group_rod_cooperativa_user,1,0,0,0
+
+access_administrator_loan_payment,loan.payment,model_loan_payment,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+access_operator_loan_payment,loan.payment,model_loan_payment,rod_cooperativa.group_rod_cooperativa_operator,1,1,0,0
+access_user_loan_payment,loan.payment,model_loan_payment,rod_cooperativa.group_rod_cooperativa_user,1,0,0,0
+
 access_family,family.family,model_family,base.group_user,1,1,1,1
 
-access_form_refinance_admin,form.refinance,model_form_refinance,base.group_user,1,1,1,1
+access_administrator_form_refinance_admin,form.refinance,model_form_refinance,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+access_operator_form_refinance_admin,form.refinance,model_form_refinance,rod_cooperativa.group_rod_cooperativa_operator,1,1,1,1
 
-access_nominal_relationship_mindef_loan,nominal.relationship.mindef.loan,model_nominal_relationship_mindef_loan,base.group_user,1,1,1,1
+access_administrator_nominal_relationship_mindef_loan,nominal.relationship.mindef.loan,model_nominal_relationship_mindef_loan,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+access_operator_nominal_relationship_mindef_loan,nominal.relationship.mindef.loan,model_nominal_relationship_mindef_loan,rod_cooperativa.group_rod_cooperativa_operator,1,1,0,0
 
-access_homolagate_form_loan,homolagate.form.loan,model_homolagate_form_loan,base.group_user,1,1,1,1
-access_reconcile_loan,reconcile.loan,model_reconcile_loan,base.group_user,1,1,1,1
+access_administrator_homolagate_form_loan,homolagate.form.loan,model_homolagate_form_loan,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+access_operator_homolagate_form_loan,homolagate.form.loan,model_homolagate_form_loan,rod_cooperativa.group_rod_cooperativa_operator,1,1,1,1
+
+access_administrator_reconcile_loan,reconcile.loan,model_reconcile_loan,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+access_operator_reconcile_loan,reconcile.loan,model_reconcile_loan,rod_cooperativa.group_rod_cooperativa_operator,1,1,0,0
