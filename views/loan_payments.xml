@@ -66,6 +66,7 @@
                         <group>
                             <group>
                                 <field name="name"/>
+                                <field name="loan_application_ids"/>
                                 <field name="flag_state"/>
                                 <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
