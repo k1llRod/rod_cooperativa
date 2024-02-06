@@ -134,11 +134,24 @@
                                             <strong></strong>
                                         </td>
                                         <td>
+                                        </td>
+                                        <td>
+                                            <strong>SALDO D/E</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.balance_total_interest_month"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong></strong>
+                                        </td>
+                                        <td>
 
                                         </td>
                                         <t t-if="o.interest_day_rest &gt; 0">
                                             <td>
-                                                <strong>INTERES D/E</strong>
+                                                <strong>INTERES ANTERIOR D/E</strong>
                                             </td>
                                             <td>
                                                 <span t-field="o.interest_day_rest"></span>

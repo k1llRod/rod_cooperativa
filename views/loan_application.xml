@@ -108,7 +108,7 @@
                                 <field name="partner_status_especific" />
                                 <field name="refinance_loan_id" readonly="1"/>
                                 <field name="amount_devolution" readonly="1"/>
-                                <field name="interest_day_rest" readonly="1"/>
+                                <field name="interest_day_rest"/>
                                 <field name="category_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
                                 <field name="code_contact"/>
                                 <field name="ci_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
@@ -207,12 +207,12 @@
                                         <field name="period" />
                                         <field name="capital_initial" />
                                         <field name="capital_index_initial" />
-                                        <field name="interest_base" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}"/>
+                                        <field name="interest_base" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" sum="Total"/>
                                         <field name="res_social" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}"/>
                                         <field name="interest_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}"/>
                                         <field name="interest_base_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}"/>
                                         <field name="balance_capital"/>
-                                        <field name="interest_month_surpluy"/>
+                                        <field name="interest_month_surpluy" sum="Total"/>
                                         <field name="percentage_amount_min_def"/>
                                         <field name="commission_min_def"/>
                                         <field name="amount_total"/>

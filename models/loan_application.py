@@ -84,7 +84,7 @@ class LoanApplication(models.Model):
     amount_devolution = fields.Float(string='Monto de entregar')
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_balance_capital', store=True)
     balance_total_interest_month = fields.Float(string='Saldo total interes mensual',
-                                                compute='_compute_balance_capital', store=True)
+                                                compute='_compute_balance_capital', digits=(6, 2),store=True)
     balance_total_interest_month_auxiliar = fields.Float(string='Saldo total interes mensual auxiliar')
     balance_capital_auxiliar = fields.Float(string='Saldo capital auxiliar')
     # amount_min_def = fields.Float(string='Min. Defensa %', currency_field='company_currency_id',compute='_compute_min_def')
