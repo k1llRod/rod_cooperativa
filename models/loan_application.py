@@ -91,6 +91,8 @@ class LoanApplication(models.Model):
     pending_payment = fields.Integer(string='Pendiente de pago', compute='_compute_pending_payment')
     alert_pending_payment = fields.Boolean(string='Alerta de pago', compute='_compute_pending_payment')
     pay_slip_balance = fields.Float(string='Saldo boleta de pago')
+    missing_payments = fields.Integer(string='Pagos pendientes', compute='_compute_missing_payments')
+    total_payments_confirm = fields.Integer(string='Total pagos confirmados', compute='_compute_missing_payments')
 
     @api.depends('loan_payment_ids')
     def _compute_pending_payment(self):
@@ -376,6 +378,10 @@ class LoanApplication(models.Model):
             rec.loan_payment_ids.unlink()
             rec.state = 'init'
 
+    def return_proccess(self):
+        for rec in self:
+            rec.state = 'progress'
+
     def import_loan(self):
         return {
             'name': 'Conciliar pagos de prestamos',
@@ -393,3 +399,15 @@ class LoanApplication(models.Model):
 
     def massive_verification_pass(self):
         self.state = 'verificate'
+
+    @api.depends('loan_payment_ids')
+    def _compute_missing_payments(self):
+        for rec in self:
+            rec.missing_payments = len(rec.loan_payment_ids.filtered(lambda x: x.state == 'draft'))
+            date_init = rec.loan_payment_ids.filtered(lambda x:x.name == 'Cuota 1').date
+            date_end = datetime.now().date()
+            count_payment_confirm = len(rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense'))
+            count_payment = len(rec.loan_payment_ids.filtered(lambda x: x.date <= date_end))
+            # rec.missing_payments = (date_end.year - date_init.year) * 12 + date_end.month - date_init.month
+            rec.missing_payments = count_payment - count_payment_confirm
+            rec.total_payments_confirm = count_payment

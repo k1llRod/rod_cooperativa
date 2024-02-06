@@ -30,6 +30,7 @@
                     <field name="guarantor_two" optional="show"/>
                     <field name="code_loan" optional="hidden"/>
                     <field name="amount_loan" widget="monetary"/>
+                    <field name="missing_payments"/>
                     <field name="state" decoration-info="state == 'draft'" decoration-success="state == 'progress'" widget="badge"/>
                 </tree>
             </field>
@@ -49,9 +50,11 @@
 <!--                        <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>-->
                         <button name="return_draft" string="Borrador" type="object" attrs="{'invisible': [('state','!=','progress')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <button name="reset_payroll" string="Reset" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
+                        <button name="return_proccess" string="Return progress" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
+
                         <div class="oe_button_box" name="button_box">
                             <button name="button_value_dolar" class="oe_stat_button" type="object" icon="fa-usd">
                                 <div class="o_field_widget o_stat_info">
@@ -80,7 +83,16 @@
 <!--                        <widget name="web_ribbon" title="In Payment" attrs="{'invisible': ['|', ('payment_state', '!=', 'in_payment'), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))]}"/>-->
 <!--                        <widget name="web_ribbon" title="Partial" attrs="{'invisible': ['|', ('payment_state', '!=', 'partial'), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))]}"/>-->
 <!--                        <widget name="web_ribbon" title="Reversed" bg_color="bg-danger" attrs="{'invisible': [('payment_state', '!=', 'reversed')]}"/>-->
-
+                        <div class="alert alert-warning text-center o_form_header" role="alert"
+                             >
+                            <a class="close" data-dismiss="alert" href="#">x</a>
+                            <div>
+                                <strong>Planilla de pagos de prestamos</strong>
+                            </div>
+                            <div attrs="{'invisible': [('missing_payments','&lt;','0')]}">Pagos pendientes
+                                <field name="missing_payments" required="0" readonly="1"/>
+                            </div>
+                        </div>
                         <div class="oe_title">
                             <h1>
                                 <field name="name" string="Nombre" readonly="1"/>
@@ -176,16 +188,19 @@
                                 <field name="balance_capital_auxiliar" />
                                 <field name="balance_total_interest_month" />
                                 <field name="balance_total_interest_month_auxiliar"/>
-
                             </group>
                             <group string="Monto maximo de prestamo">
                                 <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                            </group>
+                            <group string="Informe faltantes">
+                                <field name="total_payments_confirm"/>
+                                <field name="missing_payments"/>
                             </group>
                         </group>
                          <notebook>
                             <page string="Pagos">
                                 <field name="loan_payment_ids" >
-                                    <tree editable="bottom">
+                                    <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense')">
                                         <field name="name"/>
                                         <field name="date" />
                                         <field name="period" />
