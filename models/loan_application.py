@@ -197,6 +197,8 @@ class LoanApplication(models.Model):
 
     value_partner_total_contribution = fields.Float(string='Total aportes', compute='compute_total_contribution')
 
+    interest_day_rest = fields.Float(string='Interes dias restantes', digits=(6, 2))
+
     def compute_total_contribution(self):
         value = self.env['partner.payroll'].search([('partner_id', '=', self.partner_id.id)])
         self.value_partner_total_contribution = round(value.contribution_total, 2)

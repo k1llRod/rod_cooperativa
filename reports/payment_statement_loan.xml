@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <template id="report_loan_application">
+        <template id="report_payment_statement_loan">
             <t t-call="web.html_container">
                 <t t-if="o and 'company_id' in o">
                     <t t-set="company" t-value="o.company_id"></t>
@@ -44,7 +44,7 @@
                     <div>
                         <br/>
                         <h3>
-                            <center>PLAN DE PAGOS</center>
+                            <center>EXTRACTO DE PRESTAMO</center>
                         </h3>
                     </div>
                 </div>
@@ -122,12 +122,28 @@
                                         <td>
                                             <span t-esc="o.partner_id.mobile"></span>
                                         </td>
-<!--                                        <td>-->
-<!--                                            <strong>SALDO CAPITAL</strong>-->
-<!--                                        </td>-->
-<!--                                        <td>-->
-<!--                                            <span t-field="o.balance_capital"></span>-->
-<!--                                        </td>-->
+                                        <td>
+                                            <strong>SALDO CAPITAL</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.balance_capital"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong></strong>
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                        <t t-if="o.interest_day_rest &gt; 0">
+                                            <td>
+                                                <strong>INTERES D/E</strong>
+                                            </td>
+                                            <td>
+                                                <span t-field="o.interest_day_rest"></span>
+                                            </td>
+                                        </t>
                                     </tr>
 
                                 </table>
@@ -157,12 +173,13 @@
                                             <th style=" width:40px;" class="align-middle">D/E</th>
                                             <th style=" width:40px;" class="align-middle">%MINDEF</th>
                                             <th style=" width:40px;" class="align-middle">D/MINDEF $</th>
+                                            <th style=" width:40px;" class="align-middle">T. PAGO</th>
                                         </tr>
                                     </thead>
                                     <tbody style="font-size:12px;">
                                         <tr t-set="acumulador" t-value="0"/>
                                         <t t-set="line_number" t-value="0"/>
-                                        <t t-foreach="o.loan_payment_ids" t-as="p">
+                                        <t t-foreach="o.loan_payment_ids.filtered(lambda x:x.state == 'transfer' or x.state == 'ministry_defense')" t-as="p">
                                             <style>
                                                 .table th, .table td {
                                                     padding: 0px;
@@ -219,6 +236,9 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <t t-esc="p.amount_total"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="p.state"/>
                                                 </td>
                                             </tr>
 

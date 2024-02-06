@@ -40,6 +40,7 @@
         'views/res_partner.xml',
         'reports/report.xml',
         'reports/loan_application_pdf.xml',
+        'reports/payment_statement_loan.xml',
     ],
 
 }

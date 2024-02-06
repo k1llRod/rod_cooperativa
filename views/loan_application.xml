@@ -108,6 +108,7 @@
                                 <field name="partner_status_especific" />
                                 <field name="refinance_loan_id" readonly="1"/>
                                 <field name="amount_devolution" readonly="1"/>
+                                <field name="interest_day_rest" readonly="1"/>
                                 <field name="category_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
                                 <field name="code_contact"/>
                                 <field name="ci_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>

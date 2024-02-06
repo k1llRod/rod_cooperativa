@@ -11,4 +11,15 @@
         <field name="binding_type">report</field>
     </record>
 
+    <record id="action_report_payment_statement_loan" model="ir.actions.report">
+        <field name="name">Extracto de prestamo</field>
+        <field name="model">loan.application</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">rod_cooperativa.report_payment_statement_loan</field>
+        <field name="report_file">rod_cooperativa.report.report_payment_statement_loan</field>
+        <field name="binding_model_id" ref="model_loan_application"/>
+<!--        <field name="paperformat_id" ref="rod_cooperativa_aportes.paperformat_certificate" />-->
+        <field name="binding_type">report</field>
+    </record>
+
 </odoo>

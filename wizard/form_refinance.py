@@ -48,6 +48,7 @@ class FormRefinance(models.TransientModel):
             'date_application': self.date_refinance,
             'refinance_loan_id': self.data_loan_id.id,
             'amount_devolution': self.amount_delivered,
+            'interest_day_rest': self.interest_days_rest,
             'total_interest_month_surpluy': self.interest_days_rest,
             'state': 'init',
         })
