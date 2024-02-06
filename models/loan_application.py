@@ -153,7 +153,7 @@ class LoanApplication(models.Model):
     def _default_contingency_fund(self):
         return float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund'))
 
-    @api.onchange('months_quantity')
+    @api.onchange('months_quantity','with_guarantor')
     def _compute_index_loan_fixed_fee(self):
         try:
             if self.with_guarantor == 'loan_guarantor' or self.with_guarantor == 'no_loan_guarantor':
