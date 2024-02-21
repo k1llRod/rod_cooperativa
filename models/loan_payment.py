@@ -38,7 +38,9 @@ class LoanPayment(models.Model):
     amount_total_bs = fields.Float(string='D/MINDEF Bs', compute='_change_amount_total_bs', digits=(16, 2),store=True)
     amount_returned_coa = fields.Float(string='Monto devuelto COA',digits=(16, 2), store=True)
     state = fields.Selection(
-        [('draft', 'Borrador'), ('transfer', 'Transferencia bancaria'), ('ministry_defense', 'Ministerio de defensa')],
+        [('draft', 'Borrador'), ('transfer', 'Transferencia bancaria'),
+         ('ministry_defense', 'Ministerio de defensa'), ('debt_settlement_mindef', 'Liquidacion de deuda MINDEF'),
+         ('debt_settlement_deposit', 'Liquidacion de deuda por deposito')], string='Estado',
         default='draft', tracking=True)
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
     currency_id = fields.Many2one('res.currency', string='Moneda', related='loan_application_ids.currency_id')
@@ -124,6 +126,16 @@ class LoanPayment(models.Model):
     def draft_massive(self):
         for record in self:
             record.write({'state': 'draft'})
+
+    def debt_settlement_min_def(self):
+        for record in self:
+            if record.state == 'draft':
+                record.write({'state': 'debt_settlement_mindef'})
+
+    def debt_settlement_deposit(self):
+        for record in self:
+            if record.state == 'draft':
+                record.write({'state': 'debt_settlement_deposit'})
 
 
 

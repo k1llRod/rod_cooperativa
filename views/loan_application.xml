@@ -201,7 +201,7 @@
                          <notebook>
                             <page string="Pagos">
                                 <field name="loan_payment_ids" >
-                                    <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense')">
+                                    <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense', 'debt_settlement_mindef', 'debt_settlement_deposit')">
                                         <field name="name"/>
                                         <field name="date" />
                                         <field name="period" />
