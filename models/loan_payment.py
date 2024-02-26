@@ -30,7 +30,7 @@ class LoanPayment(models.Model):
     res_social = fields.Float(string='F.C. 0.04%', compute='_compute_interest', digits=(16, 2),store=True)
     res_mortgage = fields.Float(string='P.H. 0.04%', compute='_compute_interest', digits=(16, 2),store=True)
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_interest', digits=(16, 2),store=True)
-    percentage_amount_min_def = fields.Float(string='%MINDEF', compute='_compute_interest', digits=(16, 2), store=True)
+    percentage_amount_min_def = fields.Float(string='%MINDEF',  digits=(16, 2), store=True)
     commission_min_def = fields.Float(string='0.25% MINDEF', digits=(16, 2), store=True)
     coa_commission = fields.Float(string='Comision COA')
     interest_month_surpluy = fields.Float(string='D/E',  digits=(16, 2), store=True)
