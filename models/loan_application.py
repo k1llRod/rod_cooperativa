@@ -18,6 +18,7 @@ class LoanApplication(models.Model):
     state = fields.Selection([
         ('init', 'Inicio'),
         ('verificate', 'Verificación'),
+        ('approval', 'Aprobar'),
         ('progress', 'En Proceso'),
         ('done', 'Concluido'),
         ('refinanced', 'Refinanciado'),
@@ -217,6 +218,7 @@ class LoanApplication(models.Model):
             # if rec.ci_fothocopy == False: raise ValidationError('Falta fotocopia de CI')
             # if rec.photocopy_military_ci == False: raise ValidationError('Falta fotocopia de carnet militar')
             # rec.date_approval = fields.Date.today()
+            if rec.date_approval <= rec.date_application: raise ValidationError('La FECHA DE APROBACION no puede ser anterior a la FECHA DE SOLICITUD')
             for i in range(1, rec.months_quantity + 1):
                 commission_min_def = float(
                     self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.commission_min_def'))
@@ -233,9 +235,11 @@ class LoanApplication(models.Model):
                         else:
                             raise ValidationError('La solicitud de prestamo esta fuera de rango')
                     else:
+                        date_pivot = date_payment
                         date_payment = date_payment.replace(day=1)
                         date_payment = date_payment.replace(
-                            month=date_payment.month + 1 if date_payment.month < 12 else 1)
+                            month=date_payment.month + 1 if date_pivot.month < 12 else 1)
+                        date_payment = date_payment.replace(year=date_payment.year + 1 if date_pivot.month == 12 else date_payment.year)
                 else:
                     capital_init = rec.loan_payment_ids[i - 2].balance_capital
                     date_payment = rec.loan_payment_ids[i - 2].date
@@ -257,7 +261,16 @@ class LoanApplication(models.Model):
             self.progress()
 
     def verification_pass(self):
-        self.state = 'verificate'
+        for rec in self:
+            if rec.with_guarantor == False:
+                raise ValidationError('Falta asignar tipo de prestamo regular')
+            if not rec.months_quantity > 0:
+                raise ValidationError('La cantidad de meses no puede ser menor o igual a 0')
+            if not rec.amount_loan_dollars > 0:
+                raise ValidationError('El monto del prestamo no puede ser menor o igual a 0')
+
+            rec.state = 'verificate'
+
 
     def progress(self):
         self.state = 'progress'
@@ -372,19 +385,19 @@ class LoanApplication(models.Model):
                 raise ValidationError('No puede seleccionar el mismo garante')
         if self.guarantor_one == self.partner_id:
             raise ValidationError('No puede seleccionar el mismo socio como garante')
-        # if self.guarantor_one.guarantor_count == 3:
-        #     raise ValidationError('El garante ya tiene 3 prestamos')
-        # if self.guarantor_two.guarantor_count == 3:
-        #     raise ValidationError('El garante ya tiene 3 prestamos')
+        if self.guarantor_one.guarantor_count == 3:
+            raise ValidationError('El garante ya tiene 3 prestamos')
+        if self.guarantor_two.guarantor_count == 3:
+            raise ValidationError('El garante ya tiene 3 prestamos')
 
     def reset_payroll(self):
         for rec in self:
             rec.loan_payment_ids.unlink()
             rec.state = 'init'
 
-    def return_proccess(self):
+    def return_approval(self):
         for rec in self:
-            rec.state = 'progress'
+            rec.state = 'approval'
 
     def import_loan(self):
         return {
@@ -415,3 +428,16 @@ class LoanApplication(models.Model):
             # rec.missing_payments = (date_end.year - date_init.year) * 12 + date_end.month - date_init.month
             rec.missing_payments = count_payment - count_payment_confirm
             rec.total_payments_confirm = count_payment
+
+    def action_wizard_report_xlsx(self):
+        return {
+            'name': 'Generar reportes Excel',
+            'type': 'ir.actions.act_window',
+            'res_model': 'report.form.xlsx',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new',
+        }
+
+    def approval_state(self):
+        self.state = 'approval'

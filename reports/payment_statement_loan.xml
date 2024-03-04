@@ -149,6 +149,20 @@
                                         <td>
 
                                         </td>
+                                        <td>
+                                            <strong>TOTAL SALDO</strong>
+                                        </td>
+                                        <td>
+                                            <span t-esc="round(o.balance_capital + o.balance_total_interest_month,2)"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong></strong>
+                                        </td>
+                                        <td>
+
+                                        </td>
                                         <t t-if="o.interest_day_rest &gt; 0">
                                             <td>
                                                 <strong>INTERES ANTERIOR D/E</strong>
@@ -184,7 +198,7 @@
                                             </t>
                                             <th style=" width:40px;" class="align-middle">SALDO CAPITAL</th>
                                             <th style=" width:40px;" class="align-middle">D/E</th>
-                                            <th style=" width:40px;" class="align-middle">%MINDEF</th>
+                                            <th style=" width:40px;" class="align-middle">%COM</th>
                                             <th style=" width:40px;" class="align-middle">D/MINDEF $</th>
                                             <th style=" width:40px;" class="align-middle">T. PAGO</th>
                                         </tr>

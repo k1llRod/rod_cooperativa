@@ -24,3 +24,5 @@ access_operator_homolagate_form_loan,homolagate.form.loan,model_homolagate_form_
 
 access_administrator_reconcile_loan,reconcile.loan,model_reconcile_loan,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
 access_operator_reconcile_loan,reconcile.loan,model_reconcile_loan,rod_cooperativa.group_rod_cooperativa_operator,1,1,0,0
+
+access_administrator_report_form_xlsx,report.form.xlsx,model_report_form_xlsx,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1

@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'contacts','mail'],
+    'depends': ['base', 'contacts','mail','report_xlsx'],
 
     # always loaded
     'data': [
@@ -37,6 +37,7 @@
         'wizard/form_refinance.xml',
         'wizard/homologate_form_loan.xml',
         'wizard/reconcile_loan.xml',
+        'wizard/form_report_xlsx.xml',
         'views/res_partner.xml',
         'reports/report.xml',
         'reports/loan_application_pdf.xml',

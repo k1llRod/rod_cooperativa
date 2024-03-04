@@ -1,0 +1,23 @@
+<odoo>
+    <data>
+        <!-- Vista del wizard -->
+        <record id="report_form_xlsx_form_id" model="ir.ui.view">
+            <field name="name">report.form.xlsx.form</field>
+            <field name="model">report.form.xlsx</field>
+            <field name="arch" type="xml">
+                <form string="Your Wizard">
+                    <group>
+                        <field name="name" invisible="1"/>
+                        <field name="date_start" />
+<!--                        <field name="date_end" />-->
+                        <field name="period" />
+                    </group>
+                    <footer>
+                        <button name="print_report" string="Imprimir reporte EXCEL" type="object" class="oe_highlight"/>
+<!--                        <button string="Cancel" class="oe_link" special="cancel"/>-->
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -44,14 +44,15 @@
             <field name="arch" type="xml">
                 <form string="Solicitud de presupuesto" class="oe_left oe_edit_only oe_form_required">
                     <header>
-                        <button name="verification_pass" string="Verificación" type="object" attrs="{'invisible':[('state','!=','init')]}" groups="rod_cooperativa.group_rod_cooperativa_operator"/>
-                        <button name="approve_loan" string="Aprobar prestamo" type="object" attrs="{'invisible': [('state','!=','verificate')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
+                        <button name="verification_pass" string="Verificación" class="oe_highlight" type="object" attrs="{'invisible':[('state','!=','init')]}" groups="rod_cooperativa.group_rod_cooperativa_operator"/>
+                        <button name="approval_state" string="Aprobar prestamo" class="oe_highlight" type="object" attrs="{'invisible': [('state','!=','verificate')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <button name="refinance" string="Refinanciar" type="object" attrs="{'invisible': [('state','!=','progress')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
-<!--                        <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>-->
+                        <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>
                         <button name="return_draft" string="Borrador" type="object" attrs="{'invisible': [('state','!=','progress')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <button name="reset_payroll" string="Reset" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
-                        <button name="return_proccess" string="Return progress" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
-                        <field name="state" widget="statusbar"/>
+                        <button name="return_approval" string="Retornar aprobacion" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
+                        <button name="approve_loan" string="Validar" type="object" class="oe_highlight" attrs="{'invisible': [('state','!=','approval')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
+                        <field name="state" widget="statusbar" statusbar_visible="init,verificate,approval,progress,done"/>
                     </header>
                     <sheet>
 
@@ -106,9 +107,9 @@
                                                                     'invisible': [('type_loan','=','emergency')]}"/>
                                 <field name="partner_id" readonly="1"/>
                                 <field name="partner_status_especific" />
-                                <field name="refinance_loan_id" readonly="1"/>
-                                <field name="amount_devolution" readonly="1"/>
-                                <field name="interest_day_rest"/>
+                                <field name="refinance_loan_id" readonly="1" attrs="{'invisible': [('state','!=','refinanced')]}"/>
+                                <field name="amount_devolution" readonly="1" attrs="{'invisible': [('state','!=','refinanced')]}"/>
+                                <field name="interest_day_rest" attrs="{'invisible': [('state','!=','refinanced')]}"/>
                                 <field name="category_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
                                 <field name="code_contact"/>
                                 <field name="ci_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
@@ -145,10 +146,7 @@
                                        attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')]}"/>
                                 <field name="guarantor_two" domain="[('id','!=',partner_id),('guarantor','=',True)]"
                                        attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')],
-                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')],
-                                                                                                                'required': [('with_guarantor','=','loan_guarantor')]}"/>
-                                <field name="code_garantor_two"
-                                       attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')]}"/>
+                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}" />
                                 <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="months_quantity"
@@ -163,7 +161,7 @@
                                        attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <!--                                <field name="date_approval" attrs="{'readonly': [('state','!=','init')],-->
                                 <!--                                                                    'invisible': [('state','=','init')]}"/>-->
-                                <field name="date_approval"/>
+                                <field name="date_approval" attrs="{'required': [('state','=','approval')]}"/>
                                 <field name="monthly_interest" readonly="1" attrs="{'invisible':[('with_guarantor','=','mortgage')]}"/>
                                 <field name="monthly_interest_mortgage" readonly="1" attrs="{'invisible':[('with_guarantor','!=','mortgage')]}"/>
                                 <field name="contingency_fund" readonly="1" attrs="{'invisible':[('with_guarantor','=','mortgage')]}"/>
@@ -198,7 +196,7 @@
                                 <field name="missing_payments"/>
                             </group>
                         </group>
-                         <notebook>
+                        <notebook>
                             <page string="Pagos">
                                 <field name="loan_payment_ids" >
                                     <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense', 'debt_settlement_mindef', 'debt_settlement_deposit')">
@@ -207,6 +205,7 @@
                                         <field name="period" />
                                         <field name="capital_initial" />
                                         <field name="capital_index_initial" />
+                                        <field name="mount"/>
                                         <field name="interest_base" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" sum="Total"/>
                                         <field name="res_social" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}"/>
                                         <field name="interest_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}"/>
@@ -244,27 +243,27 @@
             <field name="arch" type="xml">
                 <search string="Buscar asociados">
                     <field name="code_contact"/>
-<!--                    <field name="vat" string="C.I."/>-->
+                    <!--                    <field name="vat" string="C.I."/>-->
                     <field name="partner_id"/>
-<!--                    <filter name="quantity_capital_initial"-->
-<!--                            string="Capital inicial"-->
-<!--                            domain="[('capital_initial', '!=', 0)]"/>-->
+                    <!--                    <filter name="quantity_capital_initial"-->
+                    <!--                            string="Capital inicial"-->
+                    <!--                            domain="[('capital_initial', '!=', 0)]"/>-->
                     <separator />
-<!--                    <filter name="partner_active_service"-->
-<!--                            string="Asociados servicio activo"-->
-<!--                            domain="[('partner_status_especific', '=', 'active_service')]"/>-->
-<!--                    <filter name="partner_passive_reserve_a"-->
-<!--                            string="Asociados Pasivo categoria 'A'"-->
-<!--                            domain="[('partner_status_especific','=','passive_reserve_a')]"/>-->
-<!--                    <filter name="partner_passive_reserve_b"-->
-<!--                            string="Asociados Pasivo categoria 'B'"-->
-<!--                            domain="[('partner_status_especific','=','passive_reserve_b')]"/>-->
-<!--                    <group expand="0" string="Group By">-->
-<!--                        <filter string="Tipo de asociado"-->
-<!--                                name="group_partner_status"-->
-<!--                                context="{'group_by': 'partner_status_especific'}"/>-->
+                    <!--                    <filter name="partner_active_service"-->
+                    <!--                            string="Asociados servicio activo"-->
+                    <!--                            domain="[('partner_status_especific', '=', 'active_service')]"/>-->
+                    <!--                    <filter name="partner_passive_reserve_a"-->
+                    <!--                            string="Asociados Pasivo categoria 'A'"-->
+                    <!--                            domain="[('partner_status_especific','=','passive_reserve_a')]"/>-->
+                    <!--                    <filter name="partner_passive_reserve_b"-->
+                    <!--                            string="Asociados Pasivo categoria 'B'"-->
+                    <!--                            domain="[('partner_status_especific','=','passive_reserve_b')]"/>-->
+                    <!--                    <group expand="0" string="Group By">-->
+                    <!--                        <filter string="Tipo de asociado"-->
+                    <!--                                name="group_partner_status"-->
+                    <!--                                context="{'group_by': 'partner_status_especific'}"/>-->
 
-<!--                    </group>-->
+                    <!--                    </group>-->
                 </search>
             </field>
         </record>
@@ -283,6 +282,13 @@
             <field name="state">code</field>
             <field name="code">action = records.massive_verification_pass()</field>
         </record>
+        <record id="action_generate_report_xlsx" model="ir.actions.server">
+            <field name="name">Generar reporte Excel</field>
+            <field name="model_id" ref="model_loan_application"/>
+            <field name="binding_model_id" ref="model_loan_application"/>
+            <field name="state">code</field>
+            <field name="code">action = records.action_wizard_report_xlsx()</field>
+        </record>
 
         <!-- Accion para visualizar loan.application -->
 
@@ -294,3 +300,6 @@
 
     </data>
 </odoo>
+<!--        'required': [('with_guarantor','=','loan_guarantor')]}"/>-->
+<!--<field name="code_garantor_two"-->
+<!--        attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')]}"/>-->

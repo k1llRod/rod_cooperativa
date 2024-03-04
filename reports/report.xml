@@ -22,4 +22,13 @@
         <field name="binding_type">report</field>
     </record>
 
+    <record id="action_report_loan_application_xls" model="ir.actions.report">
+        <field name="name">Reporte prestamos Excel</field>
+        <field name="model">report.form.xlsx</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">rod_cooperativa.report_loan_application_xls</field>
+        <field name="report_file">rod_cooperativa.report_loan_application_xls</field>
+        <field name="binding_type">report</field>
+    </record>
+
 </odoo>
