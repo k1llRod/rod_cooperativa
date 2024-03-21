@@ -55,7 +55,6 @@
                         <field name="state" widget="statusbar" statusbar_visible="init,verificate,approval,progress,done"/>
                     </header>
                     <sheet>
-
                         <div class="oe_button_box" name="button_box">
                             <button name="button_value_dolar" class="oe_stat_button" type="object" icon="fa-usd">
                                 <div class="o_field_widget o_stat_info">

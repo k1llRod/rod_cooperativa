@@ -128,7 +128,8 @@
                 <xpath expr="//tree" position="replace">
                     <tree string="Partners">
                         <header>
-                            <button name="update_destination" type="object" string="Actualizar destino" class="oe_highlight"/>
+<!--                            <button name="update_destination" type="object" string="Actualizar destino" class="oe_highlight"/>-->
+                            <button name="print_report_partner_elections" type="object" string="Report partner elecciones" class="oe_highlight"/>
                         </header>
                         <field name="paternal_surname"/>
                         <field name="maternal_surname"/>

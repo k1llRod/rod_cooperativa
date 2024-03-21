@@ -40,6 +40,7 @@ class ResPartner(models.Model):
     partner_status = fields.Selection([('active', 'Activo'),
                                        ('active_reserve', 'Reserva activa'),
                                        ('passive', 'Servicio pasivo'),
+                                       ('external', 'Externo'),
                                        ('leave', 'Baja')], string="Situacion general",
                                       compute='_onchange_partner_status', store=True)
 
@@ -47,7 +48,10 @@ class ResPartner(models.Model):
                                                  ('guest','Invitado'),
                                                  ('passive_reserve_a', 'Pasivo categoria "A"'),
                                                  ('passive_reserve_b', 'Pasivo categoria "B"'),
-                                                 ('leave', 'Baja')], string='Tipo de asociado', store=True)
+                                                 ('emergency_military','Prestamo emergencia militar'),
+                                                 ('emergency_civil','Prestamo emergencia civil'),
+                                                 ('leave', 'Baja')
+                                                 ], string='Tipo de asociado', store=True)
 
     year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
 
@@ -169,6 +173,8 @@ class ResPartner(models.Model):
                 record.partner_status = 'leave'
             if record.partner_status_especific == False:
                 record.partner_status = False
+            if record.partner_status_especific == 'emergency_civil' or record.partner_status_especific == 'emergency_military':
+                record.partner_status = 'external'
 
     def _init_partners(self):
         view_id = self.env.ref('rod_cooperativa.res_partner_tree_inh').id
