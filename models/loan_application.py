@@ -218,7 +218,7 @@ class LoanApplication(models.Model):
             # if rec.ci_fothocopy == False: raise ValidationError('Falta fotocopia de CI')
             # if rec.photocopy_military_ci == False: raise ValidationError('Falta fotocopia de carnet militar')
             # rec.date_approval = fields.Date.today()
-            if rec.date_approval <= rec.date_application: raise ValidationError('La FECHA DE APROBACION no puede ser anterior a la FECHA DE SOLICITUD')
+            if rec.date_approval < rec.date_application: raise ValidationError('La FECHA DE APROBACION no puede ser anterior a la FECHA DE SOLICITUD')
             for i in range(1, rec.months_quantity + 1):
                 commission_min_def = float(
                     self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.commission_min_def'))
