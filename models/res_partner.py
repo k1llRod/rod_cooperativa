@@ -72,7 +72,7 @@ class ResPartner(models.Model):
                                            ('comando_jefe', 'Comando en jefe'),
                                            ('ministerio_defensa', 'Ministerio de defensa')], string='Fuerza / org', default='ejercito')
 
-
+    glosa = fields.Text(string='Glosa')
     @api.depends('graduation_year')
     def _compute_year_service(self):
         for partner in self:

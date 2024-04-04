@@ -53,6 +53,7 @@
                         <field name="phone" string="Telefono"/>
                         <field name="mobile" string="Celular"/>
                         <field name="email"/>
+                        <field name="glosa"/>
 
                     </group>
                     <group>
@@ -65,6 +66,7 @@
                             <field name="photocopy_military_ci"/>
                             <field name="photocopy_cossmil_ci"/>
                             <field name="affliation"/>
+
 <!--                            <field name="linkrage_request"/>-->
                         </group>
                     </group>
