@@ -1,0 +1,34 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="form_deceased_id">
+            <field name="name">form.deseaced.form</field>
+            <field name="model">form.deseaced</field>
+            <field name="arch" type="xml">
+                <form string="Baja del asociado">
+                    <group>
+                        <group string="Datos para baja">
+                            <field name="name" />
+                            <field name="partner_id"/>
+                            <field name="description" />
+                            <field name="date_deceased" />
+                            <field name="type_unsuscribe" />
+                        </group>
+                    </group>
+                    <footer>
+<!--                        <button name="init_refinance" string="Confirmar" type="object" class="oe_highlight"/>-->
+<!--                        <button string="Cancel" class="oe_link" special="cancel"/>-->
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+<!--        <record model="ir.actions.act_window" id="alert_message_action">-->
+<!--            <field name="name">Alert message</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">alert.message</field>-->
+<!--            <field name="view_mode">form</field>-->
+<!--            <field name="view_id" ref="alert_message_form_view" />-->
+<!--            <field name="target">new</field>-->
+<!--        </record>-->
+    </data>
+</odoo>

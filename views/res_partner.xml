@@ -54,6 +54,7 @@
                         <field name="mobile" string="Celular"/>
                         <field name="email"/>
                         <field name="glosa"/>
+                        <field name="date_deceased"/>
 
                     </group>
                     <group>
@@ -94,11 +95,19 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//sheet/notebook/page[1]" autofocus="autofocus" position="before">
-                    <page string="Familiares" name="family_ids">
-                        <field name="family_id"/>
+                    <page string="Familiares" >
+                        <field name="family_id">
+                            <tree string="Familiar">
+                                <field name="name"/>
+                                <field name="beneficiary"/>
+                                <field name="kinship"/>
+                                <field name="date_of_birth"/>
+                                <field name="age"/>
+                                <field name="nro_celular"/>
+                            </tree>
+                        </field>
                     </page>
                 </xpath>
-
                 <xpath expr="//sheet/notebook/page[2]" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>

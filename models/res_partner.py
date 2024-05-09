@@ -73,6 +73,7 @@ class ResPartner(models.Model):
                                            ('ministerio_defensa', 'Ministerio de defensa')], string='Fuerza / org', default='ejercito')
 
     glosa = fields.Text(string='Glosa')
+    date_deceased = fields.Date(string='Fecha de fallecimiento')
     @api.depends('graduation_year')
     def _compute_year_service(self):
         for partner in self:
@@ -160,7 +161,10 @@ class ResPartner(models.Model):
     #     for record in self:
     #         record.family_id = [(0, 0, {'partner_id': record.id})]
     family_id = fields.One2many('family', 'partner_id', string='Familiares')
-
+    base_amount = fields.Float(string='Monto de beneficio post mortem')
+    base_longevity = fields.Float(string='Longevidad')
+    global_amount = fields.Float(string='Monto global', compute='_calculate_global_amount', store=True)
+    post_mortem_ids = fields.One2many('post.mortem', 'partner_id', string='Post mortem')
     # @api.onchange('partner_status_especific')
     @api.depends('partner_status_especific')
     def _onchange_partner_status(self):
@@ -224,3 +228,7 @@ class ResPartner(models.Model):
     #         'view_mode': 'form',
     #         'target': 'current',
     #     }
+    @api.depends('base_amount', 'base_longevity')
+    def _calculate_global_amount(self):
+        for record in self:
+            record.global_amount = record.base_amount + record.base_longevity

@@ -26,3 +26,9 @@ access_administrator_reconcile_loan,reconcile.loan,model_reconcile_loan,rod_coop
 access_operator_reconcile_loan,reconcile.loan,model_reconcile_loan,rod_cooperativa.group_rod_cooperativa_operator,1,1,0,0
 
 access_administrator_report_form_xlsx,report.form.xlsx,model_report_form_xlsx,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+
+access_form_deceased,form.deseaced,model_form_deseaced,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+
+access_form_payment_post_mortem,payment.post.mortem,model_payment_post_mortem,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+
+access_post_mortem,post.mortem,model_post_mortem,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1

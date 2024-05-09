@@ -7,9 +7,19 @@
             <field name="model">family</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="name" />
+                    <field name="category_partner_id"/>
+                    <field name="partner_name" string="Beneficiario/a"/>
+                    <field name="graduation_year"/>
+                    <field name="type_discount_post_mortem"/>
+                    <field name="since"/>
+                    <field name="until"/>
+                    <field name="payment_date"/>
+                    <field name="global_amount"/>
+
+                    <field name="name" string="Beneficiario/a"/>
                     <field name="kinship"/>
                     <field name="date_of_birth"/>
+                    <field name="age"/>
                     <field name="nro_celular" />
                     <field name="partner_id" readonly="1"/>
                 </tree>
@@ -25,16 +35,48 @@
                 <form string="Nuevo familiar" class="oe_left oe_edit_only oe_form_required">
                     <sheet>
                         <group>
-                            <group>
+                            <group string="Datos personales">
                                 <field name="partner_id" readonly="1" invisible="1"/>
+                                <field name="partner_name"/>
+                                <field name="category_partner_id"/>
                                 <field name="name" />
                                 <field name="kinship"/>
                                 <field name="date_of_birth"/>
+                                <field name="age"/>
                                 <field name="nro_celular" />
                             </group>
+                            <group string="Beneficiario POST MORTEM">
+                                <field name="beneficiary"/>
+                                <field name="type_discount_post_mortem"/>
+                                <field name="since"/>
+                                <field name="until"/>
+                                <field name="payment_date" string="Fecha de pago POST MORTEM"/>
+                                <field name="return_amount"/>
+                                <field name="return_amount_beneficiary"/>
+                                <field name="return_logevity_amount"/>
+                                <field name="total_amount"/>
+                            </group>
                         </group>
+                        <notebook>
+                            <page string="Post Mortem">
+                                <group>
+                                    <field name="base_amount"/>
+                                    <field name="base_longevity"/>
+                                    <field name="global_amount"/>
+                                </group>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
+            </field>
+        </record>
+        <record model="ir.actions.server" id="action_server_view_widow">
+            <field name="name">Beneficiarios</field>
+            <field name="model_id" ref="rod_cooperativa.model_family"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = model.init_widow()
             </field>
         </record>
 

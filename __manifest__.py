@@ -38,6 +38,8 @@
         'wizard/homologate_form_loan.xml',
         'wizard/reconcile_loan.xml',
         'wizard/form_report_xlsx.xml',
+        'wizard/form_deceased.xml',
+        'wizard/payment_post_mortem.xml',
         'views/res_partner.xml',
         'reports/report.xml',
         'reports/loan_application_pdf.xml',

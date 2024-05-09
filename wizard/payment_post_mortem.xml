@@ -1,0 +1,23 @@
+<odoo>
+    <data>
+        <!-- Vista del wizard -->
+        <record id="payment_post_mortem_id" model="ir.ui.view">
+            <field name="name">payment.post.mortem.form</field>
+            <field name="model">payment.post.mortem</field>
+            <field name="arch" type="xml">
+                <form string="Your Wizard">
+                    <group>
+                        <field name="partner_id" />
+                        <field name="family_ids" widget="many2many_tags"/>
+                        <field name="type_payment"/>
+                        <field name="return_amount"/>
+                    </group>
+<!--                    <footer>-->
+<!--                        <button name="homolagate" string="Confirmar" type="object" class="oe_highlight"/>-->
+<!--                        <button string="Cancel" class="oe_link" special="cancel"/>-->
+<!--                    </footer>-->
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
