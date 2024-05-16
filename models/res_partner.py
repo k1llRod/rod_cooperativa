@@ -165,7 +165,18 @@ class ResPartner(models.Model):
     base_longevity = fields.Float(string='Longevidad')
     global_amount = fields.Float(string='Monto global', compute='_calculate_global_amount', store=True)
     post_mortem_ids = fields.One2many('post.mortem', 'partner_id', string='Post mortem')
+    balance_post_mortem = fields.Float(string='Saldo post mortem', compute='_compute_balance_post_mortem', store=True)
+    balance_longevity = fields.Float(string='Saldo longevidad', compute='_compute_balance_post_mortem', store=True)
+    # balance_global = fields.Float(string='Saldo global', compute='_compute_balance_post_mortem', store=True)
+
     # @api.onchange('partner_status_especific')
+    @api.depends('post_mortem_ids')
+    def _compute_balance_post_mortem(self):
+        for record in self:
+            # post_mortem = self.env['post.mortem'].search([('partner_id', '=', record.id.origin)])
+            record.balance_post_mortem = record.base_amount - sum(self.post_mortem_ids.filtered(lambda x:x.type_payment == 'post_mortem').mapped('return_amount'))
+            record.balance_longevity = record.base_longevity - sum(self.post_mortem_ids.filtered(lambda x:x.type_payment == 'longevity').mapped('return_amount'))
+            # record.balance_global = record.balance_post_mortem + record.balance_longevity
     @api.depends('partner_status_especific')
     def _onchange_partner_status(self):
         for record in self:
