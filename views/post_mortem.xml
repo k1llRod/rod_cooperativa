@@ -1,0 +1,41 @@
+<odoo>
+    <data>
+        <!-- Vista del wizard -->
+        <record id="post_mortem_form_id" model="ir.ui.view">
+            <field name="name">post.mortem.form</field>
+            <field name="model">post.mortem</field>
+            <field name="arch" type="xml">
+                <form string="Registro pago">
+                    <group>
+                        <group string="Datos de los beneficiarios">
+                            <field name="partner_id"/>
+                            <field name="family_ids" widget="many2many_tags"/>
+                            <field name="type_payment"/>
+                            <field name="return_amount"/>
+                        </group>
+                        <group string="Datos base">
+                            <field name="since"/>
+                            <field name="until"/>
+<!--                            <field name="global_amount"/>-->
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="post_mortem_tree_id">
+            <field name="name">post.mortem.tree</field>
+            <field name="model">post.mortem</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="family_ids" />
+                    <field name="partner_id"/>
+                    <field name="type_payment"/>
+                    <field name="since"/>
+                    <field name="until"/>
+                    <field name="return_amount"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</odoo>

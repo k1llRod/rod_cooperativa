@@ -34,6 +34,7 @@
         'data/sequence.xml',
         'views/nominal_relationship_mindef_loan.xml',
         'views/rod_cooperativa_menuitem.xml',
+        'views/post_mortem.xml',
         'wizard/form_refinance.xml',
         'wizard/homologate_form_loan.xml',
         'wizard/reconcile_loan.xml',

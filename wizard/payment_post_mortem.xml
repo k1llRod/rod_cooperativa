@@ -7,15 +7,23 @@
             <field name="arch" type="xml">
                 <form string="Your Wizard">
                     <group>
-                        <field name="partner_id" />
-                        <field name="family_ids" widget="many2many_tags"/>
-                        <field name="type_payment"/>
-                        <field name="return_amount"/>
+                        <group string="Datos de los beneficiarios">
+                            <field name="partner_id" readonly="1"/>
+                            <field name="family_ids" widget="many2many_tags" readonly="1"/>
+                            <field name="payment_date"/>
+                            <field name="type_payment"/>
+                            <field name="return_amount"/>
+                        </group>
+                        <group string="Datos base">
+                            <field name="base_amount" readonly="1"/>
+                            <field name="base_longevity_amount" readonly="1"/>
+                            <field name="global_amount" readonly="1"/>
+                        </group>
                     </group>
-<!--                    <footer>-->
-<!--                        <button name="homolagate" string="Confirmar" type="object" class="oe_highlight"/>-->
-<!--                        <button string="Cancel" class="oe_link" special="cancel"/>-->
-<!--                    </footer>-->
+                    <footer>
+                        <button name="register_payment" string="Confirmar" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
                 </form>
             </field>
         </record>

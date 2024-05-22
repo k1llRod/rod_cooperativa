@@ -14,5 +14,11 @@
             <field name="prefix">PRESCOA</field>
             <field name="padding">4</field>
         </record>
+        <record id="seq_post_mortem" model="ir.sequence">
+            <field name="name">Secuencia de pago post mortem</field>
+            <field name="code">post.mortem</field>
+            <field name="prefix">PSTMORT</field>
+            <field name="padding">4</field>
+        </record>
     </data>
 </odoo>

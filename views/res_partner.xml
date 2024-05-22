@@ -99,7 +99,7 @@
                         <field name="family_id">
                             <tree string="Familiar">
                                 <field name="name"/>
-                                <field name="beneficiary"/>
+                                <field name="beneficiary" widget="many2many_tags"/>
                                 <field name="kinship"/>
                                 <field name="date_of_birth"/>
                                 <field name="age"/>
