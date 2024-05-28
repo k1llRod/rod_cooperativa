@@ -386,9 +386,17 @@ class LoanApplication(models.Model):
         if self.guarantor_one == self.partner_id:
             raise ValidationError('No puede seleccionar el mismo socio como garante')
         if self.guarantor_one.guarantor_count == 3:
-            raise ValidationError('El garante ya tiene 3 prestamos')
+            raise ValidationError('El garante,' + self.guarantor_one.name + ', ya tiene 3 prestamos')
+
+    @api.onchange('guarantor_two')
+    def _onchange_guarantor_two(self):
+        if self.guarantor_one and self.guarantor_two:
+            if self.guarantor_one == self.guarantor_two:
+                raise ValidationError('No puede seleccionar el mismo garante')
+        if self.guarantor_two == self.partner_id:
+            raise ValidationError('No puede seleccionar el mismo socio como garante')
         if self.guarantor_two.guarantor_count == 3:
-            raise ValidationError('El garante ya tiene 3 prestamos')
+            raise ValidationError('El garante,' + self.guarantor_two.name + ', ya tiene 3 prestamos')
 
     def reset_payroll(self):
         for rec in self:

@@ -119,6 +119,7 @@
                                        attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')],
                                                                             'readonly': ['|',('state','=','progress'),('state','=','done')],
                                                                             'required': [('with_guarantor','=','loan_guarantor')]}"
+                                       options="{'no_create': True, 'no_create_edit': True,'no_quick_create': True}"
                                         />
                             </group>
                             <group string="Respaldos">
@@ -145,7 +146,9 @@
                                        attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')]}"/>
                                 <field name="guarantor_two" domain="[('id','!=',partner_id),('guarantor','=',True)]"
                                        attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')],
-                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}" />
+                                                                                                                'readonly': ['|',('state','=','progress'),('state','=','done')]}"
+                                       options="{'no_create': True, 'no_create_edit': True,'no_quick_create': True}"
+                                />
                                 <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="months_quantity"
