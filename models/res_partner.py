@@ -74,6 +74,7 @@ class ResPartner(models.Model):
 
     glosa = fields.Text(string='Glosa')
     date_deceased = fields.Date(string='Fecha de fallecimiento')
+    date_unsubcribe = fields.Date(string='Fecha de baja')
     @api.depends('graduation_year')
     def _compute_year_service(self):
         for partner in self:

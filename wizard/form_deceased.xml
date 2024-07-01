@@ -7,7 +7,7 @@
                 <form string="Baja del asociado">
                     <group>
                         <group string="Datos para baja">
-                            <field name="name" />
+<!--                            <field name="name" />-->
                             <field name="partner_id"/>
                             <field name="description" />
                             <field name="date_deceased" />
@@ -15,8 +15,8 @@
                         </group>
                     </group>
                     <footer>
-<!--                        <button name="init_refinance" string="Confirmar" type="object" class="oe_highlight"/>-->
-<!--                        <button string="Cancel" class="oe_link" special="cancel"/>-->
+                        <button name="action_confirm" string="Confirmar" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
                 </form>
             </field>
