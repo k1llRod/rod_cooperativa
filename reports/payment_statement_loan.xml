@@ -156,22 +156,22 @@
                                             <span t-esc="round(o.balance_capital + o.balance_total_interest_month,2)"></span>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            <strong></strong>
-                                        </td>
-                                        <td>
+<!--                                    <tr>-->
+<!--                                        <td>-->
+<!--                                            <strong></strong>-->
+<!--                                        </td>-->
+<!--                                        <td>-->
 
-                                        </td>
-                                        <t t-if="o.interest_day_rest &gt; 0">
-                                            <td>
-                                                <strong>INTERES ANTERIOR D/E</strong>
-                                            </td>
-                                            <td>
-                                                <span t-field="o.interest_day_rest"></span>
-                                            </td>
-                                        </t>
-                                    </tr>
+<!--                                        </td>-->
+<!--                                        <t t-if="o.interest_day_rest &gt; 0">-->
+<!--                                            <td>-->
+<!--                                                <strong>INTERES ANTERIOR D/E</strong>-->
+<!--                                            </td>-->
+<!--                                            <td>-->
+<!--                                                <span t-field="o.interest_day_rest"></span>-->
+<!--                                            </td>-->
+<!--                                        </t>-->
+<!--                                    </tr>-->
 
                                 </table>
                                 <br/>
