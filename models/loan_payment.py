@@ -56,6 +56,23 @@ class LoanPayment(models.Model):
         ('cancel', 'Cancelado')
     ], string='Flag state', related='loan_application_ids.state')
 
+    capital_index_initial_bolivianos = fields.Float(string='Capital BS', compute='_compute_bolivianos', store=True, digits=(16, 2))
+    interest_base_bolivianos = fields.Float(string='0.7% BS', compute='_compute_bolivianos', store=True, digits=(16, 2))
+    res_social_bolivianos = fields.Float(string='F.C. BS', compute='_compute_bolivianos', store=True, digits=(16, 2))
+    percentage_amount_min_def_bolivianos = fields.Float(string='%MINDEF BS', compute='_compute_bolivianos', store=True, digits=(16, 2))
+    interest_month_surpluy_bolivianos = fields.Float(string='D/E BS', compute='_compute_bolivianos', store=True, digits=(16, 2))
+    amount_total_bolivianos = fields.Float(string='D/MINDEF Bs', compute='_compute_bolivianos', digits=(16, 2),store=True)
+    @api.depends('capital_index_initial','interest','res_social','percentage_amount_min_def','interest_month_surpluy')
+    def _compute_bolivianos(self):
+        for rec in self:
+            rec.capital_index_initial_bolivianos = rec.capital_index_initial * round(rec.currency_id_dollar.inverse_rate,2)
+            rec.interest_base_bolivianos = rec.interest_base * round(rec.currency_id_dollar.inverse_rate,2)
+            rec.res_social_bolivianos = rec.res_social * rec.currency_id_dollar.inverse_rate
+            rec.percentage_amount_min_def_bolivianos = rec.percentage_amount_min_def * round(rec.currency_id_dollar.inverse_rate,2)
+            rec.interest_month_surpluy_bolivianos = rec.interest_month_surpluy * round(rec.currency_id_dollar.inverse_rate,2)
+            rec.amount_total_bolivianos = (rec.capital_index_initial_bolivianos + rec.interest_base_bolivianos +
+                                           rec.res_social_bolivianos + rec.percentage_amount_min_def_bolivianos + rec.interest_month_surpluy_bolivianos)
+
     @api.onchange('amount_total')
     def _change_amount_total_bs(self):
         for rec in self:

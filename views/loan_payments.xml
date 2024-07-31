@@ -18,22 +18,29 @@
                     <field name="period"/>
                     <field name="capital_initial" optional="show" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
                     <field name="mount" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
+                    <field name="capital_index_initial" sum="Total"/>
+                    <field name="capital_index_initial_bolivianos" sum="Total"/>
                     <field name="interest" sum="Total"/>
-                    <field name="interest_base" optional="hidden"/>
-                    <field name="interest_mortgage" optional="hidden"/>
-                    <field name="interest_base_mortgage" optional="hidden"/>
-                    <field name="res_social" optional="hidden"/>
-                    <field name="res_mortgage" optional="hidden"/>
-                    <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                    <field name="interest_base" optional="hidden" sum="Total"/>
+                    <field name="interest_base_bolivianos" sum="Total"/>
+                    <field name="interest_mortgage" optional="hidden" sum="Total"/>
+                    <field name="interest_base_mortgage" optional="hidden" sum="Total"/>
+                    <field name="res_social" optional="hidden" sum="Total" />
+                    <field name="res_social_bolivianos" sum="Total"/>
+                    <field name="res_mortgage" optional="hidden" sum="Total"/>
+                    <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
                     <field name="interest_month_surpluy" sum="Total"/>
-                    <field name="percentage_amount_min_def" optional="hidden"/>
+                    <field name="interest_month_surpluy_bolivianos" sum="Total"/>
+                    <field name="percentage_amount_min_def" optional="hidden" sum="Total"/>
+                    <field name="percentage_amount_min_def_bolivianos" sum="Total"/>
                     <field name="commission_min_def" optional="hidden" sum="Total"/>
 <!--                    <field name="coa_commission" optional="hidden" sum="Total"/>-->
                     <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
                     <field name="amount_total_bs" widget="monetary" sum="Total"/>
+                    <field name="amount_total_bolivianos" sum="Total"/>
 
-                    <field name="amount_returned_coa" optional="hidden"/>
-                    <field name="capital_index_initial" optional="hidden"/>
+                    <field name="amount_returned_coa" optional="hidden" sum="Total"/>
+                    <field name="capital_index_initial" optional="hidden" sum="Total"/>
                     <field name="loan_application_ids" invisible="1"/>
                     <field name="state" decoration-info="state == 'init' or state == 'in_queue'" decoration-success="state == 'progress' or state == 'done'" widget="badge"/>
                     <button name="open_loan_payment" type="object" class="oe_highlight"
@@ -84,9 +91,12 @@
                                 <field name="date"/>
                                 <field name="period"/>
                                 <field name="capital_index_initial"/>
+                                <field name="capital_index_initial_bolivianos"/>
                                 <field name="interest"/>
                                 <field name="interest_base"/>
+                                <field name="interest_base_bolivianos"/>
                                 <field name="res_social"/>
+                                <field name="res_social_bolivianos"/>
                                 <field name="res_mortgage" />
                                 <field name="capital_initial" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
@@ -95,13 +105,16 @@
                                 <field name="mount" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="interest_month_surpluy" sum="Total"/>
+                                <field name="interest_month_surpluy_bolivianos"/>
                                 <field name="percentage_amount_min_def"/>
+                                <field name="percentage_amount_min_def_bolivianos"/>
                                 <field name="commission_min_def"/>
                                 <field name="loan_application_ids" invisible="1"/>
 <!--                                <field name="type_payment" />-->
                                 <field name="amount_total" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="amount_total_bs" widget="monetary"/>
+                                <field name="amount_total_bolivianos" />
                                 <field name="amount_returned_coa"/>
                             </group>
                         </group>

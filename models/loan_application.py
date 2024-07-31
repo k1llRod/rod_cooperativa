@@ -95,6 +95,22 @@ class LoanApplication(models.Model):
     missing_payments = fields.Integer(string='Pagos pendientes', compute='_compute_missing_payments')
     total_payments_confirm = fields.Integer(string='Total pagos confirmados', compute='_compute_missing_payments')
 
+    loan_historical_coaa = fields.Float(string='Prestamos historico COAA')
+    journal_id = fields.Many2one('account.journal', string='Diario Egreso', required=True)
+
+    account_loan_id = fields.Many2one('account.account', string='Cuenta de prestamo')
+    account_egreso_id = fields.Many2one('account.account', string='Cuenta de egreso')
+    accounting_entry_id = fields.Many2one('account.move', string='Asiento contable egreso')
+
+    journal_income_id = fields.Many2one('account.journal', string='Diario Ingreso', required=True)
+    account_income = fields.Many2one('account.account', string='Cuenta de ingreso')
+    account_capital_index_id = fields.Many2one('account.account', string='Cuenta de capital')
+    account_interest_base = fields.Many2one('account.account', string='Interes 0.7%')
+    account_interest_surplus = fields.Many2one('account.account', string='Fondo por Contingencia')
+    account_percentage_mindef = fields.Many2one('account.account', string='Porcentaje Min. Defensa')
+    account_surpluy_days = fields.Many2one('account.account', string='Interes dias excedentes')
+
+
     @api.depends('loan_payment_ids')
     def _compute_pending_payment(self):
         for rec in self:
@@ -449,3 +465,60 @@ class LoanApplication(models.Model):
 
     def approval_state(self):
         self.state = 'approval'
+
+    def approve_egreso(self):
+        val = []
+        for record in self:
+            data = (0, 0, {'account_id': record.account_loan_id.id,
+                                     'debit': record.amount_loan, 'credit': 0,
+                                     # 'partner_id': record.partner_id.id,
+                                     'amount_currency': 0
+                                     })
+            val.append(data)
+            if record.loan_historical_coaa > 0:
+                amount = record.amount_loan - record.loan_historical_coaa
+                # data = (0, 0, {'account_id': record.account_loan_id.id,
+                #                          'debit': record.amount_loan, 'credit': 0, 'partner_id': record.partner_id.id,
+                #                          'amount_currency': 0
+                #                          })
+                # val.append(data)
+                data = (0, 0, {'account_id': record.account_loan_id.id,
+                                         'debit': 0, 'credit': record.loan_historical_coaa, 'partner_id': record.partner_id.id,
+                                         'name': 'COAA',
+                                         'amount_currency': 0
+                                         })
+                val.append(data)
+                data = (0, 0, {'account_id': record.account_loan_id.id,
+                                         'debit': 0, 'credit': amount, 'partner_id': record.partner_id.id,
+                                         'name': 'BENEFICIARIO',
+                                         'amount_currency': 0
+                                         })
+                val.append(data)
+            else:
+                data = (0, 0, {'account_id': record.account_loan_id.id,
+                                         'debit': 0, 'credit': record.amount_loan, 'partner_id': record.partner_id.id,
+                                         'amount_currency': 0
+                                         })
+                val.append(data)
+
+            move_vals = {
+                "date": record.date_approval,
+                "journal_id": record.journal_id.id,
+                "ref": "PRESTAMOS ASIGNADO AL ASOCIADO" + " " + record.partner_id.name + " EN LA FECHA " + str(record.date_approval),
+                # "company_id": payment.company_id.id,
+                # "name": "name test",
+                "state": "draft",
+                "line_ids": val,
+            }
+            account_move_id = record.env['account.move'].create(move_vals)
+            record.accounting_entry_id = account_move_id.id
+            account_move_id.loan_application_id = record.id
+        return {
+            'name': 'Pagos de planilla',
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'view_mode': 'form',
+            'res_id': account_move_id.id,
+            'views': [(False, 'form')],
+        }
+

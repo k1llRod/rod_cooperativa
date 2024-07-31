@@ -189,6 +189,7 @@
                                 <field name="balance_capital_auxiliar" />
                                 <field name="balance_total_interest_month" />
                                 <field name="balance_total_interest_month_auxiliar"/>
+                                <field name="loan_historical_coaa"/>
                             </group>
                             <group string="Monto maximo de prestamo">
                                 <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
@@ -226,6 +227,43 @@
 
                                     </tree>
                                 </field>
+                            </page>
+                            <page string="Contabilidad egresos">
+                                <group>
+                                    <group>
+                                        <field name="journal_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="accounting_entry_id"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Debe">
+                                        <field name="account_loan_id"/>
+                                    </group>
+                                    <group string="Haber">
+                                        <field name="account_egreso_id"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Contabilidad ingresos">
+                                <group>
+                                    <group>
+                                        <field name="journal_income_id"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Debe">
+                                        <field name="account_income"/>
+                                    </group>
+                                    <group string="Haber">
+                                        <field name="account_capital_index_id"/>
+                                        <field name="account_interest_base"/>
+                                        <field name="account_interest_surplus"/>
+                                        <field name="account_percentage_mindef"/>
+                                        <field name="account_surpluy_days"/>
+                                    </group>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
@@ -290,6 +328,13 @@
             <field name="binding_model_id" ref="model_loan_application"/>
             <field name="state">code</field>
             <field name="code">action = records.action_wizard_report_xlsx()</field>
+        </record>
+        <record id="action_approve_egreso_id" model="ir.actions.server">
+            <field name="name">Asiento contable egreso</field>
+            <field name="model_id" ref="model_loan_application"/>
+            <field name="binding_model_id" ref="model_loan_application"/>
+            <field name="state">code</field>
+            <field name="code">action = records.approve_egreso()</field>
         </record>
 
         <!-- Accion para visualizar loan.application -->
