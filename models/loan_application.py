@@ -495,7 +495,7 @@ class LoanApplication(models.Model):
                                          })
                 val.append(data)
             else:
-                data = (0, 0, {'account_id': record.account_loan_id.id,
+                data = (0, 0, {'account_id': record.account_egreso_id.id,
                                          'debit': 0, 'credit': record.amount_loan, 'partner_id': record.partner_id.id,
                                          'amount_currency': 0
                                          })
