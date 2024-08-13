@@ -11,8 +11,8 @@ class LoanApplication(models.Model):
     _description = 'Solicitud de prestamo'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _columns = {
-                   'partner_id': fields.Many2one('res.partner', string='Socio solicitante', required=True)
-               },
+        'partner_id': fields.Many2one('res.partner', string='Socio solicitante', required=True)
+    },
 
     name = fields.Char(string='Código de solicitud', tracking=True)
     state = fields.Selection([
@@ -85,7 +85,7 @@ class LoanApplication(models.Model):
     amount_devolution = fields.Float(string='Monto de entregar')
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_balance_capital', store=True)
     balance_total_interest_month = fields.Float(string='Saldo total interes mensual',
-                                                compute='_compute_balance_capital', digits=(6, 2),store=True)
+                                                compute='_compute_balance_capital', digits=(6, 2), store=True)
     balance_total_interest_month_auxiliar = fields.Float(string='Saldo total interes mensual auxiliar')
     balance_capital_auxiliar = fields.Float(string='Saldo capital auxiliar')
     # amount_min_def = fields.Float(string='Min. Defensa %', currency_field='company_currency_id',compute='_compute_min_def')
@@ -109,7 +109,6 @@ class LoanApplication(models.Model):
     account_interest_surplus = fields.Many2one('account.account', string='Fondo por Contingencia')
     account_percentage_mindef = fields.Many2one('account.account', string='Porcentaje Min. Defensa')
     account_surpluy_days = fields.Many2one('account.account', string='Interes dias excedentes')
-
 
     @api.depends('loan_payment_ids')
     def _compute_pending_payment(self):
@@ -138,15 +137,18 @@ class LoanApplication(models.Model):
                     last_day = calendar.monthrange(record.date_approval.year, record.date_approval.month)[1]
                     point_day = last_day - record.date_approval.day
                     record.surplus_days = point_day
-                    calculte_interest = record.amount_loan_dollars * ((record.monthly_interest + record.contingency_fund) / 100)
-                    record.interest_month_surpluy = (calculte_interest / last_day) * (point_day / record.months_quantity)
+                    calculte_interest = record.amount_loan_dollars * (
+                            (record.monthly_interest + record.contingency_fund) / 100)
+                    record.interest_month_surpluy = (calculte_interest / last_day) * (
+                            point_day / record.months_quantity)
                 else:
                     last_day = calendar.monthrange(record.date_approval.year, record.date_approval.month)[1]
                     point_day = last_day - record.date_approval.day
                     record.surplus_days = point_day
-                    calculte_interest = record.amount_loan_dollars * ((record.monthly_interest_mortgage + record.mortgage_loan) / 100)
+                    calculte_interest = record.amount_loan_dollars * (
+                            (record.monthly_interest_mortgage + record.mortgage_loan) / 100)
                     record.interest_month_surpluy = (calculte_interest / last_day) * (
-                                point_day / record.months_quantity)
+                            point_day / record.months_quantity)
             else:
                 record.surplus_days = 0
                 record.interest_month_surpluy = 0
@@ -170,7 +172,7 @@ class LoanApplication(models.Model):
     def _default_contingency_fund(self):
         return float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund'))
 
-    @api.onchange('months_quantity','with_guarantor')
+    @api.onchange('months_quantity', 'with_guarantor')
     def _compute_index_loan_fixed_fee(self):
         try:
             if self.with_guarantor == 'loan_guarantor' or self.with_guarantor == 'no_loan_guarantor':
@@ -234,7 +236,8 @@ class LoanApplication(models.Model):
             # if rec.ci_fothocopy == False: raise ValidationError('Falta fotocopia de CI')
             # if rec.photocopy_military_ci == False: raise ValidationError('Falta fotocopia de carnet militar')
             # rec.date_approval = fields.Date.today()
-            if rec.date_approval < rec.date_application: raise ValidationError('La FECHA DE APROBACION no puede ser anterior a la FECHA DE SOLICITUD')
+            if rec.date_approval < rec.date_application: raise ValidationError(
+                'La FECHA DE APROBACION no puede ser anterior a la FECHA DE SOLICITUD')
             for i in range(1, rec.months_quantity + 1):
                 commission_min_def = float(
                     self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.commission_min_def'))
@@ -255,7 +258,8 @@ class LoanApplication(models.Model):
                         date_payment = date_payment.replace(day=1)
                         date_payment = date_payment.replace(
                             month=date_payment.month + 1 if date_pivot.month < 12 else 1)
-                        date_payment = date_payment.replace(year=date_payment.year + 1 if date_pivot.month == 12 else date_payment.year)
+                        date_payment = date_payment.replace(
+                            year=date_payment.year + 1 if date_pivot.month == 12 else date_payment.year)
                 else:
                     capital_init = rec.loan_payment_ids[i - 2].balance_capital
                     date_payment = rec.loan_payment_ids[i - 2].date
@@ -284,9 +288,12 @@ class LoanApplication(models.Model):
                 raise ValidationError('La cantidad de meses no puede ser menor o igual a 0')
             if not rec.amount_loan_dollars > 0:
                 raise ValidationError('El monto del prestamo no puede ser menor o igual a 0')
+            user = self.env['res.users'].search([('login', '=', 'username')])
 
+            if user:
+                self.message_post(body="La solicitud de prestamo fue verificada por " + user.name,
+                                  partner_ids=[(4, user.partner_id.id)])
             rec.state = 'verificate'
-
 
     def progress(self):
         self.state = 'progress'
@@ -376,14 +383,15 @@ class LoanApplication(models.Model):
     def _compute_balance_capital(self):
         for rec in self:
             if len(rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense' or
-                                                 x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef')) > 0:
+                                                           x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef')) > 0:
                 rec.balance_capital = \
-                rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense' or
-                                                        x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef')[
-                    -1].balance_capital
+                    rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense' or
+                                                            x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef')[
+                        -1].balance_capital
                 rec.balance_total_interest_month = rec.total_interest_month_surpluy - sum(
                     rec.loan_payment_ids.filtered(
-                        lambda x: x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef').mapped(
+                        lambda
+                            x: x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef').mapped(
                         'interest_month_surpluy'))
             else:
                 rec.balance_capital = rec.amount_loan_dollars
@@ -445,9 +453,10 @@ class LoanApplication(models.Model):
     def _compute_missing_payments(self):
         for rec in self:
             rec.missing_payments = len(rec.loan_payment_ids.filtered(lambda x: x.state == 'draft'))
-            date_init = rec.loan_payment_ids.filtered(lambda x:x.name == 'Cuota 1').date
+            # date_init = rec.loan_payment_ids.filtered(lambda x:x.name == 'Cuota 1').date
             date_end = datetime.now().date()
-            count_payment_confirm = len(rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense'))
+            count_payment_confirm = len(
+                rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense'))
             count_payment = len(rec.loan_payment_ids.filtered(lambda x: x.date <= date_end))
             # rec.missing_payments = (date_end.year - date_init.year) * 12 + date_end.month - date_init.month
             rec.missing_payments = count_payment - count_payment_confirm
@@ -470,10 +479,10 @@ class LoanApplication(models.Model):
         val = []
         for record in self:
             data = (0, 0, {'account_id': record.account_loan_id.id,
-                                     'debit': record.amount_loan, 'credit': 0,
-                                     # 'partner_id': record.partner_id.id,
-                                     'amount_currency': 0
-                                     })
+                           'debit': record.amount_loan, 'credit': 0,
+                           'partner_id': record.partner_id.id,
+                           'amount_currency': 0
+                           })
             val.append(data)
             if record.loan_historical_coaa > 0:
                 amount = record.amount_loan - record.loan_historical_coaa
@@ -483,30 +492,34 @@ class LoanApplication(models.Model):
                 #                          })
                 # val.append(data)
                 data = (0, 0, {'account_id': record.account_loan_id.id,
-                                         'debit': 0, 'credit': record.loan_historical_coaa, 'partner_id': record.partner_id.id,
-                                         'name': 'COAA',
-                                         'amount_currency': 0
-                                         })
+                               'debit': 0, 'credit': record.loan_historical_coaa, 'partner_id': record.partner_id.id,
+                               'name': 'COAA',
+                               'amount_currency': 0
+                               })
                 val.append(data)
                 data = (0, 0, {'account_id': record.account_loan_id.id,
-                                         'debit': 0, 'credit': amount, 'partner_id': record.partner_id.id,
-                                         'name': 'BENEFICIARIO',
-                                         'amount_currency': 0
-                                         })
+                               'debit': 0, 'credit': amount, 'partner_id': record.partner_id.id,
+                               'name': 'BENEFICIARIO',
+                               'amount_currency': 0
+                               })
                 val.append(data)
             else:
                 data = (0, 0, {'account_id': record.account_egreso_id.id,
-                                         'debit': 0, 'credit': record.amount_loan, 'partner_id': record.partner_id.id,
-                                         'amount_currency': 0
-                                         })
+                               'debit': 0, 'credit': record.amount_loan,
+                               # 'partner_id': record.partner_id.id,
+                               'amount_currency': 0
+                               })
                 val.append(data)
+            glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(record.amount_loan_dollars) + " INT 0.7: " + str(round(record.monthly_interest,2)) + " F.CONTIGENCIA:  " + str(round(record.contingency_fund,2)) + " PLAZO: " + str(record.months_quantity) + " MESES EXCED " + str(round(record.total_interest_month_surpluy,2)) + " GARANTES " + record.guarantor_one.category_partner_id.code_loan + " " +record.guarantor_one.name + " "+ record.guarantor_two.category_partner_id.code_loan + " " + record.guarantor_two.name
 
             move_vals = {
                 "date": record.date_approval,
                 "journal_id": record.journal_id.id,
-                "ref": "PRESTAMOS ASIGNADO AL ASOCIADO" + " " + record.partner_id.name + " EN LA FECHA " + str(record.date_approval),
+                "ref": "PRESTAMOS ASIGNADO AL ASOCIADO" + " " + record.partner_id.name + " EN LA FECHA " + str(
+                    record.date_approval),
                 # "company_id": payment.company_id.id,
                 # "name": "name test",
+                "glosa": glosa,
                 "state": "draft",
                 "line_ids": val,
             }
@@ -521,4 +534,3 @@ class LoanApplication(models.Model):
             'res_id': account_move_id.id,
             'views': [(False, 'form')],
         }
-
