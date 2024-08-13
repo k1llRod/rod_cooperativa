@@ -289,7 +289,7 @@ class LoanApplication(models.Model):
             if not rec.amount_loan_dollars > 0:
                 raise ValidationError('El monto del prestamo no puede ser menor o igual a 0')
             user = self.env['res.users'].search([('login', '=', 'username')])
-
+            group = self.env.ref('rod_cooperativa.group_loan_verification')
             if user:
                 self.message_post(body="La solicitud de prestamo fue verificada por " + user.name,
                                   partner_ids=[(4, user.partner_id.id)])
@@ -511,15 +511,14 @@ class LoanApplication(models.Model):
                                })
                 val.append(data)
             if record.with_guarantor == 'loan_guarantor':
-                glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(record.amount_loan_dollars) + " INT " + str(round(record.monthly_interest,2))+"% " + "F.CONTIGENCIA: " + str(round(record.contingency_fund,2)) + "% PLAZO: " + str(record.months_quantity) + " MESES EXCED " + str(record.surplus_days) + " DIAS "+ "CUOTA FIJA $US: "+ str(round(record.fixed_fee,2)) +" GARANTES " + record.guarantor_one.category_partner_id.code_loan + " " +record.guarantor_one.name + " "+ record.guarantor_two.category_partner_id.code_loan + " " + record.guarantor_two.name
+                glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(record.amount_loan_dollars) + " INT " + str(round(record.monthly_interest,2))+"% " + "F.CONTIGENCIA: " + str(round(record.contingency_fund,2)) + "% PLAZO: " + str(record.months_quantity) + " MESES EXCED " + str(record.surplus_days) + " DIAS "+ "CUOTA FIJA $US: "+ str(round(record.loan_payment_ids[0].amount_total,2)) +" GARANTES " + record.guarantor_one.category_partner_id.code_loan + " " +record.guarantor_one.name + " "+ record.guarantor_two.category_partner_id.code_loan + " " + record.guarantor_two.name
             else:
                 glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(
                     record.amount_loan_dollars) + " INT " + str(
                     round(record.monthly_interest, 2)) + "% " + "F.CONTIGENCIA: " + str(
                     round(record.contingency_fund, 2)) + "% PLAZO: " + str(
                     record.months_quantity) + " MESES EXCED " + str(
-                    record.surplus_days) + " DIAS " + "CUOTA FIJA $US: " + str(round(record.fixed_fee,
-                                                                                     2))
+                    record.surplus_days) + " DIAS " + "CUOTA FIJA $US: " + str(round(record.loan_payment_ids[0].amount_total,2))
             move_vals = {
                 "date": record.date_approval,
                 "journal_id": record.journal_id.id,
