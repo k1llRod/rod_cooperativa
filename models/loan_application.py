@@ -280,6 +280,20 @@ class LoanApplication(models.Model):
                 })
             self.progress()
 
+    def create_activity(self, activity_type_xmlid, summary, user_id, note, deadline):
+
+        activity_type  = self.env['mail.activity.type'].search([('name', '=', 'Prestamo')], limit=1)
+        if activity_type:
+            self.env['mail.activity'].create({
+                'activity_type_id': activity_type.id,  # Tipo de actividad (llamada, correo, etc.)
+                'res_id': self.id,  # ID del registro al que está asociada la actividad
+                'res_model_id': self.env['ir.model']._get(self._name).id,  # Modelo relacionado
+                'user_id': user_id,  # ID del usuario asignado a la actividad
+                'summary': summary,  # Resumen de la actividad
+                'note': note,  # Nota o descripción detallada de la actividad
+                'date_deadline': deadline,  # Fecha límite para completar la actividad
+            })
+
     def verification_pass(self):
         for rec in self:
             if rec.with_guarantor == False:
@@ -288,11 +302,30 @@ class LoanApplication(models.Model):
                 raise ValidationError('La cantidad de meses no puede ser menor o igual a 0')
             if not rec.amount_loan_dollars > 0:
                 raise ValidationError('El monto del prestamo no puede ser menor o igual a 0')
-            user = self.env['res.users'].search([('login', '=', 'username')])
-            group = self.env.ref('rod_cooperativa.group_loan_verification')
-            if user:
-                self.message_post(body="La solicitud de prestamo fue verificada por " + user.name,
-                                  partner_ids=[(4, user.partner_id.id)])
+            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            record_url = f"{base_url}/web#id={self.id}&model={self._name}&view_type=form"
+
+            message = f"Se le asigno el siguiente prestamo para revision: " \
+                      f"<a href='{record_url}'>{rec.name}</a>"
+            group = self.env.ref('rod_cooperativa.group_rod_cooperativa_administrator')
+            # group = self.env.ref('rod_cooperativa.group_rod_cooperativa_administrator')
+            users = group.users
+            self.message_subscribe(partner_ids=users.mapped('partner_id').ids)
+            # if group:
+            #     users = group.users
+            #     partner_ids = [user.partner_id.id for user in users]
+            #     if partner_ids:
+            #         rec.message_post(body=message,
+            #                          partner_ids=partner_ids)
+            activity_type = self.env['mail.activity.type'].search([('name', '=', 'Prestamo')], limit=1)
+            rec.create_activity(
+                'mail.mail_activity_data_call',  # Tipo de actividad
+                'Follow up on the order',  # Resumen
+                rec.env.user.id,  # ID del usuario asignado (puede ser cualquier usuario)
+                'Please follow up with the customer regarding the order status.',  # Nota
+                fields.Date.today() + timedelta(days=3)  # Fecha límite en 3 días
+            )
+
             rec.state = 'verificate'
 
     def progress(self):
