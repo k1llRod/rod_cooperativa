@@ -44,7 +44,7 @@
             <field name="arch" type="xml">
                 <form string="Solicitud de presupuesto" class="oe_left oe_edit_only oe_form_required">
                     <header>
-                        <button name="verification_pass" string="Verificación" class="oe_highlight" type="object" attrs="{'invisible':[('state','!=','init')]}" groups="rod_cooperativa.group_rod_cooperativa_operator"/>
+                        <button name="verification_pass" string="Verificación" class="oe_highlight" type="object" attrs="{'invisible':[('state','!=','init')]}" groups="rod_cooperativa.group_rod_cooperativa_user"/>
                         <button name="approval_state" string="Aprobar prestamo" class="oe_highlight" type="object" attrs="{'invisible': [('state','!=','verificate')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <button name="refinance" string="Refinanciar" type="object" attrs="{'invisible': [('state','!=','progress')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
                         <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>

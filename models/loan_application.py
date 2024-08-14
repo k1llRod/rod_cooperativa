@@ -96,13 +96,13 @@ class LoanApplication(models.Model):
     total_payments_confirm = fields.Integer(string='Total pagos confirmados', compute='_compute_missing_payments')
 
     loan_historical_coaa = fields.Float(string='Prestamos historico COAA')
-    journal_id = fields.Many2one('account.journal', string='Diario Egreso', required=True)
+    journal_id = fields.Many2one('account.journal', string='Diario Egreso')
 
     account_loan_id = fields.Many2one('account.account', string='Cuenta de prestamo')
     account_egreso_id = fields.Many2one('account.account', string='Cuenta de egreso')
     accounting_entry_id = fields.Many2one('account.move', string='Asiento contable egreso')
 
-    journal_income_id = fields.Many2one('account.journal', string='Diario Ingreso', required=True)
+    journal_income_id = fields.Many2one('account.journal', string='Diario Ingreso')
     account_income = fields.Many2one('account.account', string='Cuenta de ingreso')
     account_capital_index_id = fields.Many2one('account.account', string='Cuenta de capital')
     account_interest_base = fields.Many2one('account.account', string='Interes 0.7%')
@@ -280,12 +280,10 @@ class LoanApplication(models.Model):
                 })
             self.progress()
 
-    def create_activity(self, activity_type_xmlid, summary, user_id, note, deadline):
-
-        activity_type  = self.env['mail.activity.type'].search([('name', '=', 'Prestamo')], limit=1)
+    def create_activity(self, activity_type, summary, user_id, note, deadline):
         if activity_type:
             self.env['mail.activity'].create({
-                'activity_type_id': activity_type.id,  # Tipo de actividad (llamada, correo, etc.)
+                'activity_type_id': activity_type,  # Tipo de actividad (llamada, correo, etc.)
                 'res_id': self.id,  # ID del registro al que está asociada la actividad
                 'res_model_id': self.env['ir.model']._get(self._name).id,  # Modelo relacionado
                 'user_id': user_id,  # ID del usuario asignado a la actividad
@@ -317,15 +315,16 @@ class LoanApplication(models.Model):
             #     if partner_ids:
             #         rec.message_post(body=message,
             #                          partner_ids=partner_ids)
-            activity_type = self.env['mail.activity.type'].search([('name', '=', 'Prestamo')], limit=1)
-            rec.create_activity(
-                'mail.mail_activity_data_call',  # Tipo de actividad
-                'Follow up on the order',  # Resumen
-                rec.env.user.id,  # ID del usuario asignado (puede ser cualquier usuario)
-                'Please follow up with the customer regarding the order status.',  # Nota
-                fields.Date.today() + timedelta(days=3)  # Fecha límite en 3 días
-            )
-
+            activity_type  = self.env['mail.activity.type'].search([('name', '=', 'Prestamo')], limit=1)
+            activity_type_xml = self.env.ref('mail.mail_activity_data_todo')
+            for record in users:
+                rec.create_activity(
+                    activity_type_xml.id,  # Tipo de actividad
+                    'Revision de proceso',  # Resumen
+                    record.id,  # ID del usuario asignado (puede ser cualquier usuario)
+                    'Revisar el siguiente documento para continuar con el proceso.',  # Nota
+                    fields.Date.today()  # Fecha límite en 3 días
+                )
             rec.state = 'verificate'
 
     def progress(self):
@@ -506,7 +505,20 @@ class LoanApplication(models.Model):
         }
 
     def approval_state(self):
-        self.state = 'approval'
+        for rec in self:
+            group = rec.env.ref('rod_cooperativa.group_rod_cooperativa_operator')
+            # group = self.env.ref('rod_cooperativa.group_rod_cooperativa_administrator')
+            users = group.users
+            activity_type_xml = rec.env.ref('mail.mail_activity_data_todo')
+            for record in users:
+                rec.create_activity(
+                    activity_type_xml.id,  # Tipo de actividad
+                    'Revision de proceso para aprobacion',  # Resumen
+                    record.id,  # ID del usuario asignado (puede ser cualquier usuario)
+                    'Revisar el siguiente documento para continuar con el proceso.',  # Nota
+                    fields.Date.today()  # Fecha límite en 3 días
+                )
+            rec.state = 'approval'
 
     def approve_egreso(self):
         val = []
