@@ -463,6 +463,10 @@ class LoanApplication(models.Model):
         for rec in self:
             rec.state = 'approval'
 
+    def return_progress(self):
+        for rec in self:
+            rec.state = 'progress'
+
     def import_loan(self):
         return {
             'name': 'Conciliar pagos de prestamos',
