@@ -50,9 +50,9 @@
                         <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>
                         <button name="return_draft" string="Borrador" type="object" attrs="{'invisible': [('state','!=','progress')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <button name="reset_payroll" string="Reset" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
-                        <button name="return_approval" string="Retornar aprobacion" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
-                        <button name="return_progress" string="Retornar proceso" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
-                        <button name="approve_loan" string="Validar" type="object" class="oe_highlight" attrs="{'invisible': [('state','!=','approval')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
+                        <button name="return_approval" string="Retornar aprobacion" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
+                        <button name="return_progress" string="Retornar proceso" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
+                        <button name="approve_loan" string="Validar" type="object" class="oe_highlight" attrs="{'invisible': [('state','!=','approval')]}" groups="rod_cooperativa.group_rod_cooperativa_operator,rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <field name="state" widget="statusbar" statusbar_visible="init,verificate,approval,progress,done"/>
                     </header>
                     <sheet>
