@@ -24,7 +24,8 @@ class ResPartner(models.Model):
                                ('Comunicaciones', 'Comunicaciones'),
                                ('Logística', 'Logística'),
                                ('Ingenieria', 'Ingenieria'),
-                               ('Naval','Naval')], string='Arma', default='Artilleria')
+                               ('Naval','Naval'),
+                               ('Invitado', 'Invitado')], string='Arma', default='Artilleria')
     # categoria de socio
     category_partner_id = fields.Many2one('partner.category', string='Grado')
     ci_cossmil = fields.Char(string='C. COSSMIL Nro.')
