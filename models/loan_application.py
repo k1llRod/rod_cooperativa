@@ -508,6 +508,10 @@ class LoanApplication(models.Model):
     @api.onchange('interest_day_rest')
     def _onchange_interest_day_rest(self):
         self.interest_day_rest_bs = self.interest_day_rest * self.value_dolar
+
+    @api.onchange('amount_devolution')
+    def _onchange_amount_devolution(self):
+        self.amount_devolution_bs = self.amount_devolution * self.value_dolar
     def action_wizard_report_xlsx(self):
         return {
             'name': 'Generar reportes Excel',

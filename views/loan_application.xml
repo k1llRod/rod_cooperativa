@@ -108,8 +108,8 @@
                                 <field name="partner_id" readonly="1"/>
                                 <field name="partner_status_especific" />
                                 <field name="refinance_loan_id" readonly="1" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
-                                <field name="amount_devolution" readonly="1" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
-                                <field name="amount_devolution_bs" readonly="1" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
+                                <field name="amount_devolution"  attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
+                                <field name="amount_devolution_bs"  attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
                                 <field name="interest_day_rest" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
                                 <field name="interest_day_rest_bs" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
                                 <field name="category_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
