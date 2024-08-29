@@ -1,0 +1,37 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="form_finalized_contributions_id">
+            <field name="name">form.finalized.contributions.form</field>
+            <field name="model">form.finalized.contributions</field>
+            <field name="arch" type="xml">
+                <form string="Baja del asociado">
+                    <group>
+                        <group string="Datos para baja">
+<!--                            <field name="partner_payroll_id" />-->
+                            <field name="date_finalize"/>
+                            <field name="disengagement" />
+                            <field name="total_mandatory_contributions_certificate" readonly="1"/>
+                            <field name="total_voluntary_contributions_certificate" readonly="1"/>
+                            <field name="total_other_contributions" readonly="1"/>
+                            <field name="total_performance_contributions" readonly="1"/>
+                            <field name="total_balance_capital" readonly="1"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Confirmar" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+<!--        <record model="ir.actions.act_window" id="alert_message_action">-->
+<!--            <field name="name">Alert message</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">alert.message</field>-->
+<!--            <field name="view_mode">form</field>-->
+<!--            <field name="view_id" ref="alert_message_form_view" />-->
+<!--            <field name="target">new</field>-->
+<!--        </record>-->
+    </data>
+</odoo>

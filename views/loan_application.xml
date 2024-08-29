@@ -107,9 +107,11 @@
                                                                     'invisible': [('type_loan','=','emergency')]}"/>
                                 <field name="partner_id" readonly="1"/>
                                 <field name="partner_status_especific" />
-                                <field name="refinance_loan_id" readonly="1" attrs="{'invisible': [('state','!=','refinanced')]}"/>
-                                <field name="amount_devolution" readonly="1" attrs="{'invisible': [('state','!=','refinanced')]}"/>
-                                <field name="interest_day_rest" attrs="{'invisible': [('state','!=','refinanced')]}"/>
+                                <field name="refinance_loan_id" readonly="1" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
+                                <field name="amount_devolution" readonly="1" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
+                                <field name="amount_devolution_bs" readonly="1" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
+                                <field name="interest_day_rest" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
+                                <field name="interest_day_rest_bs" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
                                 <field name="category_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
                                 <field name="code_contact"/>
                                 <field name="ci_partner" attrs="{'invisible':[('partner_id', '=', False)]}"/>
@@ -244,6 +246,8 @@
                                     </group>
                                     <group string="Haber">
                                         <field name="account_egreso_id"/>
+                                        <field name="account_monto_refinanciamiento" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
+                                        <field name="account_monto_meses_interes" attrs="{'invisible': [('refinance_loan_id','=',False)]}"/>
                                     </group>
                                 </group>
                             </page>

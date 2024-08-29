@@ -82,7 +82,8 @@ class LoanApplication(models.Model):
     account_deposit = fields.Char(string='Cuenta de deposito', tracking=True)
     special_case = fields.Boolean(string='Caso especial', default=False)
     refinance_loan_id = fields.Many2one('loan.application', string='Prestamo anterior')
-    amount_devolution = fields.Float(string='Monto de entregar')
+    amount_devolution = fields.Float(string='Monto a entregar', digits=(6, 2), store=True)
+    amount_devolution_bs = fields.Float(string="Monto a entregar Bs.", digits=(6, 2), store=True)
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_balance_capital', store=True)
     balance_total_interest_month = fields.Float(string='Saldo total interes mensual',
                                                 compute='_compute_balance_capital', digits=(6, 2), store=True)
@@ -101,6 +102,9 @@ class LoanApplication(models.Model):
     account_loan_id = fields.Many2one('account.account', string='Cuenta de prestamo')
     account_egreso_id = fields.Many2one('account.account', string='Cuenta de egreso')
     accounting_entry_id = fields.Many2one('account.move', string='Asiento contable egreso')
+
+    account_monto_refinanciamiento = fields.Many2one('account.account', string="Cuenta Saldo anterior")
+    account_monto_meses_interes = fields.Many2one('account.account', string="Cuenta Saldo dias excedentes")
 
     journal_income_id = fields.Many2one('account.journal', string='Diario Ingreso')
     account_income = fields.Many2one('account.account', string='Cuenta de ingreso')
@@ -217,6 +221,7 @@ class LoanApplication(models.Model):
     value_partner_total_contribution = fields.Float(string='Total aportes', compute='compute_total_contribution')
 
     interest_day_rest = fields.Float(string='Interes dias restantes', digits=(6, 2))
+    interest_day_rest_bs = fields.Float(string='Interes dias restantes Bs.', digits=(6, 2))
 
     def compute_total_contribution(self):
         value = self.env['partner.payroll'].search([('partner_id', '=', self.partner_id.id)])
@@ -497,7 +502,12 @@ class LoanApplication(models.Model):
             # rec.missing_payments = (date_end.year - date_init.year) * 12 + date_end.month - date_init.month
             rec.missing_payments = count_payment - count_payment_confirm
             rec.total_payments_confirm = count_payment
+            # rec.amount_devolution_bs = rec.amount_devolution * rec.value_dolar
+            # rec.interest_day_rest_bs = rec.interest_day_rest * rec.value_dolar
 
+    @api.onchange('interest_day_rest')
+    def _onchange_interest_day_rest(self):
+        self.interest_day_rest_bs = self.interest_day_rest * self.value_dolar
     def action_wizard_report_xlsx(self):
         return {
             'name': 'Generar reportes Excel',
@@ -553,12 +563,35 @@ class LoanApplication(models.Model):
                                })
                 val.append(data)
             else:
-                data = (0, 0, {'account_id': record.account_egreso_id.id,
-                               'debit': 0, 'credit': record.amount_loan,
-                               # 'partner_id': record.partner_id.id,
-                               'amount_currency': 0
-                               })
-                val.append(data)
+                if record.refinance_loan_id:
+                    amount_amortizacion = record.amount_loan - record.amount_devolution_bs - record.interest_day_rest_bs
+                    amount_loan = record.amount_loan - (amount_amortizacion + record.interest_day_rest_bs)
+
+                    data = (0, 0, {'account_id': record.account_egreso_id.id,
+                                   'debit': 0, 'credit': amount_loan,
+                                   # 'partner_id': record.partner_id.id,
+                                   'amount_currency': 0
+                                   })
+                    val.append(data)
+                    data = (0, 0, {'account_id': record.account_monto_refinanciamiento.id,
+                                   'debit': 0, 'credit': amount_amortizacion,
+                                   # 'partner_id': record.partner_id.id,
+                                   'amount_currency': 0
+                                   })
+                    val.append(data)
+                    data = (0, 0, {'account_id': record.account_monto_meses_interes.id,
+                                   'debit': 0, 'credit': record.interest_day_rest_bs,
+                                   # 'partner_id': record.partner_id.id,
+                                   'amount_currency': 0
+                                   })
+                    val.append(data)
+                else:
+                    data = (0, 0, {'account_id': record.account_egreso_id.id,
+                                   'debit': 0, 'credit': record.amount_loan,
+                                   # 'partner_id': record.partner_id.id,
+                                   'amount_currency': 0
+                                   })
+                    val.append(data)
             if record.with_guarantor == 'loan_guarantor':
                 glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(record.amount_loan_dollars) + " INT " + str(round(record.monthly_interest,2))+"% " + "F.CONTIGENCIA: " + str(round(record.contingency_fund,2)) + "% PLAZO: " + str(record.months_quantity) + " MESES EXCED " + str(record.surplus_days) + " DIAS "+ "CUOTA FIJA $US: "+ str(round(record.loan_payment_ids[0].amount_total,2)) +" GARANTES " + record.guarantor_one.category_partner_id.code_loan + " " +record.guarantor_one.name + " "+ record.guarantor_two.category_partner_id.code_loan + " " + record.guarantor_two.name
             else:

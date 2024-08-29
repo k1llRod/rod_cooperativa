@@ -30,7 +30,7 @@ class ResPartner(models.Model):
     category_partner_id = fields.Many2one('partner.category', string='Grado')
     ci_cossmil = fields.Char(string='C. COSSMIL Nro.')
     ci_military = fields.Char(string='C. MILITAR Nro.')
-    graduation_year = fields.Integer(string='Año de egreso')
+    graduation_year = fields.Integer(string='Año de egreso', store=True)
     specialty = fields.Selection([('DAEN', 'DAEN'),
                                   ('DAENMG', 'DAENMG'),
                                   ('DEM', 'DEM'),
@@ -77,6 +77,8 @@ class ResPartner(models.Model):
     glosa = fields.Text(string='Glosa')
     date_deceased = fields.Date(string='Fecha de fallecimiento')
     date_unsubcribe = fields.Date(string='Fecha de baja')
+
+
     @api.depends('graduation_year')
     def _compute_year_service(self):
         for partner in self:
