@@ -34,7 +34,8 @@
                     <field name="percentage_amount_min_def" optional="hidden" sum="Total"/>
                     <field name="percentage_amount_min_def_bolivianos" sum="Total"/>
                     <field name="commission_min_def" optional="hidden" sum="Total"/>
-<!--                    <field name="coa_commission" optional="hidden" sum="Total"/>-->
+                    <field name="coa_commission" optional="hidden" sum="Total"/>
+                    <field name="coa_commission_bs" optional="hidden" sum="Total"/>
                     <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
                     <field name="amount_total_bs" widget="monetary" sum="Total"/>
                     <field name="amount_total_bolivianos" sum="Total"/>

@@ -342,6 +342,14 @@
             <field name="code">action = records.approve_egreso()</field>
         </record>
 
+        <record id="action_update_loan" model="ir.actions.server">
+            <field name="name">Actualizar prestamo</field>
+            <field name="model_id" ref="model_loan_application"/>
+            <field name="binding_model_id" ref="model_loan_application"/>
+            <field name="state">code</field>
+            <field name="code">action = records.update_loan()</field>
+        </record>
+
         <!-- Accion para visualizar loan.application -->
 
         <record id="action_loan_application" model="ir.actions.act_window">

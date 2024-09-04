@@ -627,3 +627,9 @@ class LoanApplication(models.Model):
             'res_id': account_move_id.id,
             'views': [(False, 'form')],
         }
+
+    def update_loan(self):
+        for record in self:
+            for r in record.loan_payment_ids:
+                r.commission_min_def = r.mount * 0.0025
+                r.coa_commission_bs = r.coa_commission * 6.96
