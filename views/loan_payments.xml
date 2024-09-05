@@ -119,6 +119,17 @@
                                 <field name="amount_returned_coa"/>
                             </group>
                         </group>
+                        <notebook>
+                            <page string="Contabilidad">
+                                <label for="state_account" string="Estado de asiento contable"/>
+                                <field name="state_account" decoration-danger="state_account == 'draft'"
+                                       decoration-info="state_account == 'posted'"
+                                       widget="badge"/>
+                                <group>
+                                    <field name="account_move_id" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" groups="base.group_user"/>

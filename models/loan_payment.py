@@ -63,6 +63,11 @@ class LoanPayment(models.Model):
     percentage_amount_min_def_bolivianos = fields.Float(string='%MINDEF BS', compute='_compute_bolivianos', store=True, digits=(16, 2))
     interest_month_surpluy_bolivianos = fields.Float(string='D/E BS', compute='_compute_bolivianos', store=True, digits=(16, 2))
     amount_total_bolivianos = fields.Float(string='D/MINDEF Bs', compute='_compute_bolivianos', digits=(16, 2),store=True)
+
+    account_move_id = fields.Many2one('account.move', string='Asiento contable')
+    state_account = fields.Selection([('draft', 'Borrador'), ('posted', 'Contabilizado'), ('cancel', 'Cancelado')],
+                                     default='draft', related='account_move_id.state', store=True)
+
     @api.depends('capital_index_initial','interest','res_social','percentage_amount_min_def','interest_month_surpluy')
     def _compute_bolivianos(self):
         for rec in self:
