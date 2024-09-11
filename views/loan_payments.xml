@@ -38,8 +38,8 @@
                     <field name="coa_commission_bs" optional="hidden" sum="Total"/>
                     <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
                     <field name="amount_total_bs" widget="monetary" sum="Total"/>
-                    <field name="amount_total_bolivianos" sum="Total"/>
-
+                    <field name="amount_total_bolivianos" sum="Total" optional="hidden"/>
+                    <field name="amount_payment" widget="monetary" sum="Total"/>
                     <field name="amount_returned_coa" optional="hidden" sum="Total"/>
                     <field name="capital_index_initial" optional="hidden" sum="Total"/>
                     <field name="loan_application_ids" invisible="1"/>
@@ -117,6 +117,7 @@
                                 <field name="amount_total_bs" widget="monetary"/>
                                 <field name="amount_total_bolivianos" />
                                 <field name="amount_returned_coa"/>
+                                <field name="amount_payment"/>
                             </group>
                         </group>
                         <notebook>
@@ -126,7 +127,27 @@
                                        decoration-info="state_account == 'posted'"
                                        widget="badge"/>
                                 <group>
+                                    <field name="journal_id"/>
                                     <field name="account_move_id" readonly="1"/>
+                                </group>
+                                <group>
+                                    <group string="Debe">
+                                        <field name="account_income_id"/>
+                                        <field name="amount_income"/>
+                                    </group>
+                                    <group string="Haber">
+                                        <field name="account_capital_index_id"/>
+                                        <field name="amount_capital_index"/>
+                                        <field name="account_interest_base"/>
+                                        <field name="amount_interest"/>
+                                        <field name="account_res_social"/>
+                                        <field name="amount_res_social"/>
+                                        <field name="account_percentage_mindef"/>
+                                        <field name="amount_percentage_mindef"/>
+                                        <field name="account_overage_days"/>
+                                        <field name="amount_overage_days"/>
+                                        <field name="amount_sum" />
+                                    </group>
                                 </group>
                             </page>
                         </notebook>
@@ -178,6 +199,13 @@
             <field name="binding_model_id" ref="model_loan_payment"/>
             <field name="state">code</field>
             <field name="code">action = records.draft_massive()</field>
+        </record>
+        <record id="action_publish_accounting_loan" model="ir.actions.server">
+            <field name="name">Publicar asiento contable</field>
+            <field name="model_id" ref="model_loan_payment"/>
+            <field name="binding_model_id" ref="model_loan_payment"/>
+            <field name="state">code</field>
+            <field name="code">action = records.create_account_move()</field>
         </record>
 
         <!-- Accion para visualizar loan.application -->
