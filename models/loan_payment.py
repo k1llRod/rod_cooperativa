@@ -195,7 +195,7 @@ class LoanPayment(models.Model):
     @api.onchange('amount_payment')
     def _onchange_amount_payment(self):
         for record in self:
-            if record.amount_payment <= record.amount_total_bs:
+            if record.amount_payment < record.amount_total_bs:
                 raise ValidationError('El pago no puede ser menor al establecido en el plan de pagos.')
             else:
                 record.amount_returned_coa = 0
