@@ -29,3 +29,13 @@ class FinalizedLoan(models.Model):
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code('finalized.loan')
         return super(FinalizedLoan, self).create(vals)
+
+    def open_finalized_loan(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Finalized Loan'),
+            'res_model': 'finalized.loan',
+            'view_mode': 'form',
+            'res_id': self.id,
+            'target': 'current',
+        }

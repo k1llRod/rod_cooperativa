@@ -33,7 +33,7 @@ class FormFinalizedLoan(models.TransientModel):
             'amount_loan_initial': self.amount_loan_initial,
             'payment_count': self.payment_count,
             'balance_capital_dollar': self.balance_capital,
-            'balance_captal_bolivianos': self.balance_capital_bolivianos,
+            'balance_capital_bolivianos': self.balance_capital_bolivianos,
             'balance_total_interest_month': self.balance_total_interest_month,
             'balance_total_interest_month_bolivianos': self.balance_total_interest_month_bolivianos,
             'state': 'draft'

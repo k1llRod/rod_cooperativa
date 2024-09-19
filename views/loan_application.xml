@@ -233,7 +233,25 @@
                                 </field>
                             </page>
                             <page string="Liquidacion de prestamo">
-                                <field name="finalized_loan_id" />
+                                <field name="finalized_loan_id" >
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="loan_application_id"/>
+                                        <field name="date_finalize"/>
+                                        <field name="amount_loan_dollars_initial"/>
+                                        <field name="amount_loan_initial"/>
+<!--                                        <field name="payment_coa"/>-->
+                                        <field name="balance_capital_dollar"/>
+                                        <field name="balance_capital_bolivianos"/>
+                                        <field name="balance_total_interest_month"/>
+                                        <field name="balance_total_interest_month_bolivianos"/>
+                                        <field name="state" decoration-info="state == 'init' or state == 'in_queue'"
+                                               decoration-success="state == 'progress' or state == 'done'"
+                                               widget="badge"/>
+                                        <button name="open_finalized_loan" type="object" class="oe_highlight"
+                                                icon="fa-eye"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="Contabilidad egresos">
                                 <group>
