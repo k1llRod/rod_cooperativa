@@ -1,0 +1,75 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="finalized_loan_tree">
+            <field name="name">finalized.loan.tree</field>
+            <field name="model">finalized.loan</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <header>
+
+                    </header>
+                    <field name="name"/>
+                    <field name="loan_application_id"/>
+                    <field name="date_finalize"/>
+                    <field name="amount_loan_dollars_initial"/>
+                    <field name="amount_loan_initial"/>
+                    <field name="payment_count"/>
+                    <field name="balance_capital_dollar"/>
+                    <field name="balance_capital_bolivianos"/>
+                    <field name="balance_total_interest_month" />
+                    <field name="balance_total_interest_month_bolivianos"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Formulario loan.application  -->
+
+        <record model="ir.ui.view" id="finalized_loan_form">
+            <field name="name">finalized.loan.form</field>
+            <field name="model">finalized.loan</field>
+            <field name="arch" type="xml">
+                <form string="Liquidacion de prestamo">
+                    <header>
+                        <field name="state" widget="statusbar" />
+                    </header>
+                    <sheet>
+                        <group>
+                            <div class="oe_title">
+                                <h1>
+                                    <field name="name" string="Nombre" readonly="1"/>
+                                </h1>
+                            </div>
+                            <group string="Liquidacion de prestamo">
+                                <!--                                <field name="type_loan" attrs="{'readonly': ['|',('state','=','progress'),('state','=','done'),('state','=','init')]}"/>-->
+                                <field name="loan_application_id" readonly="1"/>
+                                <field name="date_finalize" />
+                                <field name="amount_loan_dollars_initial" />
+                                <field name="amount_loan_initial" />
+                                <field name="payment_count" />
+                                <field name="balance_capital_dollar" />
+                                <field name="balance_capital_bolivianos" />
+                                <field name="balance_total_interest_month" />
+                                <field name="balance_total_interest_month_bolivianos" />
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!-- Accion para visualizar finalized.loan -->
+        <record id="action_finalized_loan" model="ir.actions.act_window">
+            <field name="name">Liquidacion de prestamos</field>
+            <field name="res_model">finalized.loan</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>
+<!--        'required': [('with_guarantor','=','loan_guarantor')]}"/>-->
+<!--<field name="code_garantor_two"-->
+<!--        attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')]}"/>-->

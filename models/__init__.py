@@ -10,3 +10,4 @@ from . import loan_payment
 from . import family
 from . import nominal_relationship_mindef_loan
 from . import post_mortem
+from . import finalized_loan

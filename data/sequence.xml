@@ -20,5 +20,11 @@
             <field name="prefix">PSTMORT</field>
             <field name="padding">4</field>
         </record>
+        <record id="seq_finalized_form" model="ir.sequence">
+            <field name="name">Secuencia liquidacion de prestamo</field>
+            <field name="code">finalized.loan</field>
+            <field name="prefix">LIQPRES</field>
+            <field name="padding">4</field>
+        </record>
     </data>
 </odoo>

@@ -114,6 +114,7 @@ class LoanApplication(models.Model):
     account_percentage_mindef = fields.Many2one('account.account', string='Porcentaje Min. Defensa')
     account_surpluy_days = fields.Many2one('account.account', string='Interes dias excedentes')
 
+    finalized_loan_id = fields.One2many('finalized.loan', 'loan_application_id', string='Prestamos finalizados')
     @api.depends('loan_payment_ids')
     def _compute_pending_payment(self):
         for rec in self:
@@ -633,3 +634,25 @@ class LoanApplication(models.Model):
             for r in record.loan_payment_ids:
                 r.commission_min_def = r.mount * 0.0025
                 r.coa_commission_bs = r.coa_commission * 6.96
+
+    def finalized_loan(self):
+        context = {
+            'default_loan_application_id': self.id,
+            'default_amount_loan_dollars_initial': self.amount_loan_dollars,
+            'default_amount_loan_initial': self.amount_loan,
+            'default_month_quantity_initial': self.months_quantity,
+            'default_payment_count': self.total_payments_confirm,
+            'default_date_application': self.date_application,
+            'default_date_approval': self.date_approval,
+            'default_balance_capital': self.balance_capital if self.balance_capital != 0 else self.balance_capital_auxiliar,
+            'default_balance_total_interest_month': self.balance_total_interest_month if self.balance_total_interest_month != 0 else self.balance_total_interest_month_auxiliar,
+        }
+        return {
+            'name': 'Pago de aportes',
+            'type': 'ir.actions.act_window',
+            'res_model': 'form.finalized.loan',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'context': context,
+            'target': 'new',
+        }

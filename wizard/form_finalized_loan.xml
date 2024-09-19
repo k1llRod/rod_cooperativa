@@ -1,0 +1,32 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="form_finalized_loan_id">
+            <field name="name">form.finalized.loan.form</field>
+            <field name="model">form.finalized.loan</field>
+            <field name="arch" type="xml">
+                <form string="Liquidacion de prestamo">
+                    <group>
+                        <group>
+                            <field name="loan_application_id" readonly="1"/>
+                            <field name="date_finalize" />
+                            <field name="amount_loan_dollars_initial" readonly="1"/>
+                            <field name="amount_loan_initial" readonly="1"/>
+                            <field name="month_quantity_initial" readonly="1"/>
+                            <field name="date_application" readonly="1"/>
+                            <field name="date_approval" readonly="1"/>
+<!--                            <field name="payment_count"/>-->
+                            <field name="balance_capital"/>
+                            <field name="balance_capital_bolivianos"/>
+                            <field name="balance_total_interest_month"/>
+                            <field name="balance_total_interest_month_bolivianos"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Confirmar" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

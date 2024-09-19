@@ -36,3 +36,6 @@ access_form_payment_post_mortem,payment.post.mortem,model_payment_post_mortem,ro
 access_post_mortem,post.mortem,model_post_mortem,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
 access_post_mortem_operator,post.mortem,model_post_mortem,rod_cooperativa.group_rod_cooperativa_operator,1,1,0,0
 access_post_mortem_user,post.mortem,model_post_mortem,rod_cooperativa.group_rod_cooperativa_user,1,0,0,0
+
+access_finalized_loan,finalized.loan,model_finalized_loan,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+access_form_finalized_loan,form.finalized.loan,model_form_finalized_loan,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1

@@ -53,6 +53,7 @@
                         <button name="return_approval" string="Retornar aprobacion" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <button name="return_progress" string="Retornar proceso" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <button name="approve_loan" string="Validar" type="object" class="oe_highlight" attrs="{'invisible': [('state','!=','approval')]}" groups="rod_cooperativa.group_rod_cooperativa_operator,rod_cooperativa.group_rod_cooperativa_administrator"/>
+                        <button name="finalized_loan" string="Liquidacion de prestamo" type="object" class="oe_highlight" attrs="{'invisible': [('state','!=','progress')]}" groups="rod_cooperativa.group_rod_cooperativa_operator,rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <field name="state" widget="statusbar" statusbar_visible="init,verificate,approval,progress,done"/>
                     </header>
                     <sheet>
@@ -230,6 +231,9 @@
 
                                     </tree>
                                 </field>
+                            </page>
+                            <page string="Liquidacion de prestamo">
+                                <field name="finalized_loan_id" />
                             </page>
                             <page string="Contabilidad egresos">
                                 <group>
