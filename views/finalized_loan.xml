@@ -30,6 +30,8 @@
             <field name="arch" type="xml">
                 <form string="Liquidacion de prestamo">
                     <header>
+                        <button name="action_confirm" string="Confirmar" class="oe_highlight" type="object" />
+                        <button name="action_draft" string="Borrador" type="object"/>
                         <field name="state" widget="statusbar" />
                     </header>
                     <sheet>
@@ -49,8 +51,38 @@
                                 <field name="balance_capital_bolivianos" />
                                 <field name="balance_total_interest_month" />
                                 <field name="balance_total_interest_month_bolivianos" />
+                                <field name="total_payment"/>
+                                <field name="total_payment_bolivianos"/>
                             </group>
                         </group>
+                        <notebook>
+                            <page string="Contabilidad">
+                                <header>
+                                    <field name="accounting_finalized_loan_state" widget="statusbar"/>
+                                </header>
+                                <group string="Contabilidad">
+                                    <group>
+                                        <field name="journal_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="accounting_finalized_loan_id"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Debe">
+                                        <field name="account_loan_id"/>
+                                        <field name="amount_account_loan"/>
+                                    </group>
+                                    <group string="Haber">
+                                        <field name="account_regular_loan_amortization"/>
+                                        <field name="amount_regular_loan_amortization"/>
+                                        <field name="account_other_income"/>
+                                        <field name="amount_other_income"/>
+                                        <field name="total_payment_bolivianos"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" groups="base.group_user"/>

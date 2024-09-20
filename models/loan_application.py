@@ -20,6 +20,7 @@ class LoanApplication(models.Model):
         ('verificate', 'Verificación'),
         ('approval', 'Aprobar'),
         ('progress', 'En Proceso'),
+        ('liquidation_process', 'Proceso de liquidación'),
         ('done', 'Concluido'),
         ('refinanced', 'Refinanciado'),
         ('expansion', 'Ampliación'),
@@ -636,6 +637,8 @@ class LoanApplication(models.Model):
                 r.coa_commission_bs = r.coa_commission * 6.96
 
     def finalized_loan(self):
+        if self.state != 'progress':
+            raise ValidationError('No se puede liquidar este prestamo.')
         context = {
             'default_loan_application_id': self.id,
             'default_amount_loan_dollars_initial': self.amount_loan_dollars,
@@ -646,6 +649,7 @@ class LoanApplication(models.Model):
             'default_date_approval': self.date_approval,
             'default_balance_capital': self.balance_capital if self.balance_capital != 0 else self.balance_capital_auxiliar,
             'default_balance_total_interest_month': self.balance_total_interest_month if self.balance_total_interest_month != 0 else self.balance_total_interest_month_auxiliar,
+
         }
         return {
             'name': 'Pago de aportes',

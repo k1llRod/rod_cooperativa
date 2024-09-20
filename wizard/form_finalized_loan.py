@@ -1,4 +1,5 @@
 from odoo import api, fields, models, tools, _
+from odoo.exceptions import UserError, ValidationError
 
 class FormFinalizedLoan(models.TransientModel):
     _name = 'form.finalized.loan'
@@ -14,9 +15,9 @@ class FormFinalizedLoan(models.TransientModel):
     date_approval = fields.Date(string='Fecha de aprobacion')
     payment_count = fields.Integer(string='Cantidad de pagos realizados')
     balance_capital = fields.Float(string='Saldo de capital $.')
-    balance_capital_bolivianos = fields.Float(string='Saldo de capital Bs.', compute='_compute_calculate_dollar')
+    balance_capital_bolivianos = fields.Float(string='Saldo de capital Bs.', compute='_compute_calculate_dollar', store=True)
     balance_total_interest_month = fields.Float(string='Saldo total de interes mensual $.')
-    balance_total_interest_month_bolivianos = fields.Float(string='Saldo total de interes mensual en Bs.', compute='_compute_calculate_dollar')
+    balance_total_interest_month_bolivianos = fields.Float(string='Saldo total de interes mensual en Bs.', compute='_compute_calculate_dollar', store=True)
 
 
     @api.depends('balance_capital', 'balance_total_interest_month')
@@ -26,6 +27,8 @@ class FormFinalizedLoan(models.TransientModel):
             record.balance_total_interest_month_bolivianos = record.balance_total_interest_month * 6.96
 
     def action_confirm(self):
+        if self.loan_application_id.state != 'progress':
+            raise UserError(_('No se puede confirmar un prestamo finalizado que no este en progreso.'))
         finalized_loan = self.env['finalized.loan'].create({
             'loan_application_id': self.loan_application_id.id,
             'date_finalize': self.date_finalize,
@@ -38,6 +41,8 @@ class FormFinalizedLoan(models.TransientModel):
             'balance_total_interest_month_bolivianos': self.balance_total_interest_month_bolivianos,
             'state': 'draft'
         })
+        if finalized_loan:
+            self.loan_application_id.state = 'liquidation_process'
         # return {
         #     'type': 'ir.actions.act_window',
         #     'name': _('Finalized Loan'),
