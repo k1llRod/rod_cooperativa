@@ -1,14 +1,16 @@
 from odoo import api, fields, models, tools, _
 from odoo.exceptions import UserError, ValidationError
 
+
 class FinalizedLoan(models.Model):
     _name = 'finalized.loan'
     _description = 'Finalized Loan'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    name = fields.Char(string = 'Codigo')
+    name = fields.Char(string='Codigo')
     loan_application_id = fields.Many2one('loan.application', string='Codigo Prestamo')
-    date_finalize = fields.Date(string='Fecha de Finalizacion', required=True, default=fields.Date.context_today, track_visibility='onchange')
+    date_finalize = fields.Date(string='Fecha de Finalizacion', required=True, default=fields.Date.context_today,
+                                track_visibility='onchange')
     amount_loan_dollars_initial = fields.Float(string='Monto de prestamo inicial en $')
     amount_loan_initial = fields.Float(string='Monto de prestamo inicial Bs.')
     payment_count = fields.Integer(string='Cantidad de pagos realizados')
@@ -22,17 +24,22 @@ class FinalizedLoan(models.Model):
     accounting_finalized_loan_state = fields.Selection([
         ('draft', 'Borrador'),
         ('posted', 'Publicado'),
-    ], string='Estado', default='draft', related='accounting_finalized_loan_id.state', store=True, track_visibility='onchange')
+    ], string='Estado', default='draft', related='accounting_finalized_loan_id.state', store=True,
+        track_visibility='onchange')
     account_loan_id = fields.Many2one('account.account', string='Cuenta de prestamo', track_visibility='onchange')
     amount_account_loan = fields.Float(string='Monto de cuenta de prestamo', track_visibility='onchange')
 
-    account_regular_loan_amortization = fields.Many2one('account.account', string='Cuenta de amortizacion de prestamo regular', track_visibility='onchange')
-    amount_regular_loan_amortization = fields.Float(string='Monto de amortizacion de prestamo regular', track_visibility='onchange')
+    account_regular_loan_amortization = fields.Many2one('account.account',
+                                                        string='Cuenta de amortizacion de prestamo regular',
+                                                        track_visibility='onchange')
+    amount_regular_loan_amortization = fields.Float(string='Monto de amortizacion de prestamo regular',
+                                                    track_visibility='onchange')
     account_other_income = fields.Many2one('account.account', string='Cuenta de otros ingresos')
     amount_other_income = fields.Float(string='Monto de otros ingresos', track_visibility='onchange')
 
     total_payment = fields.Float(string='Total de pagos', compute='_compute_total_payment', store=True)
-    total_payment_bolivianos = fields.Float(string='Total de pagos en Bs.', compute='_compute_total_payment', store=True)
+    total_payment_bolivianos = fields.Float(string='Total de pagos en Bs.', compute='_compute_total_payment',
+                                            store=True)
 
     @api.depends('balance_capital_dollar', 'balance_total_interest_month')
     def _compute_total_payment(self):
@@ -48,10 +55,13 @@ class FinalizedLoan(models.Model):
 
     def action_draft(self):
         self.state = 'draft'
+
     def action_confirm(self):
         for record in self:
             move_line = []
-            if record.loan_application_id.state == 'process':
+            balance_capital = record.loan_application_id.balance_capital * 6.96
+            balance_total_interest_month = record.loan_application_id.balance_total_interest_month * 6.96
+            if record.loan_application_id.state == 'liquidation_process' and balance_capital == record.amount_regular_loan_amortization and balance_total_interest_month == record.amount_other_income:
                 journal_id = record.journal_id.id
                 data = (
                     0, 0, {'account_id': record.account_loan_id.id,
@@ -92,9 +102,9 @@ class FinalizedLoan(models.Model):
                         lambda x: x.state == 'draft').unlink()
                     if delete_records:
                         record.loan_application_id.state = 'done'
+                        record.state = 'confirmed'
                     else:
                         raise ValidationError('Error al eliminar los registros de pagos')
-
 
     @api.model
     def create(self, vals):
@@ -110,10 +120,9 @@ class FinalizedLoan(models.Model):
             'res_id': self.id,
             'target': 'current',
         }
+
     @api.onchange('account_loan_id')
     def _onchange_account_loan_id(self):
         self.amount_account_loan = self.total_payment_bolivianos
         self.amount_regular_loan_amortization = self.balance_capital_bolivianos
         self.amount_other_income = self.balance_total_interest_month_bolivianos
-
-
