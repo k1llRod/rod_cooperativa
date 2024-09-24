@@ -226,8 +226,9 @@ class LoanApplication(models.Model):
     interest_day_rest_bs = fields.Float(string='Interes dias restantes Bs.', digits=(6, 2))
 
     def compute_total_contribution(self):
-        value = self.env['partner.payroll'].search([('partner_id', '=', self.partner_id.id)])
-        self.value_partner_total_contribution = round(value.contribution_total, 2)
+        for record in self:
+            value = record.env['partner.payroll'].search([('partner_id', '=', record.partner_id.id),('state','=','process')])
+            record.value_partner_total_contribution = round(value.contribution_total, 2)
 
     # Conversion dolares a boliviamos
     @api.depends('amount_loan_dollars')
