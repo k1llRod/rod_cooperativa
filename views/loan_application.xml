@@ -210,6 +210,7 @@
                                         <field name="name"/>
                                         <field name="date" />
                                         <field name="period" />
+                                        <field name="date_payment"/>
                                         <field name="capital_initial" />
                                         <field name="capital_index_initial" />
                                         <field name="mount"/>
