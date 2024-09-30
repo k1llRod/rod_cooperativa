@@ -442,15 +442,15 @@ class LoanApplication(models.Model):
         for rec in self:
             rec.total_interest_month_surpluy = rec.interest_month_surpluy * rec.months_quantity
 
-    # @api.onchange('guarantor_one', 'guarantor_two')
-    # def _onchange_guarantor_one(self):
-    #     if self.guarantor_one and self.guarantor_two:
-    #         if self.guarantor_one == self.guarantor_two:
-    #             raise ValidationError('No puede seleccionar el mismo garante')
-    #     if self.guarantor_one == self.partner_id:
-    #         raise ValidationError('No puede seleccionar el mismo socio como garante')
-    #     if self.guarantor_one.guarantor_count == 3:
-    #         raise ValidationError('El garante,' + self.guarantor_one.name + ', ya tiene 3 prestamos')
+    @api.onchange('guarantor_one', 'guarantor_two')
+    def _onchange_guarantor_one(self):
+        if self.guarantor_one and self.guarantor_two:
+            if self.guarantor_one == self.guarantor_two:
+                raise ValidationError('No puede seleccionar el mismo garante')
+        if self.guarantor_one == self.partner_id:
+            raise ValidationError('No puede seleccionar el mismo socio como garante')
+        if self.guarantor_one.guarantor_count == 3:
+            raise ValidationError('El garante,' + self.guarantor_one.name + ', ya tiene 3 prestamos')
 
     @api.onchange('guarantor_two')
     def _onchange_guarantor_two(self):
