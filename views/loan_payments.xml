@@ -148,6 +148,8 @@
                                         <field name="amount_percentage_mindef"/>
                                         <field name="account_overage_days"/>
                                         <field name="amount_overage_days"/>
+                                        <field name="account_overage_amount"/>
+                                        <field name="amount_overage"/>
                                         <field name="amount_sum" />
                                     </group>
                                 </group>

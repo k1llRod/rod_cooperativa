@@ -84,6 +84,8 @@ class LoanPayment(models.Model):
     account_res_social = fields.Many2one('account.account', string='Fondo por Contingencia 0.04%')
     account_percentage_mindef = fields.Many2one('account.account', string='Porcentaje Min. Defensa')
     account_overage_days = fields.Many2one('account.account', string='Dias excedentes')
+    account_overage_amount = fields.Many2one('account.account', string='Cuenta Monto excedente')
+
     journal_id = fields.Many2one('account.journal', string='Diario')
     amount_income = fields.Float(string='Monto ingreso')
     amount_capital_index = fields.Float(string='Monto Capital')
@@ -91,6 +93,8 @@ class LoanPayment(models.Model):
     amount_res_social = fields.Float(string='Monto contingencia')
     amount_percentage_mindef = fields.Float(string='Monto porcentaje MINDEF')
     amount_overage_days = fields.Float(string='Monto Dias D/E')
+    amount_overage = fields.Float(string='Monto excedente')
+
     amount_sum = fields.Float(string='Total', compute='_sum_total')
 
     @api.depends('capital_index_initial', 'interest', 'res_social', 'percentage_amount_min_def',
@@ -275,7 +279,7 @@ class LoanPayment(models.Model):
             record.amount_overage_days = record.interest_month_surpluy_bolivianos
             record.amount_sum = record.amount_capital_index + record.amount_interest + record.amount_res_social + record.amount_percentage_mindef + record.amount_overage_days
 
-    @api.depends('amount_capital_index','amount_interest','amount_res_social','amount_percentage_mindef','amount_overage_days')
+    @api.depends('amount_capital_index','amount_interest','amount_res_social','amount_percentage_mindef','amount_overage_days','amount_overage')
     def _sum_total(self):
         for record in self:
-            record.amount_sum = record.amount_capital_index + record.amount_interest + record.amount_res_social + record.amount_percentage_mindef + record.amount_overage_days
+            record.amount_sum = record.amount_capital_index + record.amount_interest + record.amount_res_social + record.amount_percentage_mindef + record.amount_overage_days + record.amount_overage
