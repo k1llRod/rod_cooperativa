@@ -71,12 +71,12 @@
                                 />
                         <button name="debt_settlement_min_def" string="Liquidacion de deuda por MINDEF" type="object"
                                 class="oe_highlight"
-                                attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'progress')]}"
+                                attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'liquidation_process')]}"
                                 groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
                                 />
                         <button name="debt_settlement_deposit" string="Liquidacion de deuda por deposito" type="object"
                                 class="oe_highlight"
-                                attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'progress')]}"
+                                attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'liquidation_process')]}"
                                 groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
                                 />
 

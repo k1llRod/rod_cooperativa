@@ -18,7 +18,15 @@ class FormFinalizedLoan(models.TransientModel):
     balance_capital_bolivianos = fields.Float(string='Saldo de capital Bs.', compute='_compute_calculate_dollar', store=True)
     balance_total_interest_month = fields.Float(string='Saldo total de interes mensual $.')
     balance_total_interest_month_bolivianos = fields.Float(string='Saldo total de interes mensual en Bs.', compute='_compute_calculate_dollar', store=True)
+    balance_total = fields.Float(string='Saldo total $.', compute='_compute_calculate_total', store=True)
+    balance_total_bolivianos = fields.Float(string='Saldo total Bs.')
 
+
+    @api.depends('balance_capital', 'balance_total_interest_month')
+    def _compute_calculate_total(self):
+        for record in self:
+            record.balance_total = record.balance_capital + record.balance_total_interest_month
+            record.balance_total_bolivianos = record.balance_total * 6.96
 
     @api.depends('balance_capital', 'balance_total_interest_month')
     def _compute_calculate_dollar(self):
@@ -41,6 +49,7 @@ class FormFinalizedLoan(models.TransientModel):
             'balance_total_interest_month_bolivianos': self.balance_total_interest_month_bolivianos,
             'state': 'draft'
         })
+
         if finalized_loan:
             self.loan_application_id.state = 'liquidation_process'
         # return {

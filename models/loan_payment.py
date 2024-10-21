@@ -120,7 +120,7 @@ class LoanPayment(models.Model):
     @api.depends('date')
     def _compute_period(self):
         for rec in self:
-            rec.period = rec.date.strftime('%m/%Y')
+            rec.period = rec.date.strftime('%m/%Y') if rec.date else ''
 
     # @api.depends('mount')
     # def _compute_interest(self):
@@ -143,20 +143,24 @@ class LoanPayment(models.Model):
 
         for rec in self:
             if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
-                rec.interest = rec.capital_initial * interest
-                rec.interest_base = rec.capital_initial * round((percentage_interest / 100), 3)
-                rec.capital_index_initial = round(rec.mount - rec.interest, 2)
+                rec.interest = rec.capital_initial * interest if rec.mount > 0 else 0
+                rec.interest_base = rec.capital_initial * round((percentage_interest / 100), 3) if rec.mount > 0 else 0
+                if rec.mount > 0:
+                    rec.capital_index_initial = round(rec.mount - rec.interest, 2)
             if rec.loan_application_ids.with_guarantor == 'mortgage':
                 rec.interest_mortgage = rec.capital_initial * interest_mortgage
                 rec.interest_base_mortgage = rec.capital_initial * (percentage_interest_mortgage / 100)
-                rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
+                if rec.mount > 0:
+                    rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
             if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
-                rec.res_social = rec.capital_initial * round((contingency_found / 100), 4)
+                rec.res_social = rec.capital_initial * round((contingency_found / 100), 4) if rec.mount > 0 else 0
             if rec.loan_application_ids.with_guarantor == 'mortgage':
                 rec.res_mortgage = rec.capital_initial * round((mortgage_loan / 100), 4)
             rec.amount_total = round(rec.mount, 2) + round(rec.percentage_amount_min_def, 2) + round(
-                rec.interest_month_surpluy, 2)
+                rec.interest_month_surpluy, 2) if rec.mount > 0 else rec.capital_index_initial + rec.interest_month_surpluy
+            if rec.capital_index_initial >= rec.capital_initial:
+                rec.amount_payment = round((rec.capital_index_initial + rec.interest_month_surpluy) * rec.loan_application_ids.value_dolar,2)
             rec._change_amount_total_bs()
             # rec.commission_min_def = round((commission_min_def / 100) * rec.amount_total_bs,2)
             # commision_auxiliar = rec.commission_min_def

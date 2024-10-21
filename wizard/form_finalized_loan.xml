@@ -19,6 +19,8 @@
                             <field name="balance_capital_bolivianos"/>
                             <field name="balance_total_interest_month"/>
                             <field name="balance_total_interest_month_bolivianos"/>
+                            <field name="balance_total"/>
+                            <field name="balance_total_bolivianos"/>
                         </group>
                     </group>
                     <footer>
