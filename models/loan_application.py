@@ -49,7 +49,7 @@ class LoanApplication(models.Model):
     code_garantor_one = fields.Char(string='Codigo de garante 1', related='guarantor_one.code_contact', store=True)
     code_garantor_two = fields.Char(string='Codigo de garante 2', related='guarantor_two.code_contact', store=True)
     code_loan = fields.Char(string='Codigo de prestamo')
-    amount_loan = fields.Float(string='Monto de prestamo (Bolivianos)', compute='_compute_change_dollars_bolivian')
+    amount_loan = fields.Float(string='Monto de prestamo (Bolivianos)')
     amount_loan_dollars = fields.Float(string='Monto de prestamo (dolares)')
     months_quantity = fields.Integer(string='Cantidad de meses', tracking=True)
     # valores calculados para prestamos
@@ -231,7 +231,7 @@ class LoanApplication(models.Model):
             record.value_partner_total_contribution = round(value.contribution_total, 2)
 
     # Conversion dolares a boliviamos
-    @api.depends('amount_loan_dollars')
+    @api.onchange('amount_loan_dollars')
     def _compute_change_dollars_bolivian(self):
         for rec in self:
             rec.amount_loan = rec.amount_loan_dollars * rec.value_dolar
@@ -377,8 +377,8 @@ class LoanApplication(models.Model):
     @api.onchange('partner_id')
     def _onchange_partner_id(self):
         for rec in self:
-            rec.months_quantity = rec.partner_id.category_partner_id.months
-            rec.amount_loan_dollars = rec.partner_id.category_partner_id.limit_amount_dollars
+            rec.months_quantity = rec.partner_id.category_partner_id.months if rec.partner_id.category_partner_id else 0
+            rec.amount_loan_dollars = rec.partner_id.category_partner_id.limit_amount_dollars if rec.partner_id.category_partner_id else 0
 
     @api.depends('fixed_fee')
     def _compute_index_loan_fixed_fee_bs(self):
