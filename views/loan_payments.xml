@@ -140,17 +140,23 @@
                                     <group string="Haber">
                                         <field name="account_capital_index_id"/>
                                         <field name="amount_capital_index"/>
+                                        <field name="amount_capital_index_bs"/>
                                         <field name="account_interest_base"/>
                                         <field name="amount_interest"/>
+                                        <field name="amount_interest_bs"/>
                                         <field name="account_res_social"/>
                                         <field name="amount_res_social"/>
+                                        <field name="amount_res_social_bs"/>
                                         <field name="account_percentage_mindef"/>
                                         <field name="amount_percentage_mindef"/>
+                                        <field name="amount_percentage_mindef_bs"/>
                                         <field name="account_overage_days"/>
                                         <field name="amount_overage_days"/>
+                                        <field name="amount_overage_days_bs"/>
                                         <field name="account_overage_amount"/>
                                         <field name="amount_overage"/>
                                         <field name="amount_sum" />
+                                        <field name="amount_sum_bs"/>
                                     </group>
                                 </group>
                             </page>

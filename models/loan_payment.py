@@ -88,14 +88,22 @@ class LoanPayment(models.Model):
 
     journal_id = fields.Many2one('account.journal', string='Diario')
     amount_income = fields.Float(string='Monto ingreso')
-    amount_capital_index = fields.Float(string='Monto Capital')
-    amount_interest = fields.Float(string='Monto interes')
-    amount_res_social = fields.Float(string='Monto contingencia')
-    amount_percentage_mindef = fields.Float(string='Monto porcentaje MINDEF')
-    amount_overage_days = fields.Float(string='Monto Dias D/E')
-    amount_overage = fields.Float(string='Monto excedente')
+    amount_capital_index = fields.Float(string='Monto Capital', digits=(16, 2), store=True)
+    amount_interest = fields.Float(string='Monto interes', digits=(16, 2), store=True)
+    amount_res_social = fields.Float(string='Monto contingencia', digits=(16, 2), store=True)
+    amount_percentage_mindef = fields.Float(string='Monto porcentaje MINDEF', digits=(16, 2), store=True)
+    amount_overage_days = fields.Float(string='Monto Dias D/E', digits=(16, 2), store=True)
+    amount_overage = fields.Float(string='Monto excedente', digits=(16, 2), store=True)
 
-    amount_sum = fields.Float(string='Total', compute='_sum_total')
+    amount_interest_bs = fields.Float(string='Monto interes Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
+    amount_capital_index_bs = fields.Float(string='Monto Capital Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
+    amount_res_social_bs = fields.Float(string='Monto contingencia Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
+    amount_percentage_mindef_bs = fields.Float(string='Monto porcentaje MINDEF Bs', compute='_onchange_values_amount', digits=(16, 4), store=True)
+    amount_overage_days_bs = fields.Float(string='Monto Dias D/E Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
+    amount_overage_bs = fields.Float(string='Monto excedente Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
+
+    amount_sum = fields.Float(string='Total', compute='_sum_total', digits=(16, 2), store=True)
+    amount_sum_bs = fields.Float(string='Total Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
 
     @api.depends('capital_index_initial', 'interest', 'res_social', 'percentage_amount_min_def',
                  'interest_month_surpluy')
@@ -211,6 +219,7 @@ class LoanPayment(models.Model):
 
     def create_account_move(self):
         for rec in self:
+            amount = 0
             move_line_vals = []
             move_line = []
             journal_id = rec.journal_id.id
@@ -222,43 +231,70 @@ class LoanPayment(models.Model):
                            'partner_id': rec.loan_application_ids.partner_id.id,
                            'amount_currency': 0
                            })
-                if not (rec.amount_payment == 0): move_line.append(data)
+                if not (rec.amount_payment == 0):
+                    move_line.append(data)
+                    # amount = rec.amount_payment + amount
                 data = (0, 0, {
                     'account_id': rec.account_capital_index_id.id,
-                    'debit': 0, 'credit': rec.amount_capital_index,
+                    'debit': 0, 'credit': rec.amount_capital_index_bs,
                     'partner_id': rec.loan_application_ids.partner_id.id,
                     'amount_currency': 0
                 })
-                if not (rec.capital_index_initial_bolivianos == 0): move_line.append(data)
+                if not (rec.capital_index_initial_bolivianos == 0):
+                    move_line.append(data)
+                    amount = rec.amount_capital_index_bs + amount
                 data = (0, 0, {
                     'account_id': rec.account_interest_base.id,
-                    'debit': 0, 'credit': rec.amount_interest,
+                    'debit': 0, 'credit': rec.amount_interest_bs,
                     'partner_id': rec.loan_application_ids.partner_id.id,
                     'amount_currency': 0
                 })
 
-                if not (rec.interest_base_bolivianos == 0): move_line.append(data)
+                if not (rec.interest_base_bolivianos == 0):
+                    move_line.append(data)
+                    amount = rec.amount_interest_bs + amount
                 data = (0, 0, {
                     'account_id': rec.account_res_social.id,
-                    'debit': 0, 'credit': rec.amount_res_social,
+                    'debit': 0, 'credit': rec.amount_res_social_bs,
                     'partner_id': rec.loan_application_ids.partner_id.id,
                     'amount_currency': 0
                 })
-                if not (rec.res_social_bolivianos == 0): move_line.append(data)
+                if not (rec.res_social_bolivianos == 0):
+                    move_line.append(data)
+                    amount = rec.amount_res_social_bs + amount
                 data = (0, 0, {
                     'account_id': rec.account_percentage_mindef.id,
-                    'debit': 0, 'credit': rec.amount_percentage_mindef,
+                    'debit': 0, 'credit': rec.amount_percentage_mindef_bs,
                     'partner_id': rec.loan_application_ids.partner_id.id,
                     'amount_currency': 0
                 })
-                if not (rec.percentage_amount_min_def_bolivianos == 0): move_line.append(data)
+                if not (rec.percentage_amount_min_def_bolivianos == 0):
+                    move_line.append(data)
+                    amount = rec.amount_percentage_mindef_bs + amount
                 data = (0, 0, {'account_id': rec.account_overage_days.id,
-                               'debit': 0, 'credit': rec.amount_overage_days,
+                               'debit': 0, 'credit': rec.amount_overage_days_bs,
                                'partner_id': rec.loan_application_ids.partner_id.id,
                                'amount_currency': 0
                                })
-                if not (rec.interest_month_surpluy_bolivianos == 0): move_line.append(data)
-
+                if not (rec.interest_month_surpluy_bolivianos == 0):
+                    move_line.append(data)
+                    amount = rec.amount_overage_days_bs + amount
+                data = (0, 0, {'account_id': rec.account_overage_amount.id,
+                               'debit': 0, 'credit': rec.amount_overage,
+                               'partner_id': rec.loan_application_ids.partner_id.id,
+                               'amount_currency': 0
+                               })
+                if not (rec.amount_overage == 0):
+                    move_line.append(data)
+                    amount = rec.amount_overage + amount
+            if not(rec.amount_payment == amount):
+                validate = round(rec.amount_payment - amount, 2)
+                data = (0, 0, {'account_id': rec.account_overage_amount.id,
+                               'debit': 0, 'credit': validate,
+                               'partner_id': rec.loan_application_ids.partner_id.id,
+                               'amount_currency': 0
+                               })
+                move_line.append(data)
             move_vals = {
                 "date": rec.date,
                 "journal_id": journal_id,
@@ -276,14 +312,25 @@ class LoanPayment(models.Model):
     def _onchange_account_income_id(self):
         for record in self:
             record.amount_income = record.amount_payment
-            record.amount_capital_index = record.capital_index_initial_bolivianos
-            record.amount_interest = record.interest_base_bolivianos
-            record.amount_res_social = record.res_social_bolivianos
-            record.amount_percentage_mindef = record.percentage_amount_min_def_bolivianos
-            record.amount_overage_days = record.interest_month_surpluy_bolivianos
-            record.amount_sum = record.amount_capital_index + record.amount_interest + record.amount_res_social + record.amount_percentage_mindef + record.amount_overage_days
+            record.amount_capital_index = record.capital_index_initial
+            record.amount_interest = record.interest_base
+            record.amount_res_social = record.res_social
+            record.amount_percentage_mindef = record.percentage_amount_min_def
+            record.amount_overage_days = record.interest_month_surpluy
+            # record.amount_sum = record.amount_capital_index + record.amount_interest + record.amount_res_social + record.amount_percentage_mindef + record.amount_overage_days
 
+    @api.depends('amount_income','amount_capital_index','amount_interest','amount_res_social','amount_percentage_mindef','amount_overage_days','amount_overage')
+    def _onchange_values_amount(self):
+        for record in self:
+            record.amount_interest_bs = record.amount_interest * record.currency_id_dollar.inverse_rate
+            record.amount_capital_index_bs = record.amount_capital_index * record.currency_id_dollar.inverse_rate
+            record.amount_res_social_bs = record.amount_res_social * record.currency_id_dollar.inverse_rate
+            record.amount_percentage_mindef_bs = record.amount_percentage_mindef * record.currency_id_dollar.inverse_rate
+            record.amount_overage_days_bs = record.amount_overage_days * record.currency_id_dollar.inverse_rate
+            record.amount_sum_bs = record.amount_sum * record.currency_id_dollar.inverse_rate
     @api.depends('amount_capital_index','amount_interest','amount_res_social','amount_percentage_mindef','amount_overage_days','amount_overage')
     def _sum_total(self):
         for record in self:
-            record.amount_sum = record.amount_capital_index + record.amount_interest + record.amount_res_social + record.amount_percentage_mindef + record.amount_overage_days + record.amount_overage
+            record.amount_sum = record.amount_capital_index + record.amount_interest + record.amount_res_social + record.amount_percentage_mindef + record.amount_overage_days
+            if record.amount_income > record.amount_sum:
+                record.amount_overage = record.amount_income - record.amount_sum_bs
