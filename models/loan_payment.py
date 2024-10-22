@@ -285,16 +285,19 @@ class LoanPayment(models.Model):
                                'amount_currency': 0
                                })
                 if not (rec.amount_overage == 0):
-                    move_line.append(data)
                     amount = rec.amount_overage + amount
-            if not(rec.amount_payment == amount):
-                validate = round(rec.amount_payment - amount, 2)
+                    move_line.append(data)
+            if rec.amount_payment >= amount:
+                validate = round(rec.amount_payment - amount, 2) if round(rec.amount_payment - amount, 2) > 0 else 0
                 data = (0, 0, {'account_id': rec.account_overage_amount.id,
                                'debit': 0, 'credit': validate,
                                'partner_id': rec.loan_application_ids.partner_id.id,
                                'amount_currency': 0
                                })
-                move_line.append(data)
+
+
+                if not (validate == 0):
+                    move_line.append(data)
             move_vals = {
                 "date": rec.date,
                 "journal_id": journal_id,
@@ -327,10 +330,11 @@ class LoanPayment(models.Model):
             record.amount_res_social_bs = record.amount_res_social * record.currency_id_dollar.inverse_rate
             record.amount_percentage_mindef_bs = record.amount_percentage_mindef * record.currency_id_dollar.inverse_rate
             record.amount_overage_days_bs = record.amount_overage_days * record.currency_id_dollar.inverse_rate
-            record.amount_sum_bs = record.amount_sum * record.currency_id_dollar.inverse_rate
+            # record.amount_sum_bs = record.amount_sum * record.currency_id_dollar.inverse_rate
     @api.depends('amount_capital_index','amount_interest','amount_res_social','amount_percentage_mindef','amount_overage_days','amount_overage')
     def _sum_total(self):
         for record in self:
             record.amount_sum = record.amount_capital_index + record.amount_interest + record.amount_res_social + record.amount_percentage_mindef + record.amount_overage_days
-            if record.amount_income > record.amount_sum:
+            record.amount_sum_bs = record.amount_capital_index_bs + record.amount_interest_bs + record.amount_res_social_bs + record.amount_percentage_mindef_bs + record.amount_overage_days_bs
+            if record.amount_income > record.amount_sum_bs:
                 record.amount_overage = record.amount_income - record.amount_sum_bs

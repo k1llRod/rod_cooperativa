@@ -633,9 +633,7 @@ class LoanApplication(models.Model):
 
     def update_loan(self):
         for record in self:
-            for r in record.loan_payment_ids:
-                r.commission_min_def = r.mount * 0.0025
-                r.coa_commission_bs = r.coa_commission * 6.96
+            record._compute_change_dollars_bolivian()
 
     def finalized_loan(self):
         if self.state != 'progress':
