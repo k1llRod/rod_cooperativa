@@ -634,6 +634,8 @@ class LoanApplication(models.Model):
     def update_loan(self):
         for record in self:
             record._compute_change_dollars_bolivian()
+            record._onchange_interest_day_rest()
+            record._onchange_amount_devolution()
 
     def finalized_loan(self):
         if self.state != 'progress':
