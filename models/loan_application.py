@@ -86,8 +86,12 @@ class LoanApplication(models.Model):
     amount_devolution = fields.Float(string='Monto a entregar', digits=(6, 2), store=True)
     amount_devolution_bs = fields.Float(string="Monto a entregar Bs.", digits=(6, 2), store=True)
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_balance_capital', store=True)
+    balance_capital_bs = fields.Float(string='Saldo capital Bs.', compute='_compute_balance_capital_bs', store=True)
     balance_total_interest_month = fields.Float(string='Saldo total interes mensual',
                                                 compute='_compute_balance_capital', digits=(6, 2), store=True)
+    balance_total_interest_month_bs = fields.Float(string='Saldo total interes mensual Bs.',
+                                                   compute='_compute_balance_capital_bs', digits=(6, 2), store=True)
+
     balance_total_interest_month_auxiliar = fields.Float(string='Saldo total interes mensual auxiliar')
     balance_capital_auxiliar = fields.Float(string='Saldo capital auxiliar')
     # amount_min_def = fields.Float(string='Min. Defensa %', currency_field='company_currency_id',compute='_compute_min_def')
@@ -636,6 +640,7 @@ class LoanApplication(models.Model):
             record._compute_change_dollars_bolivian()
             record._onchange_interest_day_rest()
             record._onchange_amount_devolution()
+            record._compute_balance_capital_bs()
 
     def finalized_loan(self):
         if self.state != 'progress':
@@ -661,3 +666,11 @@ class LoanApplication(models.Model):
             'context': context,
             'target': 'new',
         }
+
+    @api.depends('balance_capital', 'balance_total_interest_month')
+    def _compute_balance_capital_bs(self):
+        for rec in self:
+            rec.balance_capital_bs = rec.balance_capital * rec.value_dolar
+            rec.balance_total_interest_month_bs = rec.balance_total_interest_month * rec.value_dolar
+
+

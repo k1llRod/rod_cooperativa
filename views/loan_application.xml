@@ -29,8 +29,11 @@
                     <field name="guarantor_one" optional="show"/>
                     <field name="guarantor_two" optional="show"/>
                     <field name="code_loan" optional="hidden"/>
-                    <field name="amount_loan" widget="monetary"/>
-                    <field name="missing_payments"/>
+                    <field name="balance_capital" optional="show"/>
+                    <field name="balance_capital_bs" optional="show"/>
+                    <field name="balance_total_interest_month" />
+                    <field name="balance_total_interest_month_bs" optional="show"/>
+                    <field name="missing_payments" optional="show"/>
                     <field name="state" decoration-info="state == 'draft'" decoration-success="state == 'progress'" widget="badge"/>
                 </tree>
             </field>
@@ -190,8 +193,10 @@
                             </group>
                             <group string="Valores">
                                 <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                                <field name="balance_capital_bs"/>
                                 <field name="balance_capital_auxiliar" />
                                 <field name="balance_total_interest_month" />
+                                <field name="balance_total_interest_month_bs"/>
                                 <field name="balance_total_interest_month_auxiliar"/>
                                 <field name="loan_historical_coaa"/>
                             </group>
