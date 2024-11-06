@@ -78,9 +78,6 @@ class FinalizedLoan(models.Model):
             else:
                 raise ValidationError('Error al eliminar los registros de pagos')
 
-
-
-
     @api.model
     def create(self, vals):
         vals['name'] = self.env['ir.sequence'].next_by_code('finalized.loan')
