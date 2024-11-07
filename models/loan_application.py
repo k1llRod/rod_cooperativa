@@ -36,10 +36,10 @@ class LoanApplication(models.Model):
                                                  ('passive_reserve_a', 'Reserva pasivo "A"'),
                                                  ('passive_reserve_b', 'Reserva pasivo "B"'),
                                                  ('leave', 'Baja')], string='Tipo de asociado',
-                                                related='partner_id.partner_status_especific', store=True)
+                                                related='partner_id.partner_status_especific', store=True, track_visibility='always')
     letter_of_request = fields.Boolean(string='Carta de solicitud', tracking=True)
     contact_request = fields.Boolean(string='Solicitud de prestamo', tracking=True)
-    last_copy_paid_slip = fields.Boolean(string='Ultima copia de boleta de pago', tracking=True)
+    last_copy_paid_slip = fields.Boolean(string='Ultima copia de boleta de pago', tracking=True, track_visibility='always')
     ci_photocopy = fields.Boolean(string='Fotocopia de CI', tracking=True)
     photocopy_military_ci = fields.Boolean(string='Fotocopia de Carnet militar', tracking=True)
     # photocopy_payment_slip = fields.Boolean(string='Fotocopia de boleta de pago', tracking=True)

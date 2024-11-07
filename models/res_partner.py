@@ -44,7 +44,7 @@ class ResPartner(models.Model):
                                        ('passive', 'Servicio pasivo'),
                                        ('external', 'Externo'),
                                        ('leave', 'Baja')], string="Situacion general",
-                                      compute='_onchange_partner_status', store=True)
+                                      compute='_onchange_partner_status', store=True, track_visibility='always')
 
     partner_status_especific = fields.Selection([('active_service', 'Servicio activo'),
                                                  ('guest','Invitado'),
@@ -53,7 +53,7 @@ class ResPartner(models.Model):
                                                  ('emergency_military','Prestamo emergencia militar'),
                                                  ('emergency_civil','Prestamo emergencia civil'),
                                                  ('leave', 'Baja')
-                                                 ], string='Tipo de asociado', store=True)
+                                                 ], string='Tipo de asociado', store=True, track_visibility='always')
 
     year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
 
@@ -74,9 +74,9 @@ class ResPartner(models.Model):
                                            ('comando_jefe', 'Comando en jefe'),
                                            ('ministerio_defensa', 'Ministerio de defensa')], string='Fuerza / org', default='ejercito')
 
-    glosa = fields.Text(string='Glosa')
-    date_deceased = fields.Date(string='Fecha de fallecimiento')
-    date_unsubcribe = fields.Date(string='Fecha de baja')
+    glosa = fields.Text(string='Glosa', track_visibility='always')
+    date_deceased = fields.Date(string='Fecha de fallecimiento', track_visibility='always')
+    date_unsubcribe = fields.Date(string='Fecha de baja', track_visibility='always')
 
 
     @api.depends('graduation_year')
