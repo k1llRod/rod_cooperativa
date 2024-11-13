@@ -11,7 +11,7 @@ access_administrator_loan_payment,loan.payment,model_loan_payment,rod_cooperativ
 access_operator_loan_payment,loan.payment,model_loan_payment,rod_cooperativa.group_rod_cooperativa_operator,1,1,0,0
 access_user_loan_payment,loan.payment,model_loan_payment,rod_cooperativa.group_rod_cooperativa_user,1,0,0,0
 
-access_family,family.family,model_family,base.group_user,1,1,1,1
+access_family,family.family,model_family,rod_cooperativa.group_rod_cooperativa_user,1,1,1,1
 
 access_administrator_form_refinance_admin,form.refinance,model_form_refinance,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
 access_operator_form_refinance_admin,form.refinance,model_form_refinance,rod_cooperativa.group_rod_cooperativa_operator,1,1,1,1
