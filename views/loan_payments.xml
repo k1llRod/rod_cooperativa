@@ -45,6 +45,7 @@
                     <field name="capital_index_initial" optional="hidden" sum="Total"/>
                     <field name="loan_application_ids" invisible="1"/>
                     <field name="state" decoration-info="state == 'init' or state == 'in_queue'" decoration-success="state == 'progress' or state == 'done'" widget="badge"/>
+                    <field name="state_account" widget="badge"/>
                     <button name="open_loan_payment" type="object" class="oe_highlight"
                                                 icon="fa-eye"/>
                 </tree>
