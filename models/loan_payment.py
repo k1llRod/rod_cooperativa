@@ -22,7 +22,7 @@ class LoanPayment(models.Model):
     #                                              ('passive_reserve_a','Pasivo categoria "A"'),('passive_reserve_b','Pasivo categoria "B"')
     #                                              ('leave','Baja')], string='Estatus del socio', related='loan_application_ids.partner_status_especific')
     type_payment = fields.Selection([('1', 'Abono'), ('2', 'Transferencia')], string='Tipo de pago')
-    date = fields.Date(string='Fecha de pago', required=True)
+    date = fields.Date(string='Fecha pivote', required=True)
     date_payment = fields.Date(string='Fecha de pago')
     period = fields.Char(string='Periodo', compute='_compute_period', store=True)
     capital_initial = fields.Float(string='Capital inicial')
@@ -299,7 +299,7 @@ class LoanPayment(models.Model):
                 if not (validate == 0):
                     move_line.append(data)
             move_vals = {
-                "date": rec.date,
+                "date": rec.date_payment,
                 "journal_id": journal_id,
                 "ref": "PAGO PREST" + " " + rec.loan_application_ids.partner_id.name + " " + rec.period,
                 # "company_id": payment.company_id.id,
