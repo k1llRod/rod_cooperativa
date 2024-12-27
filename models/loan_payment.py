@@ -15,9 +15,9 @@ class LoanPayment(models.Model):
                                  related='loan_application_ids.type_loan')
     with_guarantor = fields.Selection(
         [('loan_guarantor', 'Prestamo regular con garantes'), ('no_loan_guarantor', 'Prestamo regular sin garantes')],
-        string='Tipo de prestamo regular', related='loan_application_ids.with_guarantor')
-    code_contact = fields.Char(string='Codigo de contacto', related='loan_application_ids.code_contact')
-    ci_partner = fields.Char(string='Carnet de identidad', related='loan_application_ids.ci_partner')
+        string='Tipo de prestamo regular', related='loan_application_ids.with_guarantor', store=True)
+    code_contact = fields.Char(string='Codigo de contacto', related='loan_application_ids.code_contact', store=True)
+    ci_partner = fields.Char(string='Carnet de identidad', related='loan_application_ids.ci_partner', store=True)
     # partner_status_especific = fields.Selection([('active_service', 'Servicio activo'), ('guest', 'Invitado'),
     #                                              ('passive_reserve_a','Pasivo categoria "A"'),('passive_reserve_b','Pasivo categoria "B"')
     #                                              ('leave','Baja')], string='Estatus del socio', related='loan_application_ids.partner_status_especific')
