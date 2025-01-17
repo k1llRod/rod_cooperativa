@@ -33,7 +33,8 @@
                     <field name="balance_capital_bs" optional="show"/>
                     <field name="balance_total_interest_month" />
                     <field name="balance_total_interest_month_bs" optional="show"/>
-                    <field name="missing_payments" optional="show"/>
+                    <field name="missing_payments" optional="hidden"/>
+                    <field name="report_missing_payments"/>
                     <field name="state" decoration-info="state == 'draft'" decoration-success="state == 'progress'" widget="badge"/>
                 </tree>
             </field>
@@ -332,12 +333,12 @@
                     <!--                    <filter name="partner_passive_reserve_b"-->
                     <!--                            string="Asociados Pasivo categoria 'B'"-->
                     <!--                            domain="[('partner_status_especific','=','passive_reserve_b')]"/>-->
-                    <!--                    <group expand="0" string="Group By">-->
-                    <!--                        <filter string="Tipo de asociado"-->
-                    <!--                                name="group_partner_status"-->
-                    <!--                                context="{'group_by': 'partner_status_especific'}"/>-->
+<!--                    <group expand="0" string="Group by">-->
+<!--                        <filter string="Pagos pendientes"-->
+<!--                                name="group_pendings_payments"-->
+<!--                                context="{'group_by': 'missing_payments'}"/>-->
 
-                    <!--                    </group>-->
+<!--                    </group>-->
                 </search>
             </field>
         </record>

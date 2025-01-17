@@ -100,7 +100,7 @@ class LoanApplication(models.Model):
     pay_slip_balance = fields.Float(string='Saldo boleta de pago')
     missing_payments = fields.Integer(string='Pagos pendientes', compute='_compute_missing_payments')
     total_payments_confirm = fields.Integer(string='Total pagos confirmados', compute='_compute_missing_payments')
-
+    report_missing_payments = fields.Integer(string='Pagos pendientes')
     loan_historical_coaa = fields.Float(string='Prestamos historico COAA')
     journal_id = fields.Many2one('account.journal', string='Diario Egreso')
 
@@ -509,6 +509,7 @@ class LoanApplication(models.Model):
             # rec.missing_payments = (date_end.year - date_init.year) * 12 + date_end.month - date_init.month
             rec.missing_payments = count_payment - count_payment_confirm
             rec.total_payments_confirm = count_payment
+            rec.report_missing_payments = rec.missing_payments
             # rec.amount_devolution_bs = rec.amount_devolution * rec.value_dolar
             # rec.interest_day_rest_bs = rec.interest_day_rest * rec.value_dolar
 
