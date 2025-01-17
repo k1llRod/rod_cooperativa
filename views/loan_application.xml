@@ -34,7 +34,7 @@
                     <field name="balance_total_interest_month" />
                     <field name="balance_total_interest_month_bs" optional="show"/>
                     <field name="missing_payments" optional="hidden"/>
-                    <field name="report_missing_payments"/>
+<!--                    <field name="report_missing_payments"/>-->
                     <field name="state" decoration-info="state == 'draft'" decoration-success="state == 'progress'" widget="badge"/>
                 </tree>
             </field>
