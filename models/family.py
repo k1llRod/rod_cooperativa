@@ -6,7 +6,12 @@ class Family(models.Model):
     # _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Nombre beneficiario/a', required=True)
-    kinship = fields.Selection([('son', 'Hijo/a'), ('wife', 'Esposa'), ('husband', 'Esposo')], string='Parentesco')
+    kinship = fields.Selection([('son', 'Hijo/a'),
+                                ('wife', 'Esposa'),
+                                ('husband', 'Esposo'),
+                                ('father','Padre'),
+                                ('mother','Madre'),
+                                ('brothers','Hermana/o')], string='Parentesco')
     date_of_birth = fields.Date(string='Fecha de nacimiento')
     age = fields.Integer(string='Edad', compute='_compute_age', store=True)
     nro_celular = fields.Char(string='Nro. Celular')
