@@ -75,6 +75,44 @@ class FinalizedLoan(models.Model):
                         'state': 'draft'
                     }
                 )
+                if payment:
+                    move_line = []
+                    data = (0, 0, {
+                        'account_id': record.account_loan_id.id,
+                        'debit': record.amount_account_loan, 'credit': 0,
+                        'partner_id': self.env['res.partner'].search([('name','=',record.journal_id.bank_id.display_name.upper())]).id,
+                        'amount_currency': 0
+                    })
+                    if not record.amount_account_loan == 0:
+                        move_line.append(data)
+
+                    data = (0, 0, {
+                        'account_id': record.account_regular_loan_amortization.id,
+                        'debit': 0, 'credit': record.amount_regular_loan_amortization,
+                        'partner_id': record.loan_application_id.partner_id.id,
+                        'amount_currency': 0
+                    })
+                    if not record.amount_regular_loan_amortization == 0:
+                        move_line.append(data)
+
+                    data = (0, 0, {
+                        'account_id': record.account_other_income.id,
+                        'debit': 0, 'credit': record.amount_other_income,
+                        'partner_id': record.loan_application_id.partner_id.id,
+                        'amount_currency': 0
+                    })
+                    if not record.amount_other_income == 0:
+                        move_line.append(data)
+                    move_vals = {
+                        'journal_id': record.journal_id.id,
+                        'date': record.date_finalize,
+                        'ref': "LIQUIDACION DE PRESTAMO DEL SOCIO " + record.loan_application_id.partner_id.name,
+                        'state': 'draft',
+                        'line_ids': move_line
+                    }
+                    move = record.env['account.move'].create(move_vals)
+                    record.accounting_finalized_loan_id = move.id
+                    move.finalized_loan_id = record.id
             else:
                 raise ValidationError('Error al eliminar los registros de pagos')
 
