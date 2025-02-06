@@ -80,7 +80,7 @@ class FinalizedLoan(models.Model):
                     data = (0, 0, {
                         'account_id': record.account_loan_id.id,
                         'debit': record.amount_account_loan, 'credit': 0,
-                        'partner_id': self.env['res.partner'].search([('name','=',record.journal_id.bank_id.display_name.upper())]).id,
+                        'partner_id': self.env['res.partner'].search([('name','=',record.journal_id.bank_id.display_name.upper())]).id if record.journal_id.bank_id else "",
                         'amount_currency': 0
                     })
                     if not record.amount_account_loan == 0:
@@ -110,9 +110,11 @@ class FinalizedLoan(models.Model):
                         'state': 'draft',
                         'line_ids': move_line
                     }
-                    move = record.env['account.move'].create(move_vals)
-                    record.accounting_finalized_loan_id = move.id
-                    move.finalized_loan_id = record.id
+                    if record.journal_id:
+                        move = self.env['account.move'].create(move_vals)
+                        record.accounting_finalized_loan_id = move.id
+                        move.finalized_loan_id = record.id
+
             else:
                 raise ValidationError('Error al eliminar los registros de pagos')
 
@@ -136,3 +138,9 @@ class FinalizedLoan(models.Model):
         self.amount_account_loan = round(self.total_payment_bolivianos,2)
         self.amount_regular_loan_amortization = round(self.balance_capital_bolivianos,2)
         self.amount_other_income = round(self.balance_total_interest_month_bolivianos,2)
+
+    def _format_name(self, name):
+        """Transforma un nombre en mayúsculas a minúsculas con la primera letra en mayúscula."""
+        if name:
+            return " ".join(word.capitalize() for word in name.split())
+        return ""
