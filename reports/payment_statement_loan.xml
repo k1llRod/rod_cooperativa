@@ -156,6 +156,20 @@
                                             <span t-esc="round(o.balance_capital + o.balance_total_interest_month,2)"></span>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>
+                                            <strong></strong>
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                        <td>
+                                            <strong>TOTAL SALDO BS</strong>
+                                        </td>
+                                        <td>
+                                            <span t-esc="round(o.balance_capital_bs + o.balance_total_interest_month_bs, 2)"></span>
+                                        </td>
+                                    </tr>
 <!--                                    <tr>-->
 <!--                                        <td>-->
 <!--                                            <strong></strong>-->
