@@ -55,7 +55,8 @@ class ResPartner(models.Model):
                                                  ('leave', 'Baja')
                                                  ], string='Tipo de asociado', store=True, track_visibility='always')
 
-    year_service = fields.Integer(string='Años de servicio', compute='_compute_year_service', store=True)
+    year_service = fields.Integer(string='Años de servicio', store=True)
+    year_service_compute = fields.Integer(string='Años de servicio', compute='_compute_year_service_compute')
 
     ci_photocopy = fields.Boolean(string='Fotocopia de C.I.')
     photocopy_military_ci = fields.Boolean(string='Fotocopia de carnet militar')
@@ -85,6 +86,16 @@ class ResPartner(models.Model):
             if partner.graduation_year:
                 partner.year_service = datetime.now().year - partner.graduation_year
             else:
+                partner.year_service = 0
+
+    @api.depends('graduation_year')
+    def _compute_year_service_compute(self):
+        for partner in self:
+            if partner.graduation_year:
+                partner.year_service_compute = datetime.now().year - partner.graduation_year
+                partner.year_service = partner.year_service_compute
+            else:
+                partner.year_service_compute = 0
                 partner.year_service = 0
 
     @api.depends('date_birthday')
@@ -222,8 +233,10 @@ class ResPartner(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
-    def action_partner_coap(self):
-        return True
+    def action_partner_coa(self):
+        partner = self.env['res.partner'].search([])
+        for record in partner:
+            record._compute_year_service_compute()
 
     def update_destination(self):
         payroll = self.env['payroll.payments'].search([('partner_status_especific', '=', 'active_service')])

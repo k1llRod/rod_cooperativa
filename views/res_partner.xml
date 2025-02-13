@@ -40,6 +40,7 @@
                         <field name="weapon"/>
                         <field name="graduation_year"/>
                         <field name="year_service"/>
+                        <field name="year_service_compute" invisible="1"/>
                         <field name="date_birthday"/>
                         <field name="years_completed"/>
                         <field name="specialty"/>
