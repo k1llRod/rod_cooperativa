@@ -1,0 +1,43 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="form_amortization_id">
+            <field name="name">form.amortization.form</field>
+            <field name="model">form.amortization</field>
+            <field name="arch" type="xml">
+                <form string="Amortizacion de prestamos">
+                    <group>
+                        <group string="Datos del prestamo">
+                            <field name="data_loan_id"/>
+                            <field name="capital_initial"/>
+                            <field name="quantity_month_initial" />
+                            <field name="interest_days_rest" />
+                            <field name="capital_rest"/>
+                            <field name="total_capital_rest"/>
+                        </group>
+                    </group>
+                    <group >
+                        <group string="Datos para amortizar">
+                            <field name="amount_amortization"/>
+                            <field name="month_amortization"/>
+                            <field name="date_amortization"/>
+                        </group>
+
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Confirmar" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+<!--        <record model="ir.actions.act_window" id="alert_message_action">-->
+<!--            <field name="name">Alert message</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">alert.message</field>-->
+<!--            <field name="view_mode">form</field>-->
+<!--            <field name="view_id" ref="alert_message_form_view" />-->
+<!--            <field name="target">new</field>-->
+<!--        </record>-->
+    </data>
+</odoo>

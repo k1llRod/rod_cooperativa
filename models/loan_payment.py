@@ -222,10 +222,10 @@ class LoanPayment(models.Model):
             amount = 0
             move_line_vals = []
             move_line = []
-            journal_id = rec.journal_id.id
+            journal_id = rec.loan_application_ids.journal_id.id if rec.loan_application_ids.journal_id else rec.journal_id.id
             if rec.state == 'transfer':
                 data = (
-                    0, 0, {'account_id': rec.account_income_id.id,
+                    0, 0, {'account_id': rec.account_income_id.id if rec.account_income_id else rec.loan_application_ids.account_capital_index_id.id,
                            'debit': rec.amount_payment,
                            'credit': 0,
                            'partner_id': rec.loan_application_ids.partner_id.id,
@@ -235,7 +235,7 @@ class LoanPayment(models.Model):
                     move_line.append(data)
                     # amount = rec.amount_payment + amount
                 data = (0, 0, {
-                    'account_id': rec.account_capital_index_id.id,
+                    'account_id': rec.account_capital_index_id.id if rec.account_capital_index_id else rec.loan_application_ids.account_capital_index_id.id,
                     'debit': 0, 'credit': rec.amount_capital_index_bs,
                     'partner_id': rec.loan_application_ids.partner_id.id,
                     'amount_currency': 0
@@ -244,7 +244,7 @@ class LoanPayment(models.Model):
                     move_line.append(data)
                     amount = rec.amount_capital_index_bs + amount
                 data = (0, 0, {
-                    'account_id': rec.account_interest_base.id,
+                    'account_id': rec.account_interest_base.id if rec.account_interest_base else rec.loan_application_ids.account_interest_base.id,
                     'debit': 0, 'credit': rec.amount_interest_bs,
                     'partner_id': rec.loan_application_ids.partner_id.id,
                     'amount_currency': 0
@@ -254,7 +254,7 @@ class LoanPayment(models.Model):
                     move_line.append(data)
                     amount = rec.amount_interest_bs + amount
                 data = (0, 0, {
-                    'account_id': rec.account_res_social.id,
+                    'account_id': rec.account_res_social.id if rec.account_res_social else rec.loan_application_ids.account_interest_surplus.id,
                     'debit': 0, 'credit': rec.amount_res_social_bs,
                     'partner_id': rec.loan_application_ids.partner_id.id,
                     'amount_currency': 0
@@ -263,7 +263,7 @@ class LoanPayment(models.Model):
                     move_line.append(data)
                     amount = rec.amount_res_social_bs + amount
                 data = (0, 0, {
-                    'account_id': rec.account_percentage_mindef.id,
+                    'account_id': rec.account_percentage_mindef.id if rec.account_percentage_mindef else rec.loan_application_ids.account_percentage_mindef.id,
                     'debit': 0, 'credit': rec.amount_percentage_mindef_bs,
                     'partner_id': rec.loan_application_ids.partner_id.id,
                     'amount_currency': 0
@@ -271,7 +271,7 @@ class LoanPayment(models.Model):
                 if not (rec.percentage_amount_min_def_bolivianos == 0):
                     move_line.append(data)
                     amount = rec.amount_percentage_mindef_bs + amount
-                data = (0, 0, {'account_id': rec.account_overage_days.id,
+                data = (0, 0, {'account_id': rec.account_overage_days.id if rec.account_overage_days else rec.loan_application_ids.account_surpluy_days.id,
                                'debit': 0, 'credit': rec.amount_overage_days_bs,
                                'partner_id': rec.loan_application_ids.partner_id.id,
                                'amount_currency': 0
@@ -279,7 +279,7 @@ class LoanPayment(models.Model):
                 if not (rec.interest_month_surpluy_bolivianos == 0):
                     move_line.append(data)
                     amount = rec.amount_overage_days_bs + amount
-                data = (0, 0, {'account_id': rec.account_overage_amount.id,
+                data = (0, 0, {'account_id': rec.account_overage_amount.id if rec.account_overage_amount else rec.loan_application_ids.account_surpluy_days.id,
                                'debit': 0, 'credit': rec.amount_overage,
                                'partner_id': rec.loan_application_ids.partner_id.id,
                                'amount_currency': 0
@@ -289,7 +289,7 @@ class LoanPayment(models.Model):
                     move_line.append(data)
             if rec.amount_payment >= amount:
                 validate = round(rec.amount_payment - amount, 2) if round(rec.amount_payment - amount, 2) > 0 else 0
-                data = (0, 0, {'account_id': rec.account_overage_amount.id,
+                data = (0, 0, {'account_id': rec.account_overage_amount.id if rec.account_overage_amount else rec.loan_application_ids.account_surpluy_days.id,
                                'debit': 0, 'credit': validate,
                                'partner_id': rec.loan_application_ids.partner_id.id,
                                'amount_currency': 0

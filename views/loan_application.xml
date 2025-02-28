@@ -51,6 +51,7 @@
                         <button name="verification_pass" string="Verificación" class="oe_highlight" type="object" attrs="{'invisible':[('state','!=','init')]}" groups="rod_cooperativa.group_rod_cooperativa_user"/>
                         <button name="approval_state" string="Aprobar prestamo" class="oe_highlight" type="object" attrs="{'invisible': [('state','!=','verificate')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <button name="refinance" string="Refinanciar" type="object" attrs="{'invisible': [('state','!=','progress')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
+                        <button name="amortization" string="Amortizar" type="object"/>
                         <button name="return_application" string="Devolver" type="object" attrs="{'invisible': [('state','!=','verificate')]}"/>
                         <button name="return_draft" string="Borrador" type="object" attrs="{'invisible': [('state','!=','progress')]}" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <button name="reset_payroll" string="Reset" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"/>
@@ -233,6 +234,9 @@
                                         <field name="amount_payment" optional="hidden"/>
                                         <field name="state" decoration-info="state == 'init' or state == 'in_queue'"
                                                decoration-success="state == 'progress' or state == 'done'"
+                                               widget="badge"/>
+                                        <field name="state_account" decoration-info="state_account == 'init' or state_account == 'in_queue'"
+                                               decoration-success="state_account == 'progress' or state_account == 'done'"
                                                widget="badge"/>
                                         <button name="open_loan_payment" type="object" class="oe_highlight"
                                                 icon="fa-eye"/>

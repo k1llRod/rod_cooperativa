@@ -674,4 +674,28 @@ class LoanApplication(models.Model):
             rec.balance_capital_bs = rec.balance_capital * rec.value_dolar
             rec.balance_total_interest_month_bs = rec.balance_total_interest_month * rec.value_dolar
 
+    def amortization(self):
+        id = self.id
+        auxiliar = self.balance_total_interest_month
+        auxiliar_balance = self.balance_capital
+        if self.balance_total_interest_month_auxiliar > 0:
+            auxiliar = self.balance_total_interest_month_auxiliar
+        if self.balance_capital_auxiliar > 0:
+            auxiliar_balance = self.balance_capital_auxiliar
+        return {
+            'name': 'Formulario de amortizacion',
+            'type': 'ir.actions.act_window',
+            'res_model': 'form.amortization',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new',
+            'context': {
+                'default_capital_initial': self.amount_loan_dollars,
+                'default_data_loan_id': id,
+                'default_capital_rest': auxiliar_balance,
+                'default_interest_days_rest': auxiliar,
+                'default_quantity_month_initial': self.months_quantity,
+            },
+        }
+
 

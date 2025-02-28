@@ -43,7 +43,7 @@
         'wizard/form_deceased.xml',
         'wizard/payment_post_mortem.xml',
         'wizard/form_finalized_loan.xml',
-        # 'wizard/form_finalized_contributions.xml',
+        'wizard/form_amortization.xml',
         'views/res_partner.xml',
         'reports/report.xml',
         'reports/loan_application_pdf.xml',
