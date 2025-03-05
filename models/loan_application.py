@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from odoo.exceptions import UserError, ValidationError
 from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
+from docutils.parsers.rst.directives import percentage
 
 
 class LoanApplication(models.Model):
@@ -61,6 +62,7 @@ class LoanApplication(models.Model):
     index_loan_bs = fields.Float(string='Indice de prestamo (Bs)')
     fixed_fee = fields.Float(string='Cuota fija ($)', compute='_compute_index_loan_fixed_fee')
     fixed_fee_bs = fields.Float(string='Cuota fija (Bs)', compute='_compute_index_loan_fixed_fee_bs')
+    total_fixed_fee = fields.Float(string='Total cuota fija', compute='_compute_index_loan_fixed_fee')
     date_application = fields.Date(string='Fecha de solicitud', default=fields.Date.today())
     date_approval = fields.Date(string='Fecha de aprobacion')
     with_guarantor = fields.Selection(string='Tipo de prestamo regular',
@@ -191,12 +193,15 @@ class LoanApplication(models.Model):
                 self.index_loan = interest / index_quantity if index_quantity != 0 else 0
                 self.fixed_fee = self.amount_loan_dollars * self.index_loan
                 self.pay_slip_balance = self.fixed_fee_bs * (100 / 40)
+                self.total_fixed_fee = round(self.fixed_fee,2) + round(self.interest_month_surpluy,2) + round((self.amount_min_def * self.fixed_fee),2)
             else:
                 interest = (self.monthly_interest_mortgage + self.mortgage_loan) / 100
                 index_quantity = (1 - (1 + interest) ** (-self.months_quantity))
                 self.index_loan = interest / index_quantity if index_quantity != 0 else 0
                 self.fixed_fee = self.amount_loan_dollars * self.index_loan
                 self.pay_slip_balance = self.fixed_fee_bs * (100 / 40)
+                self.total_fixed_fee = round(self.fixed_fee, 2) + round(self.interest_month_surpluy, 2) + round(
+                    (self.amount_min_def * self.fixed_fee), 2)
         except:
             self.index_loan = 0
 
@@ -228,6 +233,8 @@ class LoanApplication(models.Model):
 
     interest_day_rest = fields.Float(string='Interes dias restantes', digits=(6, 2))
     interest_day_rest_bs = fields.Float(string='Interes dias restantes Bs.', digits=(6, 2))
+
+
 
     def compute_total_contribution(self):
         for record in self:
@@ -508,7 +515,7 @@ class LoanApplication(models.Model):
             count_payment = len(rec.loan_payment_ids.filtered(lambda x: x.date <= date_end))
             # rec.missing_payments = (date_end.year - date_init.year) * 12 + date_end.month - date_init.month
             rec.missing_payments = count_payment - count_payment_confirm
-            rec.total_payments_confirm = count_payment
+            rec.total_payments_confirm = count_payment_confirm
             rec.report_missing_payments = rec.missing_payments
             # rec.amount_devolution_bs = rec.amount_devolution * rec.value_dolar
             # rec.interest_day_rest_bs = rec.interest_day_rest * rec.value_dolar
@@ -693,9 +700,18 @@ class LoanApplication(models.Model):
                 'default_capital_initial': self.amount_loan_dollars,
                 'default_data_loan_id': id,
                 'default_capital_rest': auxiliar_balance,
+                'default_total_capital_rest': self.balance_capital_bs,
                 'default_interest_days_rest': auxiliar,
+                'default_interest_days_rest_bs': self.balance_total_interest_month_bs,
                 'default_quantity_month_initial': self.months_quantity,
+                'default_fixed_fee': self.fixed_fee,
+                'default_total_fixed_fee': self.total_fixed_fee,
+                'default_quantity_month_payment': self.total_payments_confirm,
             },
         }
-
+    # @api.depends('fixed_fee')
+    # def _compute_total_fixed_fee(self):
+    #     for rec in self:
+    #         percentage_min_def = rec.fixed_fee * rec.amount_min_def
+    #         rec.total_fixed_fee = rec.fixed_fee + percentage_min_def
 

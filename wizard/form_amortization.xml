@@ -7,21 +7,24 @@
                 <form string="Amortizacion de prestamos">
                     <group>
                         <group string="Datos del prestamo">
-                            <field name="data_loan_id"/>
-                            <field name="capital_initial"/>
-                            <field name="quantity_month_initial" />
-                            <field name="interest_days_rest" />
-                            <field name="capital_rest"/>
-                            <field name="total_capital_rest"/>
+                            <field name="data_loan_id" readonly="1"/>
+                            <field name="capital_initial" readonly="1"/>
+                            <field name="quantity_month_initial" readonly="1"/>
+                            <field name="quantity_month_payment" readonly="1"/>
+                            <field name="capital_rest" readonly="1"/>
+                            <field name="total_capital_rest" readonly="1"/>
+                            <field name="interest_days_rest" readonly="1"/>
+                            <field name="interest_days_rest_bs" readonly="1"/>
+                            <field name="total_fixed_fee" readonly="1"/>
                         </group>
-                    </group>
-                    <group >
                         <group string="Datos para amortizar">
                             <field name="amount_amortization"/>
                             <field name="month_amortization"/>
                             <field name="date_amortization"/>
+                            <field name="recalculate_capital_rest"/>
+                            <field name="month_rest"/>
+                            <field name="new_fixed_fee"/>
                         </group>
-
                     </group>
                     <footer>
                         <button name="action_confirm" string="Confirmar" type="object" class="oe_highlight"/>
