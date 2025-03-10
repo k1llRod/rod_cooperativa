@@ -32,16 +32,46 @@ class FormAmortization(models.TransientModel):
             record.recalculate_capital_rest = record.capital_rest - record.amount_amortization
             record.month_rest = record.quantity_month_initial - record.quantity_month_payment
 
-    @api.onchange('month_refinance', 'amount_refinance')
+    @api.onchange('amount_amortization', 'month_rest')
     def _compute_index_loan_fixed_fee(self):
         try:
-            interest = (self.monthly_interest + self.contingency_fund) / 100
-            index_quantity = (1 - (1 + interest) ** (-self.month_refinance))
-            self.index_loan = interest / index_quantity if index_quantity != 0 else 0
-            self.fixed_fee = self.amount_refinance * self.index_loan
+            interest = (self.data_loan_id.monthly_interest + self.data_loan_id.contingency_fund) / 100
+            index_quantity = (1 - (1 + interest) ** (-self.month_rest))
+            index_loan = interest / index_quantity if index_quantity != 0 else 0
+            self.new_fixed_fee = self.recalculate_capital_rest * index_loan
+            percentage_amount_min_def = round(self.new_fixed_fee,2) * self.data_loan_id.amount_min_def
+            self.new_fixed_fee = round(self.new_fixed_fee,2) + round(percentage_amount_min_def,2)
         except:
             self.index_loan = 0
             # record.total_capital_rest = record.capital_rest * 6.96
 
     def action_confirm(self):
+        unlink_registers = self.data_loan_id.loan_payment_ids.filtered(lambda x: x.state == 'draft').unlink()
+        count_amortization = len(self.data_loan_id.loan_payment_ids.filtered(lambda x: x.state == 'amortization'))
+        create_loan_payment_amortization = self.env['loan.payment'].create({
+            'loan_application_ids': self.data_loan_id.id,
+            'name': 'AMORT '+str(count_amortization+1),
+            'date': self.date_amortization,
+            'date_payment': self.date_amortization,
+            'amount_payment': self.amount_amortization,
+            'capital_initial': self.capital_rest,
+            'capital_index_initial': self.amount_amortization - self.interest_days_rest,
+            'interest_month_surpluy': self.interest_days_rest,
+            'amount_total': self.amount_amortization,
+            'state': 'amortization'
+        })
+        if create_loan_payment_amortization:
+            create_loan_payment = self.env['loan.payment'].create({
+                'loan_application_ids': self.data_loan_id.id,
+                'name': 'PAGO '+str(count_amortization+2),
+                'date': self.date_amortization,
+                'date_payment': self.date_amortization,
+                'amount_payment': self.new_fixed_fee,
+                'capital_initial': self.recalculate_capital_rest,
+                'capital_index_initial': self.new_fixed_fee - self.interest_days_rest,
+                'interest_month_surpluy': self.interest_days_rest,
+                'amount_total': self.new_fixed_fee,
+                'state': 'draft'
+            })
         a = 1
+

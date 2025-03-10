@@ -45,9 +45,12 @@ class LoanPayment(models.Model):
     amount_returned_coa = fields.Float(string='Monto devuelto COA', digits=(16, 2), store=True)
     amount_payment = fields.Float(string='Monto a pagar', digits=(16, 2), store=True)
     state = fields.Selection(
-        [('draft', 'Borrador'), ('transfer', 'Transferencia bancaria'),
-         ('ministry_defense', 'Ministerio de defensa'), ('debt_settlement_mindef', 'Liquidacion de deuda MINDEF'),
-         ('debt_settlement_deposit', 'Liquidacion de deuda por deposito')], string='Estado',
+        [('draft', 'Borrador'),
+         ('transfer', 'Transferencia bancaria'),
+         ('ministry_defense', 'Ministerio de defensa'),
+         ('debt_settlement_mindef', 'Liquidacion de deuda MINDEF'),
+         ('debt_settlement_deposit', 'Liquidacion de deuda por deposito'),
+         ('amortization','Amortizacion')], string='Estado',
         default='draft', tracking=True)
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
     currency_id = fields.Many2one('res.currency', string='Moneda', related='loan_application_ids.currency_id')
