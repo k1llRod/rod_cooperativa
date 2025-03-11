@@ -1,5 +1,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 class FormAmortization(models.TransientModel):
     _name='form.amortization'
@@ -61,17 +63,49 @@ class FormAmortization(models.TransientModel):
             'state': 'amortization'
         })
         if create_loan_payment_amortization:
-            create_loan_payment = self.env['loan.payment'].create({
-                'loan_application_ids': self.data_loan_id.id,
-                'name': 'PAGO '+str(count_amortization+2),
-                'date': self.date_amortization,
-                'date_payment': self.date_amortization,
-                'amount_payment': self.new_fixed_fee,
-                'capital_initial': self.recalculate_capital_rest,
-                'capital_index_initial': self.new_fixed_fee - self.interest_days_rest,
-                'interest_month_surpluy': self.interest_days_rest,
-                'amount_total': self.new_fixed_fee,
-                'state': 'draft'
-            })
+            for i in range(1, self.month_amortization + 1):
+                coa_commission = (1.25 / 100) * self.new_fixed_fee
+                percentage_amount_min_def = self.new_fixed_fee * self.data_loan_id.amount_min_def
+                if len(self.data_loan_id.loan_payment_ids) == 0:
+                    capital_init = self.recalculate_capital_rest
+                    # date_payment = datetime.today()
+                    date_payment = self.date_amortization
+                    date_pivot = date_payment
+                    date_payment = date_payment.replace(day=1)
+                    date_payment = date_payment.replace(
+                        month=date_payment.month + 1 if date_pivot.month < 12 else 1)
+                    date_payment = date_payment.replace(
+                        year=date_payment.year + 1 if date_pivot.month == 12 else date_payment.year)
+                else:
+                    capital_init = self.data_loan_id.loan_payment_ids[i - 2].balance_capital
+                    date_payment = self.data_loan_id.loan_payment_ids[i - 2].date
+                    date_payment = date_payment + relativedelta(months=+1)
+                    date_payment = date_payment.replace(day=1)
+                self.env['loan.payment'].create({
+                    'name': 'Cuota ' + str(i),
+                    'date': date_payment,
+                    'capital_initial': capital_init,
+                    'mount': self.new_fixed_fee,
+                    'loan_application_ids': self.data_loan_id.id,
+                    'percentage_amount_min_def': percentage_amount_min_def,
+                    'interest_month_surpluy': self.data_loan_id.interest_month_surpluy,
+                    # 'commission_min_def': amount_commission,
+                    'coa_commission': coa_commission,
+                    'state': 'draft',
+                })
+            # create_loan_payment = self.env['loan.payment'].create({
+            #     'loan_application_ids': self.data_loan_id.id,
+            #     'name': 'PAGO '+str(count_amortization+2),
+            #     'date': self.date_amortization,
+            #     'date_payment': self.date_amortization,
+            #     'amount_payment': self.new_fixed_fee,
+            #     'capital_initial': self.recalculate_capital_rest,
+            #     'capital_index_initial': self.new_fixed_fee - self.interest_days_rest,
+            #     'interest_month_surpluy': self.interest_days_rest,
+            #     'amount_total': self.new_fixed_fee,
+            #     'state': 'draft'
+            # })
         a = 1
+
+
 
