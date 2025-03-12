@@ -329,9 +329,10 @@
                     <!--                            string="Capital inicial"-->
                     <!--                            domain="[('capital_initial', '!=', 0)]"/>-->
                     <separator />
-                    <!--                    <filter name="partner_active_service"-->
-                    <!--                            string="Asociados servicio activo"-->
-                    <!--                            domain="[('partner_status_especific', '=', 'active_service')]"/>-->
+
+                    <filter name="state_progress"
+                            string="En proceso"
+                            domain="[('state', '=', 'progress')]"/>
                     <!--                    <filter name="partner_passive_reserve_a"-->
                     <!--                            string="Asociados Pasivo categoria 'A'"-->
                     <!--                            domain="[('partner_status_especific','=','passive_reserve_a')]"/>-->
@@ -391,6 +392,7 @@
             <field name="name">Solicitud de préstamos</field>
             <field name="res_model">loan.application</field>
             <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_state_progress': 1}</field>
         </record>
 
     </data>
