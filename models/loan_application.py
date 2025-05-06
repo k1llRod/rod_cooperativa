@@ -709,6 +709,8 @@ class LoanApplication(models.Model):
                 'default_quantity_month_payment': self.total_payments_confirm,
             },
         }
+
+
     # @api.depends('fixed_fee')
     # def _compute_total_fixed_fee(self):
     #     for rec in self:
