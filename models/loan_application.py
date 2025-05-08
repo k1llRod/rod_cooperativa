@@ -710,7 +710,10 @@ class LoanApplication(models.Model):
             },
         }
 
-
+    def update_loan_refinance(self):
+        for record in self:
+            if record.state == 'refinanced' or record.state == 'expansion':
+                record.loan_payment_ids.filtered(lambda x:x.state == 'draft').unlink()
     # @api.depends('fixed_fee')
     # def _compute_total_fixed_fee(self):
     #     for rec in self:

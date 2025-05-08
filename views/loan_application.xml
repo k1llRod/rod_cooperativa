@@ -395,6 +395,14 @@
             <field name="context">{'search_default_state_progress': 1}</field>
         </record>
 
+        <record id="action_update_loan_refinance" model="ir.actions.server">
+            <field name="name">Actualizar refinanciamiento </field>
+            <field name="model_id" ref="model_loan_application"/>
+            <field name="binding_model_id" ref="model_loan_application"/>
+            <field name="state">code</field>
+            <field name="code">action = records.update_loan_refinance()</field>
+        </record>
+
     </data>
 </odoo>
 <!--        'required': [('with_guarantor','=','loan_guarantor')]}"/>-->
