@@ -11,6 +11,7 @@
                     <field name="partner_id" optional="hide"/>
                     <field name="type_loan" optional="hide"/>
                     <field name="with_guarantor" optional="hide"/>
+                    <field name="partner_status_especific" optional="hide"/>
                     <field name="name" optional="hide"/>
                     <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                     <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>

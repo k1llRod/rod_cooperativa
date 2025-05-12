@@ -18,9 +18,11 @@ class LoanPayment(models.Model):
         string='Tipo de prestamo regular', related='loan_application_ids.with_guarantor', store=True)
     code_contact = fields.Char(string='Codigo de contacto', related='loan_application_ids.code_contact', store=True)
     ci_partner = fields.Char(string='Carnet de identidad', related='loan_application_ids.ci_partner', store=True)
-    # partner_status_especific = fields.Selection([('active_service', 'Servicio activo'), ('guest', 'Invitado'),
-    #                                              ('passive_reserve_a','Pasivo categoria "A"'),('passive_reserve_b','Pasivo categoria "B"')
-    #                                              ('leave','Baja')], string='Estatus del socio', related='loan_application_ids.partner_status_especific')
+    partner_status_especific = fields.Selection([('active_service', 'Servicio activo'),
+                                                 ('guest', 'Invitado'),
+                                                 ('passive_reserve_a','Pasivo categoria "A"'),
+                                                 ('passive_reserve_b','Pasivo categoria "B"'),
+                                                 ('leave','Baja')], string='Tipo de asociado', related='loan_application_ids.partner_id.partner_status_especific', store=True)
     type_payment = fields.Selection([('1', 'Abono'), ('2', 'Transferencia')], string='Tipo de pago')
     date = fields.Date(string='Fecha pivote', required=True)
     date_payment = fields.Date(string='Fecha de pago')
