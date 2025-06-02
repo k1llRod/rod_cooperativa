@@ -1,0 +1,48 @@
+<odoo>
+    <data>
+        <record id="view_res_partner_tree_custom" model="ir.ui.view">
+            <field name="name">res.partner.tree.custom</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="Contactos Personalizados">
+                    <field name="category_partner_id"/>
+                    <field name="name"/>
+                    <field name="partner_status_especific"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_res_partner_tree_custom" model="ir.actions.act_window">
+            <field name="name">Vista Personalizada de Contactos</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_tree_custom"/>
+            <field name="domain">[('loan_count', '&gt;', 0)]</field>
+        </record>
+        <record id="view_loan_application_up_tree_custom" model="ir.ui.view">
+            <field name="name">loan.application.tree.custom</field>
+            <field name="model">loan.application</field>
+            <field name="arch" type="xml">
+                <tree string="Prestamos altas">
+                    <field name="category_partner"/>
+                    <field name="partner_id"/>
+                    <field name="date_approval"/>
+                    <field name="months_quantity"/>
+                    <field name="accounting_entry_id"/>
+                    <field name="nro_cheque"/>
+                    <field name="amount_loan_dollars"/>
+                    <field name="amount_loan"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_loan_application_up_custom" model="ir.actions.act_window">
+            <field name="name">Reporte de Prestamos Altas</field>
+            <field name="res_model">loan.application</field>
+            <field name="view_mode">tree</field>
+<!--            <field name="domain">[('state', '=', 'approved')]</field>-->
+<!--            <field name="context">{'search_default_state': 1}</field>-->
+            <field name="help">Este reporte muestra los prestamos aprobados.</field>
+            <field name="view_id" ref="view_loan_application_up_tree_custom"/>
+        </record>
+
+    </data>
+</odoo>

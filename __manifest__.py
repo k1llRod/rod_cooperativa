@@ -45,6 +45,7 @@
         'wizard/form_finalized_loan.xml',
         'wizard/form_amortization.xml',
         'views/res_partner.xml',
+        'views/report_res_partner.xml',
         'reports/report.xml',
         'reports/loan_application_pdf.xml',
         'reports/payment_statement_loan.xml',

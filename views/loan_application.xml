@@ -59,6 +59,7 @@
                         <button name="return_progress" string="Retornar proceso" type="object" groups="rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <button name="approve_loan" string="Validar" type="object" class="oe_highlight" attrs="{'invisible': [('state','!=','approval')]}" groups="rod_cooperativa.group_rod_cooperativa_operator,rod_cooperativa.group_rod_cooperativa_administrator"/>
                         <button name="finalized_loan" string="Liquidacion de prestamo" type="object" class="oe_highlight" attrs="{'invisible': [('state','!=','progress')]}" groups="rod_cooperativa.group_rod_cooperativa_operator,rod_cooperativa.group_rod_cooperativa_administrator"/>
+                        <button name="done_loan" string="Finalizar" type="object" class="oe_highlight"/>
                         <field name="state" widget="statusbar" statusbar_visible="init,verificate,approval,progress,done"/>
                     </header>
                     <sheet>
@@ -207,8 +208,12 @@
                                 <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
                             </group>
                             <group string="Informe faltantes">
+                                <field name="pending_payment"/>
                                 <field name="total_payments_confirm"/>
                                 <field name="missing_payments"/>
+                                <field name="ending_date_period" />
+                                <field name="last_payment"/>
+
                             </group>
                         </group>
                         <notebook>
@@ -273,6 +278,7 @@
                                     </group>
                                     <group>
                                         <field name="accounting_entry_id" readonly="1"/>
+                                        <field name="nro_cheque"/>
                                     </group>
                                 </group>
                                 <group>
@@ -392,6 +398,8 @@
             <field name="name">Solicitud de préstamos</field>
             <field name="res_model">loan.application</field>
             <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="loan_application_tree_id"/>
+            <field name="search_view_id" ref="loan_application_view_search_cooperativa"/>
             <field name="context">{'search_default_state_progress': 1}</field>
         </record>
 
@@ -403,6 +411,51 @@
             <field name="code">action = records.update_loan_refinance()</field>
         </record>
 
+        <!-- Accion para visualizar loan.application -->
+        <record id="view_loan_application_tree_custom" model="ir.ui.view">
+            <field name="name">loan.application.tree.custom</field>
+            <field name="model">loan.application</field>
+            <field name="arch" type="xml">
+                <tree string="Solicitud de prestamos">
+                    <field name="category_partner" string="GRADO"/>
+                    <field name="partner_id" string="APELLIDOS Y NOMBRES"/>
+                    <field name="partner_status_especific" string="TIPO DE ASOCIADO"/>
+                    <field name="months_quantity" string="PLAZO EN AÑOS"/>
+                    <field name="date_approval" string="FECHA DE PRESTAMO"/>
+                    <field name="ending_date_period" string="FECHA DE FINALIZACION"/>
+                    <field name="amount_loan" string="MONTO PRESTADO"/>
+                    <field name="balance_capital_bs" string="SALDO DEUDOR"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_loan_application_search_custom" model="ir.ui.view">
+            <field name="name">loan.application.search.custom</field>
+            <field name="model">loan.application</field>
+            <field name="arch" type="xml">
+                <search string="Búsqueda personalizada de contactos">
+                    <filter name="date_approval" string="2025" domain="[('date_approval', '&gt;=', '2025-01-01'), ('date_approval', '&lt;=', '2025-12-31')]" />
+                    <filter name="date_approval" string="2024" domain="[('date_approval', '&gt;=', '2024-01-01'), ('date_approval', '&lt;=', '2024-12-31')]" />
+                    <filter name="date_approval" string="2024" domain="[('date_approval', '&gt;=', '2023-01-01'), ('date_approval', '&lt;=', '2023-12-31')]" />
+<!--                    <filter name="this_month" string="Este mes" domain="[('date_approval', '&gt;=', (context_today().replace(day=1))), ('date_approval', '&lt;=', (context_today().replace(day=1) + relativedelta(months=1, days=-1)))]"/>-->
+                    <group expand="0" string="Agrupar por">
+                        <filter name="group_by_date_approval" string="Altas"
+                                context="{'group_by': 'date_approval'}"/>
+<!--                        <filter name="group_by_user_id" string="Responsable" context="{'group_by': 'user_id'}"/>-->
+<!--                        <filter name="group_by_state_id" string="Estado" context="{'group_by': 'state_id'}"/>-->
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_loan_application_custom" model="ir.actions.act_window">
+            <field name="name">Reporte de prestamos</field>
+            <field name="res_model">loan.application</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_loan_application_search_custom"/>
+<!--            <field name="context">{'search_default_state_progress': 1}</field>-->
+            <field name="view_id" ref="rod_cooperativa.view_loan_application_tree_custom"/>
+        </record>
     </data>
 </odoo>
 <!--        'required': [('with_guarantor','=','loan_guarantor')]}"/>-->

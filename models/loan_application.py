@@ -108,7 +108,8 @@ class LoanApplication(models.Model):
 
     account_loan_id = fields.Many2one('account.account', string='Cuenta de prestamo', domain=[('deprecated','=',False)])
     account_egreso_id = fields.Many2one('account.account', string='Cuenta de egreso', domain=[('deprecated','=',False)])
-    accounting_entry_id = fields.Many2one('account.move', string='Asiento contable egreso', domain=[('deprecated','=',False)])
+    accounting_entry_id = fields.Many2one('account.move', string='Asiento contable egreso')
+    nro_cheque = fields.Char(string='Nro. de cheque', compute='_compute_nro_cheque')
 
     account_monto_refinanciamiento = fields.Many2one('account.account', string="Cuenta Saldo anterior", domain=[('deprecated','=',False)])
     account_monto_meses_interes = fields.Many2one('account.account', string="Cuenta Saldo dias excedentes", domain=[('deprecated','=',False)])
@@ -122,6 +123,14 @@ class LoanApplication(models.Model):
     account_surpluy_days = fields.Many2one('account.account', string='Interes dias excedentes', domain=[('deprecated','=',False)])
 
     finalized_loan_id = fields.One2many('finalized.loan', 'loan_application_id', string='Prestamos finalizados')
+    @api.depends('accounting_entry_id')
+    def _compute_nro_cheque(self):
+        for rec in self:
+            if rec.accounting_entry_id:
+                rec.nro_cheque = rec.accounting_entry_id.nro_cheque
+            else:
+                rec.nro_cheque = False
+
     @api.depends('loan_payment_ids')
     def _compute_pending_payment(self):
         for rec in self:
@@ -234,8 +243,18 @@ class LoanApplication(models.Model):
     interest_day_rest = fields.Float(string='Interes dias restantes', digits=(6, 2))
     interest_day_rest_bs = fields.Float(string='Interes dias restantes Bs.', digits=(6, 2))
 
-
-
+    ending_date_period = fields.Char(string='Fecha de finalizacion', compute='_compute_ending_date_period')
+    # last_payment = fields.Many2one(string='Ultimo pago')
+    
+    
+    # @api.onchange('state')
+    # def _onchange_state(self):
+    #     for rec in self:
+    #         if rec.state == 'done':
+    #             rec.last_payment = rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense')
+    #
+    
+    
     def compute_total_contribution(self):
         for record in self:
             value = record.env['partner.payroll'].search([('partner_id', '=', record.partner_id.id),('state','=','process')])
@@ -516,7 +535,7 @@ class LoanApplication(models.Model):
             # rec.missing_payments = (date_end.year - date_init.year) * 12 + date_end.month - date_init.month
             rec.missing_payments = count_payment - count_payment_confirm
             rec.total_payments_confirm = count_payment_confirm
-            rec.report_missing_payments = rec.missing_payments
+            # rec.report_missing_payments = rec.missing_payments
             # rec.amount_devolution_bs = rec.amount_devolution * rec.value_dolar
             # rec.interest_day_rest_bs = rec.interest_day_rest * rec.value_dolar
 
@@ -719,4 +738,19 @@ class LoanApplication(models.Model):
     #     for rec in self:
     #         percentage_min_def = rec.fixed_fee * rec.amount_min_def
     #         rec.total_fixed_fee = rec.fixed_fee + percentage_min_def
+    @api.depends('loan_payment_ids')
+    def _compute_ending_date_period(self):
+        for rec in self:
+            if rec.loan_payment_ids:
+                rec.ending_date_period = rec.loan_payment_ids[-1].date.strftime('%d/%m/%Y')
+            else:
+                rec.ending_date_period = ''
 
+    def done_loan(self):
+        for rec in self:
+            if rec.state != 'liquidation_process':
+                raise ValidationError('No se puede finalizar este prestamo.')
+            rec.state = 'done'
+            # rec.loan_payment_ids.write({'state': 'done'})
+            rec.message_post(body="El prestamo ha sido finalizado correctamente.")
+            # Aquí podrías agregar lógica adicional si es necesario, como enviar notificaciones o actualizar otros registros.
