@@ -31,18 +31,79 @@
                     <field name="nro_cheque"/>
                     <field name="amount_loan_dollars"/>
                     <field name="amount_loan"/>
+<!--                    <field name="last_payment_id"/>-->
+<!--                    <field name="state_last_payment"/>-->
+                </tree>
+            </field>
+        </record>
+        <record id="view_loan_application_down_tree_custom" model="ir.ui.view">
+            <field name="name">loan.application.tree.custom</field>
+            <field name="model">loan.application</field>
+            <field name="arch" type="xml">
+                <tree string="Prestamos bajas">
+                    <field name="category_partner"/>
+                    <field name="partner_id"/>
+                    <field name="date_approval"/>
+                    <field name="months_quantity"/>
+                    <field name="accounting_entry_id"/>
+                    <field name="nro_cheque"/>
+                    <field name="amount_loan_dollars"/>
+                    <field name="amount_loan"/>
+                    <field name="last_payment_id"/>
+<!--                    <field name="state_last_payment"/>-->
                 </tree>
             </field>
         </record>
         <record id="action_loan_application_up_custom" model="ir.actions.act_window">
             <field name="name">Reporte de Prestamos Altas</field>
             <field name="res_model">loan.application</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">tree.form</field>
 <!--            <field name="domain">[('state', '=', 'approved')]</field>-->
 <!--            <field name="context">{'search_default_state': 1}</field>-->
             <field name="help">Este reporte muestra los prestamos aprobados.</field>
             <field name="view_id" ref="view_loan_application_up_tree_custom"/>
         </record>
+        <record id="action_loan_application_down_custom" model="ir.actions.act_window">
+            <field name="name">Reporte de Prestamos Bajas</field>
+            <field name="res_model">loan.application</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', 'in', ['liquidation_process', 'done'])]</field>
+            <field name="help">Este reporte muestra los prestamos concluidos.</field>
+            <field name="view_id" ref="view_loan_application_down_tree_custom"/>
+        </record>
 
+        <record id="view_partner_payroll_tree_custom" model="ir.ui.view">
+            <field name="name">partner.payroll.tree.custom</field>
+            <field name="model">partner.payroll</field>
+            <field name="arch" type="xml">
+                <tree string="Socios que solicitaron su desvinculacion">
+                    <field name="partner_id"/>
+                    <field name="code_contact"/>
+                    <field name="vat"/>
+                    <field name="partner_state"/>
+                    <field name="capital_initial"/>
+                    <field name="partner_status_especific"/>
+                    <field name="date_registration" optional="hide"/>
+                    <field name="date_burn_partner" optional="hide"/>
+                    <field name="advanced_payments" optional="hide"/>
+                    <field name="count_pay_contributions" optional="hide"/>
+<!--                    <field name="outstanding_payments" optional="hide"/>-->
+                    <field name="outstanding"/>
+                    <field name="voluntary_contribution_certificate_total" optional="hide"/>
+                    <field name="mandatory_contribution_certificate_total" optional="hide"/>
+                    <field name="performance_management_total"/>
+                    <field name="contribution_total"/>
+                    <field name="state" decoration-info="state == 'draft'" decoration-success="state == 'progress'" widget="badge"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_partner_payroll_custom" model="ir.actions.act_window">
+            <field name="name">Reporte de socios que solicitaron su desvinculacion</field>
+            <field name="res_model">partner.payroll</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('type_disengagements', '=', 'retiro_voluntario')]</field>
+            <field name="help">Este reporte muestra a los socios que solicitaron su desvinculacion.</field>
+            <field name="view_id" ref="view_partner_payroll_tree_custom"/>
+        </record>
     </data>
 </odoo>

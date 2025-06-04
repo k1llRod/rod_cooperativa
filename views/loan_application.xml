@@ -212,7 +212,8 @@
                                 <field name="total_payments_confirm"/>
                                 <field name="missing_payments"/>
                                 <field name="ending_date_period" />
-                                <field name="last_payment"/>
+                                <field name="last_payment_id"/>
+                                <field name="state_last_payment"/>
 
                             </group>
                         </group>
