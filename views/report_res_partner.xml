@@ -12,11 +12,38 @@
             </field>
         </record>
         <record id="action_res_partner_tree_custom" model="ir.actions.act_window">
-            <field name="name">Vista Personalizada de Contactos</field>
+            <field name="name">Relacion nominal de asociados sin prestamos (Activo y categoria "A")</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_res_partner_tree_custom"/>
-            <field name="domain">[('loan_count', '&gt;', 0)]</field>
+            <field name="domain">[('loan_count', '=', 0)]</field>
+        </record>
+        <record id="view_res_partner_tree_custom_longevity" model="ir.ui.view">
+            <field name="name">res.partner.tree.custom.longevity</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="Servicio pasivo por edad para el beneficio de longevidad">
+                    <field name="category_partner_id"/>
+                    <field name="name"/>
+                    <field name="date_birthday"/>
+                    <field name="years_completed"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_res_partner_tree_custom" model="ir.actions.act_window">
+            <field name="name">Relacion nominal de asociados sin prestamos (Activo y categoria "A")</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_tree_custom"/>
+            <field name="domain">[('loan_count', '=', 0)]</field>
+        </record>
+        <record id="action_res_partner_tree_custom_longevity" model="ir.actions.act_window">
+            <field name="name">Relacion nominal de asociados del servicio pasivo por edad para el beneficio de longevidad</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_tree_custom_longevity"/>
+            <field name="domain">[('partner_status_especific', '=', 'passive_reserve_b'),('state','=','activate')]</field>
+            <field name="context">{'group_by': 'years_completed'}</field>
         </record>
         <record id="view_loan_application_up_tree_custom" model="ir.ui.view">
             <field name="name">loan.application.tree.custom</field>
