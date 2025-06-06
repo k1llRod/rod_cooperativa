@@ -84,7 +84,7 @@
         <record id="action_loan_application_up_custom" model="ir.actions.act_window">
             <field name="name">Reporte de Prestamos Altas</field>
             <field name="res_model">loan.application</field>
-            <field name="view_mode">tree.form</field>
+            <field name="view_mode">tree,form</field>
 <!--            <field name="domain">[('state', '=', 'approved')]</field>-->
 <!--            <field name="context">{'search_default_state': 1}</field>-->
             <field name="help">Este reporte muestra los prestamos aprobados.</field>
@@ -95,6 +95,14 @@
             <field name="res_model">loan.application</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('state', 'in', ['liquidation_process', 'done'])]</field>
+            <field name="help">Este reporte muestra los prestamos concluidos.</field>
+            <field name="view_id" ref="view_loan_application_down_tree_custom"/>
+        </record>
+        <record id="action_loan_application_hipotecary_custom" model="ir.actions.act_window">
+            <field name="name">Prestamos hipotecarios realizados</field>
+            <field name="res_model">loan.application</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', 'in', ['progress']),('with_guarantor','=','mortgage')]</field>
             <field name="help">Este reporte muestra los prestamos concluidos.</field>
             <field name="view_id" ref="view_loan_application_down_tree_custom"/>
         </record>
