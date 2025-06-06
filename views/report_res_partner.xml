@@ -11,12 +11,13 @@
                 </tree>
             </field>
         </record>
-        <record id="action_res_partner_tree_custom" model="ir.actions.act_window">
-            <field name="name">Relacion nominal de asociados sin prestamos (Activo y categoria "A")</field>
+        <record id="action_res_partner_tree_custom_no_loan" model="ir.actions.act_window">
+            <field name="name">Relación nominal de asociados sin préstamos (Activo y categoría "A")</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_res_partner_tree_custom"/>
-            <field name="domain">[('loan_count', '=', 0)]</field>
+            <field name="domain">[('loan_count', '=', 0),('loan_count_mortgage', '=', '0'), ('partner_status_especific', 'in', ['active_service', 'passive_reserve_a'])]
+            </field>
         </record>
         <record id="view_res_partner_tree_custom_longevity" model="ir.ui.view">
             <field name="name">res.partner.tree.custom.longevity</field>
@@ -35,7 +36,7 @@
             <field name="res_model">res.partner</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_res_partner_tree_custom"/>
-            <field name="domain">[('loan_count', '=', 0)]</field>
+            <field name="domain">[('loan_count', '>', 0)]</field>
         </record>
         <record id="action_res_partner_tree_custom_longevity" model="ir.actions.act_window">
             <field name="name">Relacion nominal de asociados del servicio pasivo por edad para el beneficio de longevidad</field>
