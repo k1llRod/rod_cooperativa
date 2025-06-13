@@ -743,13 +743,16 @@ class LoanApplication(models.Model):
     def _compute_ending_date_period(self):
         for rec in self:
             if rec.loan_payment_ids:
-                rec.ending_date_period = rec.loan_payment_ids[-1].date.strftime('%d/%m/%Y')
-                rec.last_payment_id = rec.loan_payment_ids[-1]
-                state_value = rec.loan_payment_ids[-1].state
+                last_payment = rec.loan_payment_ids[-1]
+                rec.ending_date_period = last_payment.date.strftime('%d/%m/%Y')
+                rec.last_payment_id = last_payment
+                state_value = last_payment.state
                 selection = rec.loan_payment_ids._fields['state'].selection
                 rec.state_last_payment = dict(selection).get(state_value, '')
             else:
                 rec.ending_date_period = ''
+                rec.last_payment_id = None  # ← asignación obligatoria
+                rec.state_last_payment = ''  # ← asignación obligatoria
 
     def done_loan(self):
         for rec in self:
