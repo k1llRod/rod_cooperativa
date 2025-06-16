@@ -12,6 +12,7 @@ class TypeLoan(models.Model):
     max_limit_amount_dollars = fields.Float(string='Monto maximo en dolares')
     max_limit_amount = fields.Float(string='Monto maximo en bolivianos', compute='_compute_limit_amount_dollars', store=True)
     ballot_balance = fields.Float(string='Saldo de boleta', store=True)
+    grade_sheet = fields.Char(string='Grado planilla', store=True)
 
     @api.depends('max_limit_amount_dollars')
     def _compute_limit_amount_dollars(self):

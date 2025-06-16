@@ -9,6 +9,7 @@
                 <tree editable="bottom">
                     <field name="name"/>
                     <field name="code_loan"/>
+                    <field name="grade_sheet"/>
                     <field name="months"/>
                     <field name="max_limit_amount_dollars"/>
                     <field name="max_limit_amount"/>
