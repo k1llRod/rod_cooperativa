@@ -67,7 +67,7 @@ class FormAmortization(models.TransientModel):
                 coa_commission = (1.25 / 100) * self.new_fixed_fee
                 percentage_amount_min_def = self.new_fixed_fee * self.data_loan_id.amount_min_def
                 if len(self.data_loan_id.loan_payment_ids) == 1:
-                    capital_init = self.recalculate_capital_rest
+                    capital_init = create_loan_payment_amortization.balance_capital
                     # date_payment = datetime.today()
                     date_payment = self.date_amortization
                     date_pivot = date_payment
