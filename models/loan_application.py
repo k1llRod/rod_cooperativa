@@ -454,14 +454,15 @@ class LoanApplication(models.Model):
     def _compute_balance_capital(self):
         for rec in self:
             if len(rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense' or
-                                                           x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef')) > 0:
+                                                           x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization')) > 0:
                 rec.balance_capital = rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense' or
-                                                            x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef')[
+                                                            x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or
+                                                                    x.state == 'amortization')[
                         -1].balance_capital
                 rec.balance_total_interest_month = rec.total_interest_month_surpluy - sum(
                     rec.loan_payment_ids.filtered(
                         lambda
-                            x: x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef').mapped(
+                            x: x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization').mapped(
                         'interest_month_surpluy'))
             else:
                 rec.balance_capital = rec.amount_loan_dollars
