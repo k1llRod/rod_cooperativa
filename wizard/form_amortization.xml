@@ -8,6 +8,7 @@
                     <group>
                         <group string="Datos del prestamo">
                             <field name="data_loan_id" readonly="1"/>
+                            <field name="with_guarantor"/>
                             <field name="capital_initial" readonly="1"/>
                             <field name="quantity_month_initial" readonly="1"/>
                             <field name="quantity_month_payment" readonly="1"/>
