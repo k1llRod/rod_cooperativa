@@ -218,6 +218,10 @@
                             <filter string="Lugar de nacimiento"
                                 name="group_state_id"
                                 context="{'group_by':'state_id'}"/>
+                            <separator />
+                            <filter string="Baja por"
+                                name="group_type_disengagements"
+                                context="{'group_by':'type_disengagements'}"/>
                         </group>
                     </search>
                 </xpath>
