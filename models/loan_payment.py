@@ -228,7 +228,7 @@ class LoanPayment(models.Model):
             move_line_vals = []
             move_line = []
             journal_id = rec.loan_application_ids.journal_id.id if rec.loan_application_ids.journal_id else rec.journal_id.id
-            if rec.state == 'transfer':
+            if rec.state == 'transfer' or rec.state == 'amortization':
                 data = (
                     0, 0, {'account_id': rec.account_income_id.id if rec.account_income_id else rec.loan_application_ids.account_capital_index_id.id,
                            'debit': rec.amount_payment,
