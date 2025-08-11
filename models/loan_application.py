@@ -62,7 +62,7 @@ class LoanApplication(models.Model):
     index_loan_bs = fields.Float(string='Indice de prestamo (Bs)')
     fixed_fee = fields.Float(string='Cuota fija ($)', compute='_compute_index_loan_fixed_fee')
     fixed_fee_bs = fields.Float(string='Cuota fija (Bs)', compute='_compute_index_loan_fixed_fee_bs')
-    total_fixed_fee = fields.Float(string='Total cuota fija', compute='_compute_index_loan_fixed_fee')
+    total_fixed_fee = fields.Float(string='Total cuota fija', compute='_compute_index_loan_fixed_fee', store=True)
     date_application = fields.Date(string='Fecha de solicitud', default=fields.Date.today())
     date_approval = fields.Date(string='Fecha de aprobacion')
     with_guarantor = fields.Selection(string='Tipo de prestamo regular',
@@ -104,6 +104,9 @@ class LoanApplication(models.Model):
     total_payments_confirm = fields.Integer(string='Total pagos confirmados', compute='_compute_missing_payments')
     report_missing_payments = fields.Integer(string='Pagos pendientes')
     loan_historical_coaa = fields.Float(string='Prestamos historico COAA')
+
+    flag_collect_guarantors = fields.Boolean(string='Cobrar a garantes', default=False)
+
     journal_id = fields.Many2one('account.journal', string='Diario Egreso')
 
     account_loan_id = fields.Many2one('account.account', string='Cuenta de prestamo', domain=[('deprecated','=',False)])
@@ -247,7 +250,7 @@ class LoanApplication(models.Model):
     last_payment_id = fields.Many2one('loan.payment', string='Ultimo pago', compute='_compute_ending_date_period')
     state_last_payment = fields.Char(string='Estado ultimo pago', compute='_compute_ending_date_period')
     
-    
+
     # @api.onchange('state')
     # def _onchange_state(self):
     #     for rec in self:

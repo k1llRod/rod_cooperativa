@@ -203,6 +203,7 @@
                                 <field name="balance_total_interest_month_bs"/>
                                 <field name="balance_total_interest_month_auxiliar"/>
                                 <field name="loan_historical_coaa"/>
+                                <field name="flag_collect_guarantors" widget="boolean_toggle"/>
                             </group>
                             <group string="Monto maximo de prestamo">
                                 <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>

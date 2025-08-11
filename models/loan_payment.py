@@ -24,6 +24,15 @@ class LoanPayment(models.Model):
                                                  ('passive_reserve_b','Pasivo categoria "B"'),
                                                  ('leave','Baja')], string='Tipo de asociado', related='loan_application_ids.partner_id.partner_status_especific', store=True)
     type_payment = fields.Selection([('1', 'Abono'), ('2', 'Transferencia')], string='Tipo de pago')
+
+    guarantor_one = fields.Many2one('res.partner', string='Garante 1', related='loan_application_ids.guarantor_one', store=True, tracking=True)
+    guarantor_two = fields.Many2one('res.partner', string='Garante 2', related='loan_application_ids.guarantor_two', store=True, tracking=True)
+    code_garantor_one = fields.Char(string='Codigo de garante 1', related='guarantor_one.code_contact', store=True)
+    code_garantor_two = fields.Char(string='Codigo de garante 2', related='guarantor_two.code_contact', store=True)
+    flag_collect_guarantors = fields.Boolean(string='Cobrar a garantes', related='loan_application_ids.flag_collect_guarantors', store=True)
+    amount_desc_guarantor_one = fields.Float(string='Monto descontado garante 1', compute='_compute_guarantor_fields', store=True, digits=(16, 2))
+    amount_desc_guarantor_two = fields.Float(string='Monto descontado garante 2', compute='_compute_guarantor_fields', store=True, digits=(16, 2))
+
     date = fields.Date(string='Fecha pivote', required=True)
     date_payment = fields.Date(string='Fecha de pago')
     period = fields.Char(string='Periodo', compute='_compute_period', store=True)
@@ -343,3 +352,13 @@ class LoanPayment(models.Model):
             record.amount_sum_bs = record.amount_capital_index_bs + record.amount_interest_bs + record.amount_res_social_bs + record.amount_percentage_mindef_bs + record.amount_overage_days_bs
             if record.amount_income > record.amount_sum_bs:
                 record.amount_overage = record.amount_income - record.amount_sum_bs
+
+    @api.depends('flag_collect_guarantors', 'guarantor_one', 'guarantor_two')
+    def _compute_guarantor_fields(self):
+        for rec in self:
+            if rec.flag_collect_guarantors:
+                rec.amount_desc_guarantor_one = rec.amount_total_bs * 0.5 if rec.guarantor_one else 0
+                rec.amount_desc_guarantor_two = rec.amount_total_bs * 0.5 if rec.guarantor_two else 0
+            else:
+                rec.amount_desc_guarantor_one = 0
+                rec.amount_desc_guarantor_two = 0

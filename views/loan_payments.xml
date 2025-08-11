@@ -123,6 +123,15 @@
                                 <field name="amount_returned_coa"/>
                                 <field name="amount_payment"/>
                             </group>
+                            <group>
+                                <field name="flag_collect_guarantors" widget="boolean_toggle"/>
+                                <field name="guarantor_one"/>
+                                <field name="code_garantor_one"/>
+                                <field name="amount_desc_guarantor_one"/>
+                                <field name="guarantor_two"/>
+                                <field name="code_garantor_two"/>
+                                <field name="amount_desc_guarantor_two"/>
+                            </group>
                         </group>
                         <notebook>
                             <page string="Contabilidad">
