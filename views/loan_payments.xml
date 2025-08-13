@@ -6,7 +6,11 @@
             <field name="name">loan.payment.tree</field>
             <field name="model">loan.payment</field>
             <field name="arch" type="xml">
+
                 <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense')" >
+                    <header>
+                        <button name="create_report_excel" string="Reporte MINDEF" type="object"/>
+                    </header>
                     <field name="loan_application_ids" optional="hide"/>
                     <field name="partner_id" optional="hide"/>
                     <field name="type_loan" optional="hide"/>
@@ -81,6 +85,7 @@
                                 attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'liquidation_process')]}"
                                 groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
                                 />
+
 
                         <field name="state" widget="statusbar" statusbar_visible="draft,transfer,ministry_defense"/>
                     </header>

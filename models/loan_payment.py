@@ -362,3 +362,11 @@ class LoanPayment(models.Model):
             else:
                 rec.amount_desc_guarantor_one = 0
                 rec.amount_desc_guarantor_two = 0
+
+    def create_report_excel(self):
+        action = self.env["ir.actions.actions"]._for_xml_id("rod_cooperativa.action_loan_payment_excel")
+        action['context'] = {
+            'active_model': 'loan.payment',
+            'active_ids': self.ids,
+        }
+        return action

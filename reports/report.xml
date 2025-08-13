@@ -31,4 +31,13 @@
         <field name="binding_type">report</field>
     </record>
 
+    <record id="action_loan_payment_excel" model="ir.actions.report">
+        <field name="name">Reporte enviar MINDEF</field>
+        <field name="model">report.form.xlsx</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">rod_cooperativa.action_loan_payment_excel</field>
+        <field name="report_file">rod_cooperativa.action_loan_payment_excel</field>
+        <field name="binding_type">report</field>
+    </record>
+
 </odoo>
