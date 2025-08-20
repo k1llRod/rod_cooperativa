@@ -527,21 +527,31 @@ class LoanApplication(models.Model):
     def massive_verification_pass(self):
         self.state = 'verificate'
 
-    @api.depends('loan_payment_ids')
+    @api.depends('loan_payment_ids.state', 'loan_payment_ids.date')
     def _compute_missing_payments(self):
+        confirmed_states = ('transfer', 'ministry_defense')
+        today = fields.Date.context_today(self)
+
         for rec in self:
-            rec.missing_payments = len(rec.loan_payment_ids.filtered(lambda x: x.state == 'draft'))
-            # date_init = rec.loan_payment_ids.filtered(lambda x:x.name == 'Cuota 1').date
-            date_end = datetime.now().date()
-            count_payment_confirm = len(
-                rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense'))
-            count_payment = len(rec.loan_payment_ids.filtered(lambda x: x.date <= date_end))
-            # rec.missing_payments = (date_end.year - date_init.year) * 12 + date_end.month - date_init.month
-            rec.missing_payments = count_payment - count_payment_confirm
-            rec.total_payments_confirm = count_payment_confirm
-            # rec.report_missing_payments = rec.missing_payments
-            # rec.amount_devolution_bs = rec.amount_devolution * rec.value_dolar
-            # rec.interest_day_rest_bs = rec.interest_day_rest * rec.value_dolar
+            payments = rec.loan_payment_ids
+
+            due_payments = []
+            confirmed_due = []
+
+            for p in payments:
+                if not p.date:
+                    continue
+
+                # vencimiento real: primer día del mes siguiente
+                expiration_date = p.date + relativedelta(months=1, day=1)
+
+                if expiration_date <= today:
+                    due_payments.append(p)
+                    if p.state in confirmed_states:
+                        confirmed_due.append(p)
+
+            rec.missing_payments = max(0, len(due_payments) - len(confirmed_due))
+            rec.total_payments_confirm = len(confirmed_due)
 
     @api.onchange('interest_day_rest')
     def _onchange_interest_day_rest(self):

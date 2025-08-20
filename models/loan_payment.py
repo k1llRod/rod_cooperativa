@@ -57,6 +57,7 @@ class LoanPayment(models.Model):
     amount_payment = fields.Float(string='Monto a pagar', digits=(16, 2), store=True)
     state = fields.Selection(
         [('draft', 'Borrador'),
+         ('scheduled', 'Programado'),
          ('transfer', 'Transferencia bancaria'),
          ('ministry_defense', 'Ministerio de defensa'),
          ('debt_settlement_mindef', 'Liquidacion de deuda MINDEF'),
@@ -119,6 +120,7 @@ class LoanPayment(models.Model):
     amount_sum = fields.Float(string='Total', compute='_sum_total', digits=(16, 2), store=True)
     amount_sum_bs = fields.Float(string='Total Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
 
+    date_scheduled = fields.Date(string='Fecha programada', help="Fecha programada para el pago del préstamo")
     @api.depends('capital_index_initial', 'interest', 'res_social', 'percentage_amount_min_def',
                  'interest_month_surpluy')
     def _compute_bolivianos(self):
