@@ -136,6 +136,7 @@
                                 <field name="guarantor_two"/>
                                 <field name="code_garantor_two"/>
                                 <field name="amount_desc_guarantor_two"/>
+                                <field name="special_case"/>
                             </group>
                         </group>
                         <notebook>

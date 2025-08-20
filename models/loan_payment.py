@@ -121,6 +121,7 @@ class LoanPayment(models.Model):
     amount_sum_bs = fields.Float(string='Total Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
 
     date_scheduled = fields.Date(string='Fecha programada', help="Fecha programada para el pago del préstamo")
+    special_case = fields.Boolean(string='Caso especial', related='loan_application_ids.special_case', store=True)
     @api.depends('capital_index_initial', 'interest', 'res_social', 'percentage_amount_min_def',
                  'interest_month_surpluy')
     def _compute_bolivianos(self):
