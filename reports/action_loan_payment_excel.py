@@ -42,7 +42,7 @@ class LoanPaymentXlsx(models.AbstractModel):
             nombres = getattr(partner, 'name_contact', None) or partner.display_name or ''
             sheet.write(row, 5, nombres, fmt_text)
             sheet.write(row, 6, 'ALTA', fmt_text)
-            sheet.write(row, 7, 'TIPO MONEDA', fmt_text)
+            sheet.write(row, 7, 'BS.', fmt_text)
             sheet.write(row, 8, getattr(rec, 'amount_total_bs', '') or '', fmt_text)
             sheet.write(row, 9, '001', fmt_text)
             sheet.write(row, 10, 'PRESTAMO-PAV', fmt_text)
@@ -65,7 +65,7 @@ class LoanPaymentXlsx(models.AbstractModel):
                 nombres = getattr(guarantor_one, 'name_contact', None) or partner.display_name or ''
                 sheet.write(row, 5, nombres, fmt_yellow)
                 sheet.write(row, 6, 'ALTA', fmt_yellow)
-                sheet.write(row, 7, 'TIPO MONEDA', fmt_yellow)
+                sheet.write(row, 7, 'BS.', fmt_yellow)
                 sheet.write(row, 8, getattr(rec, 'amount_desc_guarantor_one', '') or '', fmt_yellow)
                 sheet.write(row, 9, '001', fmt_yellow)
                 sheet.write(row, 10, 'PRESTAMO-PAV', fmt_yellow)
