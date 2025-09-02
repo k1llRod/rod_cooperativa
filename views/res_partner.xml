@@ -62,6 +62,7 @@
                         <group string="Tipo de asociado">
                             <field name="guarantor"/>
                             <field name="partner"/>
+                            <field name="affcoop"/>
                         </group>
                         <group string="Documentos de respaldo">
                             <field name="ci_photocopy"/>
