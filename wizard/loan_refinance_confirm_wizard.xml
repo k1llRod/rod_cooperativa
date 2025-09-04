@@ -1,0 +1,21 @@
+<!-- views/loan_refinance_confirm_wizard_views.xml -->
+<odoo>
+  <record id="view_loan_refinance_confirm_wizard_form" model="ir.ui.view">
+    <field name="name">loan.refinance.confirm.wizard.form</field>
+    <field name="model">loan.refinance.confirm.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Confirmar refinanciamiento">
+        <sheet>
+          <group>
+            <field name="message" readonly="1" nolabel="1" colspan="4"/>
+            <field name="original_wizard_id" invisible="1"/>
+          </group>
+        </sheet>
+        <footer>
+          <button string="Cancelar" class="btn-secondary" special="cancel" type="object" name="action_cancel"/>
+          <button string="Continuar de todos modos" type="object" name="action_proceed" class="btn-primary"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+</odoo>

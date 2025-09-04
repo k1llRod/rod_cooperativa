@@ -44,6 +44,7 @@
         'wizard/payment_post_mortem.xml',
         'wizard/form_finalized_loan.xml',
         'wizard/form_amortization.xml',
+        'wizard/loan_refinance_confirm_wizard.xml',
         'views/res_partner.xml',
         'views/report_res_partner.xml',
         'reports/report.xml',

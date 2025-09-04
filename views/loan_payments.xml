@@ -12,6 +12,7 @@
                         <button name="create_report_excel" string="Reporte MINDEF" type="object"/>
                     </header>
                     <field name="loan_application_ids" optional="hide"/>
+                    <field name="special_case" invisible="1"/>
                     <field name="partner_id" optional="hide"/>
                     <field name="type_loan" optional="hide"/>
                     <field name="with_guarantor" optional="hide"/>

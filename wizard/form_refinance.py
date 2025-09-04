@@ -39,7 +39,44 @@ class FormRefinance(models.TransientModel):
         except:
             self.index_loan = 0
     def init_refinance(self):
-        create_loan = self.env['loan.application'].create({
+        """Entrada del botón: verifica pagos programados y, si hay, abre confirmación."""
+        self.ensure_one()
+        programmed = self.data_loan_id.loan_payment_ids.filtered(lambda p: p.state == 'scheduled')
+        if programmed:
+            # --- Construir etiquetas de periodo únicas y ordenadas ---
+            period_labels = []
+            for p in programmed:
+                val = getattr(p, 'period', False)  # si tu campo es period_id, igual funciona por display_name
+                period_labels.append(val)
+            # únicos y ordenados
+            unique_periods = sorted(set(period_labels))
+            periods_str = ', '.join(unique_periods) if unique_periods else _('(sin periodo)')
+
+            message = _(
+                "El préstamo tiene pagos PROGRAMADOS para el siguiente ciclo.\n\n"
+                "- N° pagos programados: %(n)d\n"
+                "- Períodos: %(periods)s\n\n"
+                "Si continúas, el sistema procederá con el refinanciamiento igualmente."
+            ) % {'n': len(programmed), 'periods': periods_str}
+
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Confirmar refinanciamiento'),
+                'res_model': 'loan.refinance.confirm.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_original_wizard_id': self.id,
+                    'default_message': message,
+                }
+            }
+        # Si no hay programados, ejecutar directamente
+        return self._do_refinance()
+
+    def _do_refinance(self):
+        """Ejecución real del refinanciamiento (crea el nuevo loan y cambia estado del actual)."""
+        self.ensure_one()
+        new_loan = self.env['loan.application'].create({
             'name': self.name,
             'type_loan': 'regular',
             'partner_id': self.data_loan_id.partner_id.id,
@@ -52,22 +89,21 @@ class FormRefinance(models.TransientModel):
             'total_interest_month_surpluy': self.interest_days_rest,
             'state': 'init',
         })
-        if create_loan:
-            if self.flag_expansion == False:
-                self.data_loan_id.state = 'refinanced'
-            else:
-                self.data_loan_id.state = 'expansion'
-            return {
-                'type': 'ir.actions.act_window',
-                'name': 'Prestamo',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'loan.application',
-                'res_id': create_loan.id,
-                'target': 'current',
-            }
-        else:
+        new_loan._onchange_amount_loan_dollars()
+        new_loan._onchange_amount_devolution()
+        if not new_loan:
             raise ValidationError(_('Error en el proceso de refinanciamiento'))
+
+        self.data_loan_id.state = 'refinanced' if not self.flag_expansion else 'expansion'
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Préstamo'),
+            'view_mode': 'form',
+            'res_model': 'loan.application',
+            'res_id': new_loan.id,
+            'target': 'current',
+        }
 
     @api.depends('amount_refinance','flag_expansion')
     def _compute_amount_delivered(self):
