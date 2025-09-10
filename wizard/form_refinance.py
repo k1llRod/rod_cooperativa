@@ -7,6 +7,7 @@ class FormRefinance(models.TransientModel):
     name = fields.Char(string='Codigo de refinancimiento', default='Nuevo')
     capital_initial = fields.Float(string='Monto de prestamo inicial')
     capital_rest = fields.Float(string='Capital Restante')
+    capital_rest_scheduled = fields.Float(string='Capital restante programado')
     quantity_month_initial = fields.Integer(string='Cantidad de meses inicial')
     interest_days_rest = fields.Float(string='Días de Interés Restantes')
     total_capital_rest = fields.Float(string='Total Capital Restante')
@@ -109,6 +110,12 @@ class FormRefinance(models.TransientModel):
     def _compute_amount_delivered(self):
         for rec in self:
             if rec.flag_expansion == False:
-                rec.amount_delivered = rec.amount_refinance - rec.capital_rest - rec.interest_days_rest
+                if rec.capital_rest_scheduled > 0:
+                    rec.amount_delivered = rec.amount_refinance - rec.capital_rest_scheduled - rec.interest_days_rest
+                else:
+                    rec.amount_delivered = rec.amount_refinance - rec.capital_rest - rec.interest_days_rest
             else:
-                rec.amount_delivered = rec.amount_refinance - rec.capital_rest
+                if rec.capital_rest_scheduled > 0:
+                    rec.amount_delivered = rec.amount_refinance - rec.capital_rest_scheduled
+                else:
+                    rec.amount_delivered = rec.amount_refinance - rec.capital_rest

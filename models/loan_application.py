@@ -84,10 +84,12 @@ class LoanApplication(models.Model):
     turn_name = fields.Char(string='Girar a', tracking=True)
     account_deposit = fields.Char(string='Cuenta de deposito', tracking=True)
     special_case = fields.Boolean(string='Caso especial', default=False)
+    special_case_glosa = fields.Text(string='Glosa caso especial')
     refinance_loan_id = fields.Many2one('loan.application', string='Prestamo anterior')
     amount_devolution = fields.Float(string='Monto a entregar', digits=(6, 2), store=True)
     amount_devolution_bs = fields.Float(string="Monto a entregar Bs.", digits=(6, 2), store=True)
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_balance_capital', store=True)
+    balance_capital_scheduled = fields.Float(string='Saldo capital programado', compute='_compute_balance_capital', store=True)
     balance_capital_bs = fields.Float(string='Saldo capital Bs.', compute='_compute_balance_capital_bs', store=True)
     balance_total_interest_month = fields.Float(string='Saldo total interes mensual',
                                                 compute='_compute_balance_capital', digits=(6, 2), store=True)
@@ -448,6 +450,7 @@ class LoanApplication(models.Model):
                 'default_capital_initial': self.amount_loan_dollars,
                 'default_data_loan_id': id,
                 'default_capital_rest': auxiliar_balance,
+                'default_capital_rest_scheduled': self.balance_capital_scheduled,
                 'default_interest_days_rest': auxiliar,
                 'default_quantity_month_initial': self.months_quantity,
             },
@@ -460,8 +463,12 @@ class LoanApplication(models.Model):
                                                            x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization')) > 0:
                 rec.balance_capital = rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense' or
                                                             x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or
-                                                                    x.state == 'amortization')[
+                                                                    x.state == 'amortization' )[
                         -1].balance_capital
+                rec.balance_capital_scheduled = rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense' or
+                                                            x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or
+                                                                    x.state == 'amortization' or x.state == 'scheduled')[
+                        -1].balance_capital if len(rec.loan_payment_ids.filtered(lambda x: x.state == 'scheduled')) > 0 else 0
                 rec.balance_total_interest_month = rec.total_interest_month_surpluy - sum(
                     rec.loan_payment_ids.filtered(
                         lambda
@@ -469,6 +476,7 @@ class LoanApplication(models.Model):
                         'interest_month_surpluy'))
             else:
                 rec.balance_capital = rec.amount_loan_dollars
+                rec.balance_capital_scheduled = rec.amount_loan_dollars
                 rec.balance_total_interest_month = rec.total_interest_month_surpluy
 
     @api.depends('interest_month_surpluy', 'months_quantity')
