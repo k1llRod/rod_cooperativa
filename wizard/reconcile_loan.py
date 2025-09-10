@@ -62,7 +62,7 @@ class ReconcileLoan(models.TransientModel):
         for partner in partner_loan_ids:
             search_partner = filing_cabinet_ids.filtered(lambda x: x.eit_item == partner.partner_id.code_contact)
             if search_partner:
-                verify_period = partner.loan_payment_ids.filtered(lambda x:x.period == period and x.state == 'draft' or x.state == 'scheduled')
+                verify_period = partner.loan_payment_ids.filtered(lambda x:x.period == period and x.state == 'scheduled')
                 verify_amount_returned_coa = partner.loan_payment_ids.filtered(lambda x:x.amount_returned_coa == 0)
                 if verify_period:
                     verify_period.commission_min_def = search_partner.comision
@@ -71,6 +71,8 @@ class ReconcileLoan(models.TransientModel):
                     if verify_amount_returned_coa:
                         verify_period.amount_returned_coa = search_partner.tot2
                     if verify_period.amount_total_bs >= search_partner.amount_bs:
+
+
                         search_partner.loan_regular = True
                         # verify_period.confirm_ministry_defense()
                     else:
