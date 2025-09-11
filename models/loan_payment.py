@@ -209,7 +209,7 @@ class LoanPayment(models.Model):
 
     def confirm_ministry_defense(self):
         for record in self:
-            if record.state == 'draft':
+            if record.state == 'draft' or record.state == 'scheduled':
                 record.write({'state': 'ministry_defense'})
 
     def draft_massive(self):
