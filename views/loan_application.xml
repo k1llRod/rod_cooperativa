@@ -427,8 +427,8 @@
                     <field name="months_quantity" string="PLAZO EN AÑOS"/>
                     <field name="date_approval" string="FECHA DE PRESTAMO"/>
                     <field name="ending_date_period" string="FECHA DE FINALIZACION"/>
-                    <field name="amount_loan" string="MONTO PRESTADO"/>
-                    <field name="balance_capital_bs" string="SALDO DEUDOR"/>
+                    <field name="amount_loan" string="MONTO PRESTADO" sum="Total"/>
+                    <field name="balance_capital_bs" string="SALDO DEUDOR" sum="Total"/>
                 </tree>
             </field>
         </record>

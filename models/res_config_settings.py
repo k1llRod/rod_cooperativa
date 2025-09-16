@@ -11,6 +11,12 @@ class ResConfigSettings(models.TransientModel):
     mortgage_loan = fields.Float(string='Prestamo hipotecario', digits=(6, 3))
     monthly_interest_mortgage = fields.Float(string='Interes mensual hipotecario %', digits=(6, 3))
 
+    account_loan_id = fields.Many2one('account.account', string='Cuenta contable de prestamos')
+    account_egreso_id = fields.Many2one('account.account', string='Cuenta contable de egreso de intereses')
+    account_monto_refinanciamiento = fields.Many2one('account.account', string='Cuenta contable de monto refinanciamiento')
+    account_monto_meses_interes = fields.Many2one('account.account', string='Cuenta contable de monto meses de interes')
+
+
     @api.model
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
@@ -28,7 +34,16 @@ class ResConfigSettings(models.TransientModel):
             mortgage_loan=float(
                 self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_loan')),
             monthly_interest_mortgage=float(
-                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage'))
+                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage')),
+            account_loan_id=int(
+                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_loan_id', default=False) or False),
+            account_egreso_id=int(
+                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_egreso_id', default=False) or False),
+            account_monto_refinanciamiento=int(
+                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_monto_refinanciamiento', default=False) or False),
+            account_monto_meses_interes=int(
+                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_monto_meses_interes', default=False) or False),
+
         )
         return res
 
@@ -45,5 +60,13 @@ class ResConfigSettings(models.TransientModel):
                                                          str(self.mortgage_loan))
         self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.monthly_interest_mortgage',
                                                          str(self.monthly_interest_mortgage))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_loan_id',
+                                                            str(self.account_loan_id.id if self.account_loan_id else ''))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_egreso_id',
+                                                            str(self.account_egreso_id.id if self.account_egreso_id else ''))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_monto_refinanciamiento',
+                                                            str(self.account_monto_refinanciamiento.id if self.account_monto_refinanciamiento else ''))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_monto_meses_interes',
+                                                            str(self.account_monto_meses_interes.id if self.account_monto_meses_interes else ''))
 
     #crear get y set

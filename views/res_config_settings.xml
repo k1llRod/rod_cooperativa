@@ -93,6 +93,76 @@
                         </div>
 
                     </div>
+                    <h2>Parametros Contabilidad de egresos</h2>
+                    <div class="row mt16 o_settings_container" name="taxes_setting_container">
+
+                        <!-- IZQUIERDA: solo account_loan_id -->
+                        <div class="col-12 col-lg-6">
+                            <div class="o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <div class="content-group mt16">
+                                        <label string="Cuenta de prestamo" for="account_loan_id"/>
+                                        <div class="text-muted">
+                                            Establecer la cuenta contable de prestamo.
+                                        </div>
+                                        <div>
+                                            <field name="account_loan_id" colspan="4" nolabel="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DERECHA: el resto apilados -->
+                        <div class="col-12 col-lg-6">
+
+                            <div class="o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <div class="content-group mt16">
+                                        <label string="Cuenta de egresos"
+                                               for="account_egreso_id"/>
+                                        <div class="text-muted">
+                                            Establecer la cuenta contable para egresos.
+                                        </div>
+                                        <div>
+                                            <field name="account_egreso_id" colspan="4" nolabel="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="o_setting_box mt16">
+                                <div class="o_setting_right_pane">
+                                    <div class="content-group mt16">
+                                        <label string="Cuenta de saldo anterior"
+                                               for="account_monto_refinanciamiento"/>
+                                        <div class="text-muted">
+                                            Establecer la cuenta contable saldo anterior.
+                                        </div>
+                                        <div>
+                                            <field name="account_monto_refinanciamiento" colspan="4" nolabel="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="o_setting_box mt16">
+                                <div class="o_setting_right_pane">
+                                    <div class="content-group mt16">
+                                        <label string="Cuenta de saldos dias excedentes" for="account_monto_meses_interes"/>
+                                        <div class="text-muted">
+                                            Establecer la cuenta contable para saldo dias excedentes.
+                                        </div>
+                                        <div>
+                                            <field name="account_monto_meses_interes" colspan="4" nolabel="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
             </xpath>
         </field>

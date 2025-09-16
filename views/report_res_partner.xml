@@ -57,8 +57,8 @@
                     <field name="months_quantity"/>
                     <field name="accounting_entry_id"/>
                     <field name="nro_cheque"/>
-                    <field name="amount_loan_dollars"/>
-                    <field name="amount_loan"/>
+                    <field name="amount_loan_dollars" sum="Total"/>
+                    <field name="amount_loan" sum="Total"/>
 <!--                    <field name="last_payment_id"/>-->
 <!--                    <field name="state_last_payment"/>-->
                 </tree>
@@ -75,9 +75,10 @@
                     <field name="months_quantity"/>
                     <field name="accounting_entry_id"/>
                     <field name="nro_cheque"/>
-                    <field name="amount_loan_dollars"/>
-                    <field name="amount_loan"/>
+                    <field name="amount_loan_dollars" sum="Total"/>
+                    <field name="amount_loan" sum="Total"/>
                     <field name="last_payment_id"/>
+                    <field name="ending_date_period" optional="hidden"/>
 <!--                    <field name="state_last_payment"/>-->
                 </tree>
             </field>

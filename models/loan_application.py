@@ -1,5 +1,7 @@
 import calendar
 from odoo import api, fields, models, tools, _
+
+from Tools.scripts.dutree import store
 from datetime import datetime, timedelta
 from odoo.exceptions import UserError, ValidationError
 from dateutil.relativedelta import relativedelta
@@ -248,7 +250,7 @@ class LoanApplication(models.Model):
     interest_day_rest = fields.Float(string='Interes dias restantes', digits=(6, 2))
     interest_day_rest_bs = fields.Float(string='Interes dias restantes Bs.', digits=(6, 2))
 
-    ending_date_period = fields.Char(string='Fecha de finalizacion', compute='_compute_ending_date_period')
+    ending_date_period = fields.Char(string='Fecha de finalizacion', compute='_compute_ending_date_period', store=True)
     last_payment_id = fields.Many2one('loan.payment', string='Ultimo pago', compute='_compute_ending_date_period')
     state_last_payment = fields.Char(string='Estado ultimo pago', compute='_compute_ending_date_period')
     

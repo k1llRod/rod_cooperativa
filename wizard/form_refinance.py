@@ -14,6 +14,7 @@ class FormRefinance(models.TransientModel):
     amount_refinance = fields.Float(string='Monto a Refinanciar', required=True)
     month_refinance = fields.Integer(string='Meses a Refinanciar', required=True)
     date_refinance = fields.Date(string='Fecha de Refinanciamiento', required=True)
+    date_initial_loan = fields.Date(string='Fecha de inicio del prestamo')
     data_loan_id = fields.Many2one('loan.application', string='Datos del prestamo')
     amount_delivered = fields.Float(string='Monto a entregar' ,compute='_compute_amount_delivered', store=True)
 
@@ -39,6 +40,14 @@ class FormRefinance(models.TransientModel):
             self.fixed_fee = self.amount_refinance * self.index_loan
         except:
             self.index_loan = 0
+
+    def _int_or_false(env, key):
+        val = env['ir.config_parameter'].sudo().get_param(key)
+        try:
+            return int(val) if val and val not in ('False', 'false', '0') else False
+        except (TypeError, ValueError):
+            return False
+
     def init_refinance(self):
         """Entrada del botón: verifica pagos programados y, si hay, abre confirmación."""
         self.ensure_one()
@@ -77,6 +86,24 @@ class FormRefinance(models.TransientModel):
     def _do_refinance(self):
         """Ejecución real del refinanciamiento (crea el nuevo loan y cambia estado del actual)."""
         self.ensure_one()
+
+        ICP = self.env['ir.config_parameter'].sudo()
+
+        # Leer y convertir IDs de cuentas SIN helper
+        raw_loan = ICP.get_param('rod_cooperativa.account_loan_id')
+        raw_egreso = ICP.get_param('rod_cooperativa.account_egreso_id')
+        raw_refi = ICP.get_param('rod_cooperativa.account_monto_refinanciamiento')
+        raw_meses = ICP.get_param('rod_cooperativa.account_monto_meses_interes')  # clave corregida
+
+        acc_loan_id = int(str(raw_loan).strip()) if raw_loan and str(raw_loan).strip().isdigit() and str(
+            raw_loan).strip() != '0' else False
+        acc_egreso_id = int(str(raw_egreso).strip()) if raw_egreso and str(raw_egreso).strip().isdigit() and str(
+            raw_egreso).strip() != '0' else False
+        acc_refi_id = int(str(raw_refi).strip()) if raw_refi and str(raw_refi).strip().isdigit() and str(
+            raw_refi).strip() != '0' else False
+        acc_meses_interes_id = int(str(raw_meses).strip()) if raw_meses and str(raw_meses).strip().isdigit() and str(
+            raw_meses).strip() != '0' else False
+
         new_loan = self.env['loan.application'].create({
             'name': self.name,
             'type_loan': 'regular',
@@ -88,14 +115,36 @@ class FormRefinance(models.TransientModel):
             'amount_devolution': self.amount_delivered,
             'interest_day_rest': self.interest_days_rest,
             'total_interest_month_surpluy': self.interest_days_rest,
+            # No asignamos cuentas aquí para no pelear con onchanges
             'state': 'init',
         })
-        new_loan._onchange_amount_loan_dollars()
-        new_loan._onchange_amount_devolution()
+
         if not new_loan:
             raise ValidationError(_('Error en el proceso de refinanciamiento'))
 
-        self.data_loan_id.state = 'refinanced' if not self.flag_expansion else 'expansion'
+        # Ejecuta cálculos que puedan pisar campos
+        new_loan._onchange_amount_loan_dollars()
+        new_loan._onchange_amount_devolution()
+        new_loan._compute_change_dollars_bolivian()
+        new_loan._onchange_interest_day_rest()
+
+        # Ahora sí, escribe cuentas (Many2one) como enteros válidos
+        write_vals = {}
+        if acc_loan_id:
+            write_vals['account_loan_id'] = acc_loan_id
+        if acc_egreso_id:
+            write_vals['account_egreso_id'] = acc_egreso_id
+        if acc_refi_id:
+            write_vals['account_monto_refinanciamiento'] = acc_refi_id
+        if acc_meses_interes_id:
+            write_vals['account_monto_meses_interes'] = acc_meses_interes_id
+
+        if write_vals:
+            new_loan.write(write_vals)
+
+        # Cambia estado del préstamo original
+        new_state = 'expansion' if self.flag_expansion else 'refinanced'
+        self.data_loan_id.state = new_state
 
         return {
             'type': 'ir.actions.act_window',
