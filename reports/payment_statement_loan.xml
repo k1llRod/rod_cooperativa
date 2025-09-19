@@ -126,7 +126,12 @@
                                             <strong>SALDO CAPITAL</strong>
                                         </td>
                                         <td>
-                                            <span t-field="o.balance_capital"></span>
+                                            <t t-if="o.balance_capital_scheduled &gt; 0">
+                                                <span t-esc="round(o.balance_capital_scheduled,2)" style="color:red;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="round(o.balance_capital,2)"></span>
+                                            </t>
                                         </td>
                                     </tr>
                                     <tr>
@@ -139,7 +144,12 @@
                                             <strong>SALDO D/E</strong>
                                         </td>
                                         <td>
-                                            <span t-field="o.balance_total_interest_month"></span>
+                                            <t t-if="o.balance_capital_scheduled &gt; 0">
+                                                <span t-esc="round(o.balance_total_interest_month_scheduled,2)" style="color:red;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="round(o.balance_total_interest_month, 2)"></span>
+                                            </t>
                                         </td>
                                     </tr>
                                     <tr>
@@ -153,7 +163,12 @@
                                             <strong>TOTAL SALDO</strong>
                                         </td>
                                         <td>
-                                            <span t-esc="round(o.balance_capital + o.balance_total_interest_month,2)"></span>
+                                            <t t-if="o.balance_capital_scheduled &gt; 0">
+                                                <span t-esc="round(o.balance_capital_scheduled + o.balance_total_interest_month_scheduled,2)" style="color:red;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="round(o.balance_capital + o.balance_total_interest_month,2)"></span>
+                                            </t>
                                         </td>
                                     </tr>
                                     <tr>
@@ -167,7 +182,13 @@
                                             <strong>TOTAL SALDO BS</strong>
                                         </td>
                                         <td>
-                                            <span t-esc="round(o.balance_capital_bs + o.balance_total_interest_month_bs, 2)"></span>
+                                            <t t-if="o.balance_capital_scheduled &gt; 0">
+                                                <span t-esc="round(o.balance_capital_scheduled_bs + o.balance_total_interest_month_scheduled_bs,2)" style="color:red;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="round(o.balance_capital_bs + o.balance_total_interest_month_bs, 2)"></span>
+                                            </t>
+
                                         </td>
                                     </tr>
 <!--                                    <tr>-->
@@ -220,7 +241,7 @@
                                     <tbody style="font-size:12px;">
                                         <tr t-set="acumulador" t-value="0"/>
                                         <t t-set="line_number" t-value="0"/>
-                                        <t t-foreach="o.loan_payment_ids.filtered(lambda x:x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization')" t-as="p">
+                                        <t t-foreach="o.loan_payment_ids.filtered(lambda x:x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization' or x.state == 'scheduled')" t-as="p">
                                             <style>
                                                 .table th, .table td {
                                                     padding: 0px;
@@ -293,6 +314,9 @@
                                                     </t>
                                                     <t t-if="p.state == 'amortization'">
                                                         Amortizacion
+                                                    </t>
+                                                    <t t-if="p.state == 'scheduled'">
+                                                        <span style="color:red;">Programado</span>
                                                     </t>
                                                 </td>
                                             </tr>

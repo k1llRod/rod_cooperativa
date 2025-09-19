@@ -43,3 +43,7 @@ access_form_finalized_loan,form.finalized.loan,model_form_finalized_loan,rod_coo
 access_form_amortization,form.amortization,model_form_amortization,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
 
 access_loan_refinance_confirm_wizard,loan.refinance.confirm.wizard,model_loan_refinance_confirm_wizard,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+
+access_loan_application_portal,loan.application,model_loan_application,base.group_portal,1,0,0,0
+
+access_loan_payment_portal,loan.payment,model_loan_payment,base.group_portal,1,0,0,0

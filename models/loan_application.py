@@ -91,9 +91,14 @@ class LoanApplication(models.Model):
     amount_devolution_bs = fields.Float(string="Monto a entregar Bs.", digits=(6, 2), store=True)
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_balance_capital', store=True)
     balance_capital_scheduled = fields.Float(string='Saldo capital programado', compute='_compute_balance_capital', store=True)
+    balance_capital_scheduled_bs = fields.Float(string='Saldo capital programado Bs.', compute='_compute_balance_capital_bs', store=True)
     balance_capital_bs = fields.Float(string='Saldo capital Bs.', compute='_compute_balance_capital_bs', store=True)
     balance_total_interest_month = fields.Float(string='Saldo total interes mensual',
                                                 compute='_compute_balance_capital', digits=(6, 2), store=True)
+    balance_total_interest_month_scheduled = fields.Float(string='Saldo total interes mensual programado',
+                                                            compute='_compute_balance_capital', digits=(6, 2), store=True)
+    balance_total_interest_month_scheduled_bs = fields.Float(string='Saldo total interes mensual programado Bs.',
+                                                            compute='_compute_balance_capital_bs', digits=(6, 2), store=True)
     balance_total_interest_month_bs = fields.Float(string='Saldo total interes mensual Bs.',
                                                    compute='_compute_balance_capital_bs', digits=(6, 2), store=True)
 
@@ -475,6 +480,11 @@ class LoanApplication(models.Model):
                         lambda
                             x: x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization').mapped(
                         'interest_month_surpluy'))
+                rec.balance_total_interest_month_scheduled = rec.total_interest_month_surpluy - sum(
+                    rec.loan_payment_ids.filtered(
+                        lambda
+                            x: x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization' or x.state == 'scheduled').mapped(
+                        'interest_month_surpluy'))
             else:
                 rec.balance_capital = rec.amount_loan_dollars
                 rec.balance_capital_scheduled = rec.amount_loan_dollars
@@ -722,6 +732,8 @@ class LoanApplication(models.Model):
         for rec in self:
             rec.balance_capital_bs = rec.balance_capital * rec.value_dolar
             rec.balance_total_interest_month_bs = rec.balance_total_interest_month * rec.value_dolar
+            rec.balance_capital_scheduled_bs = rec.balance_capital_scheduled * rec.value_dolar
+            rec.balance_total_interest_month_scheduled_bs = rec.balance_total_interest_month_scheduled * rec.value_dolar
 
     def amortization(self):
         id = self.id

@@ -34,7 +34,7 @@ class LoanPaymentXlsx(models.AbstractModel):
             grade = partner.category_partner_id if partner else ''
             sheet.write(row, 0, row, fmt_text)
             code = str(getattr(partner, 'code_contact', '') or '')
-            sheet.write(row, 1, "0000" + code, fmt_text)
+            sheet.write(row, 1, "000" + code, fmt_text)
             # sheet.write(row, 1, getattr(partner, '0000'+'code_contact', '') or '', fmt_text)
             sheet.write(row, 2, getattr(grade, 'code_loan', '') or '', fmt_text)
             sheet.write(row, 3, getattr(partner, 'paternal_surname', '') or '', fmt_text)

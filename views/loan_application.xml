@@ -209,6 +209,9 @@
                             <group string="Monto maximo de prestamo">
                                 <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="balance_capital_scheduled" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
+                                <field name="balance_capital_scheduled_bs" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
+                                <field name="balance_total_interest_month_scheduled" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
+                                <field name="balance_total_interest_month_scheduled_bs" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
                             </group>
                             <group string="Informe faltantes">
                                 <field name="pending_payment"/>
