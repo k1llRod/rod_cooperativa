@@ -439,12 +439,13 @@ class LoanApplication(models.Model):
 
     def refinance(self):
         id = self.id
-        auxiliar = self.balance_total_interest_month
-        auxiliar_balance = self.balance_capital
+        auxiliar = self.balance_total_interest_month_scheduled if self.balance_total_interest_month_scheduled > 0 else self.balance_total_interest_month
+        auxiliar_balance = self.balance_capital_scheduled if self.balance_capital_scheduled > 0 else self.balance_capital
         if self.balance_total_interest_month_auxiliar > 0:
             auxiliar = self.balance_total_interest_month_auxiliar
         if self.balance_capital_auxiliar > 0:
             auxiliar_balance = self.balance_capital_auxiliar
+
         return {
             'name': 'Formulario de refinanciamiento',
             'type': 'ir.actions.act_window',
