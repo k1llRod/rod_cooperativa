@@ -14,6 +14,7 @@
                             <field name="capital_rest" readonly="1"/>
                             <field name="capital_rest_scheduled" readonly="1" class="text-danger" attrs="{'invisible': [('capital_rest_scheduled','&lt;=','0')]}"/>
                             <field name="interest_days_rest" readonly="1"/>
+                            <field name="interest_days_rest_scheduled" readonly="1" class="text-danger" attrs="{'invisible': [('capital_rest_scheduled','&lt;=','0')]}"/>
                             <field name="amount_refinance" />
                             <field name="month_refinance" />
                             <field name="amount_delivered"/>

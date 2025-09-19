@@ -457,6 +457,7 @@ class LoanApplication(models.Model):
                 'default_data_loan_id': id,
                 'default_capital_rest': auxiliar_balance,
                 'default_capital_rest_scheduled': self.balance_capital_scheduled,
+                'default_interest_days_rest_scheduled': self.balance_total_interest_month_scheduled,
                 'default_interest_days_rest': auxiliar,
                 'default_quantity_month_initial': self.months_quantity,
             },
