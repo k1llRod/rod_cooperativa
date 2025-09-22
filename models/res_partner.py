@@ -8,6 +8,7 @@ class ResPartner(models.Model):
 
     name = fields.Char(string='Nombre', store=True)
     code_contact = fields.Char(string='Código de asociado / Boleta de pago', require=True)
+    code_afcoop = fields.Char(string='Código AFCOOP')
     guarantor = fields.Boolean(string='Garante')
     partner = fields.Boolean(string='Asociado', default=True)
     ballot_balance = fields.Integer(string='Saldo boleta')

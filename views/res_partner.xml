@@ -26,6 +26,7 @@
                 <xpath expr="//sheet/group/group[1]" position="before">
                     <group string="Datos personales">
                         <field name="code_contact" default_focus="1" required="1"/>
+                        <field name="code_afcoop"/>
                         <field name="ci_cossmil"/>
                         <field name="ci_military"/>
                         <field name="partner_status"/>
