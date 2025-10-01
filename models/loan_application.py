@@ -51,19 +51,28 @@ class LoanApplication(models.Model):
     code_garantor_one = fields.Char(string='Codigo de garante 1', related='guarantor_one.code_contact', store=True)
     code_garantor_two = fields.Char(string='Codigo de garante 2', related='guarantor_two.code_contact', store=True)
     code_loan = fields.Char(string='Codigo de prestamo')
-    amount_loan = fields.Float(string='Monto de prestamo (Bolivianos)')
-    amount_loan_dollars = fields.Float(string='Monto de prestamo (dolares)')
+
+    # Moneda base (Bs) = la de la compañía
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company, required=True)
+    currency_id = fields.Many2one('res.currency', string='Moneda (Bs)', related='company_id.currency_id', store=True,
+                                  readonly=True)
+    # Moneda USD fija
+    currency_id_dollar = fields.Many2one('res.currency', string='Moneda (USD)',
+                                         default=lambda self: self.env.ref('base.USD'), readonly=True)
+
+    amount_loan = fields.Monetary(string='Monto de préstamo (Bolivianos)', currency_field='currency_id')
+    amount_loan_dollars = fields.Monetary(string='Monto de préstamo (Dólares)', currency_field='currency_id_dollar')
     months_quantity = fields.Integer(string='Cantidad de meses', tracking=True)
     # valores calculados para prestamos
     amount_loan_max = fields.Float(string='Monto maximo de prestamo (Bolivianos)', compute='_compute_set_amount')
     amount_loan_max_dollars = fields.Float(string='Monto maximo de prestamo (dolares)', )
     # monthly_interest = fields.Float(string='Interes mensual %', compute='_compute_interest_monthly')
     # contingency_fund = fields.Float(string='Fondo de contingencia %', compute='_compute_interest_monthly')
-    index_loan = fields.Float(string='Indice de prestamo ($)', compute='_compute_index_loan_fixed_fee')
-    index_loan_bs = fields.Float(string='Indice de prestamo (Bs)')
-    fixed_fee = fields.Float(string='Cuota fija ($)', compute='_compute_index_loan_fixed_fee')
-    fixed_fee_bs = fields.Float(string='Cuota fija (Bs)', compute='_compute_index_loan_fixed_fee_bs')
-    total_fixed_fee = fields.Float(string='Total cuota fija', compute='_compute_index_loan_fixed_fee', store=True)
+    index_loan = fields.Monetary(string='Indice de prestamo ($)', compute='_compute_index_loan_fixed_fee', currency_field='currency_id_dollar')
+    index_loan_bs = fields.Monetary(string='Indice de prestamo (Bs)', currency_field='currency_id')
+    fixed_fee = fields.Monetary(string='Cuota fija ($)', compute='_compute_index_loan_fixed_fee', currency_field='currency_id_dollar')
+    fixed_fee_bs = fields.Monetary(string='Cuota fija (Bs)', compute='_compute_index_loan_fixed_fee_bs', currency_field='currency_id')
+    total_fixed_fee = fields.Monetary(string='Total cuota fija', compute='_compute_index_loan_fixed_fee', store=True, currency_field='currency_id_dollar')
     date_application = fields.Date(string='Fecha de solicitud', default=fields.Date.today())
     date_approval = fields.Date(string='Fecha de aprobacion')
     with_guarantor = fields.Selection(string='Tipo de prestamo regular',
@@ -78,10 +87,10 @@ class LoanApplication(models.Model):
                                                 compute='_compute_total_interest_month_surpluy', store=True)
     reason_loan = fields.Text(string='Motivo del prestamo')
     number_account = fields.Char(string='Numero de cuenta')
-    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
-    currency_id = fields.Many2one('res.currency', string='Moneda', related='company_id.currency_id')
-    currency_id_dollar = fields.Many2one('res.currency', string='Moneda en Dólares',
-                                         default=lambda self: self.env.ref('base.USD'))
+    # company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
+    # currency_id = fields.Many2one('res.currency', string='Moneda (Bs)', related='company_id.currency_id')
+    # currency_id_dollar = fields.Many2one('res.currency', string='Moneda (USD)',
+    #                                      default=lambda self: self.env.ref('base.USD'))
     turn_name = fields.Char(string='Girar a', tracking=True)
     account_deposit = fields.Char(string='Cuenta de deposito', tracking=True)
     special_case = fields.Boolean(string='Caso especial', default=False)
@@ -89,25 +98,25 @@ class LoanApplication(models.Model):
     refinance_loan_id = fields.Many2one('loan.application', string='Prestamo anterior')
     amount_devolution = fields.Float(string='Monto a entregar', digits=(6, 2), store=True)
     amount_devolution_bs = fields.Float(string="Monto a entregar Bs.", digits=(6, 2), store=True)
-    balance_capital = fields.Float(string='Saldo capital', compute='_compute_balance_capital', store=True)
-    balance_capital_scheduled = fields.Float(string='Saldo capital programado', compute='_compute_balance_capital', store=True)
-    balance_capital_scheduled_bs = fields.Float(string='Saldo capital programado Bs.', compute='_compute_balance_capital_bs', store=True)
-    balance_capital_bs = fields.Float(string='Saldo capital Bs.', compute='_compute_balance_capital_bs', store=True)
-    balance_total_interest_month = fields.Float(string='Saldo total interes mensual',
-                                                compute='_compute_balance_capital', digits=(6, 2), store=True)
-    balance_total_interest_month_scheduled = fields.Float(string='Saldo total interes mensual programado',
-                                                            compute='_compute_balance_capital', digits=(6, 2), store=True)
-    balance_total_interest_month_scheduled_bs = fields.Float(string='Saldo total interes mensual programado Bs.',
-                                                            compute='_compute_balance_capital_bs', digits=(6, 2), store=True)
-    balance_total_interest_month_bs = fields.Float(string='Saldo total interes mensual Bs.',
-                                                   compute='_compute_balance_capital_bs', digits=(6, 2), store=True)
+    balance_capital = fields.Monetary(string='Saldo capital', compute='_compute_balance_capital', store=True, digits=(6, 2), currency_field='currency_id_dollar')
+    balance_capital_scheduled = fields.Monetary(string='Saldo capital programado', compute='_compute_balance_capital', store=True, digits=(6, 2), currency_field='currency_id_dollar')
+    balance_capital_scheduled_bs = fields.Monetary(string='Saldo capital programado Bs.', compute='_compute_balance_capital_bs', store=True, digits=(6, 2), currency_field='currency_id')
+    balance_capital_bs = fields.Monetary(string='Saldo capital Bs.', compute='_compute_balance_capital_bs', store=True, digits=(6, 2), currency_field='currency_id')
+    balance_total_interest_month = fields.Monetary(string='Saldo total interes mensual',
+                                                compute='_compute_balance_capital', digits=(6, 2), store=True, currency_field='currency_id_dollar')
+    balance_total_interest_month_scheduled = fields.Monetary(string='Saldo total interes mensual programado',
+                                                            compute='_compute_balance_capital', digits=(6, 2), store=True, currency_field='currency_id_dollar')
+    balance_total_interest_month_scheduled_bs = fields.Monetary(string='Saldo total interes mensual programado Bs.',
+                                                            compute='_compute_balance_capital_bs', digits=(6, 2), store=True, currency_field='currency_id')
+    balance_total_interest_month_bs = fields.Monetary(string='Saldo total interes mensual Bs.',
+                                                   compute='_compute_balance_capital_bs', digits=(6, 2), store=True, currency_field='currency_id')
 
     balance_total_interest_month_auxiliar = fields.Float(string='Saldo total interes mensual auxiliar')
     balance_capital_auxiliar = fields.Float(string='Saldo capital auxiliar')
     # amount_min_def = fields.Float(string='Min. Defensa %', currency_field='company_currency_id',compute='_compute_min_def')
     pending_payment = fields.Integer(string='Pendiente de pago', compute='_compute_pending_payment')
     alert_pending_payment = fields.Boolean(string='Alerta de pago', compute='_compute_pending_payment')
-    pay_slip_balance = fields.Float(string='Saldo boleta de pago')
+    pay_slip_balance = fields.Monetary(string='Saldo boleta de pago', currency_field='currency_id')
     missing_payments = fields.Integer(string='Pagos pendientes', compute='_compute_missing_payments')
     total_payments_confirm = fields.Integer(string='Total pagos confirmados', compute='_compute_missing_payments')
     report_missing_payments = fields.Integer(string='Pagos pendientes')

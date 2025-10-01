@@ -164,11 +164,11 @@
                                 <field name="months_quantity"
                                        attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')],
                                                 'required': True}"/>
-                                <field name="amount_loan_dollars" widget="monetary"
-                                       options="{'currency_field': 'currency_id_dollar'}"
-                                       attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')],
-                                                'required': True}"/>
-                                <field name="amount_loan" widget="monetary"/>
+                                <field name="amount_loan_dollars"
+                                       attrs="{'readonly': ['|', ('state','=','progress'), ('state','=','done')], 'required': True}"/>
+                                <field name="amount_loan"
+                                       attrs="{'readonly': ['|', ('state','=','progress'), ('state','=','done')], 'required': True}"/>
+
                                 <field name="date_application"
                                        attrs="{'readonly': ['|',('state','=','progress'),('state','=','done')]}"/>
                                 <!--                                <field name="date_approval" attrs="{'readonly': [('state','!=','init')],-->
@@ -197,7 +197,7 @@
                                 <field name="special_case_glosa"/>
                             </group>
                             <group string="Valores">
-                                <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                                <field name="balance_capital" />
                                 <field name="balance_capital_bs"/>
                                 <field name="balance_capital_auxiliar" />
                                 <field name="balance_total_interest_month" />
@@ -207,11 +207,11 @@
                                 <field name="flag_collect_guarantors" widget="boolean_toggle"/>
                             </group>
                             <group string="Monto maximo de prestamo">
-                                <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
-                                <field name="balance_capital_scheduled" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
-                                <field name="balance_capital_scheduled_bs" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
-                                <field name="balance_total_interest_month_scheduled" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
-                                <field name="balance_total_interest_month_scheduled_bs" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
+                                <field name="balance_capital" />
+                                <field name="balance_capital_scheduled" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
+                                <field name="balance_capital_scheduled_bs" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
+                                <field name="balance_total_interest_month_scheduled" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
+                                <field name="balance_total_interest_month_scheduled_bs" class="text-danger" attrs="{'invisible': [('balance_capital_scheduled','&lt;=','0')]}" />
                             </group>
                             <group string="Informe faltantes">
                                 <field name="pending_payment"/>
