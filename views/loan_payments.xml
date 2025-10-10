@@ -12,14 +12,16 @@
                         <button name="create_report_excel" string="Reporte MINDEF" type="object"/>
                     </header>
                     <field name="loan_application_ids" optional="hide"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
+                    <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
                     <field name="special_case" invisible="1"/>
                     <field name="partner_id" optional="hide"/>
                     <field name="type_loan" optional="hide"/>
                     <field name="with_guarantor" optional="hide"/>
                     <field name="partner_status_especific" optional="hide"/>
                     <field name="name" optional="hide"/>
-                    <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
-                    <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
+
                     <field name="date"/>
                     <field name="date_payment"/>
                     <field name="period"/>

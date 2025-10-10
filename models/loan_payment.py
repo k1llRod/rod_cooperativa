@@ -36,25 +36,34 @@ class LoanPayment(models.Model):
     date = fields.Date(string='Fecha pivote', required=True)
     date_payment = fields.Date(string='Fecha de pago')
     period = fields.Char(string='Periodo', compute='_compute_period', store=True)
-    capital_initial = fields.Float(string='Capital inicial')
-    capital_index_initial = fields.Float(string='Capital')
-    mount = fields.Float(string='Cuota fija')
-    interest = fields.Float(string='Interes', compute='_compute_interest', store=True)
-    interest_base = fields.Float(string='0.7%', compute='_compute_interest', store=True)
-    interest_mortgage = fields.Float(string='Interes H.', compute='_compute_interest', store=True)
-    interest_base_mortgage = fields.Float(string='0.207%', compute='_compute_interest', digits=(16, 2), store=True)
-    res_social = fields.Float(string='F.C. 0.04%', compute='_compute_interest', digits=(16, 2), store=True)
-    res_mortgage = fields.Float(string='P.H. 0.04%', compute='_compute_interest', digits=(16, 2), store=True)
-    balance_capital = fields.Float(string='Saldo capital', compute='_compute_interest', digits=(16, 2), store=True)
-    percentage_amount_min_def = fields.Float(string='%MINDEF', digits=(16, 2), store=True)
-    commission_min_def = fields.Float(string='0.25% MINDEF', digits=(16, 2), store=True)
-    coa_commission = fields.Float(string='%COA')
-    coa_commission_bs = fields.Float(string='%COA Bs')
-    interest_month_surpluy = fields.Float(string='D/E', digits=(16, 2), store=True)
-    amount_total = fields.Float(string='D/MINDEF $', digits=(16, 2))
-    amount_total_bs = fields.Float(string='D/MINDEF Bs', compute='_change_amount_total_bs', digits=(16, 2), store=True)
-    amount_returned_coa = fields.Float(string='Monto devuelto COA', digits=(16, 2), store=True)
-    amount_payment = fields.Float(string='Monto a pagar', digits=(16, 2), store=True)
+
+    # Moneda base (Bs) = la de la compañía
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company, required=True)
+    currency_id = fields.Many2one('res.currency', string='Moneda (Bs)', related='company_id.currency_id', store=True,
+                                  readonly=True)
+    # Moneda USD fija
+    currency_id_dollar = fields.Many2one('res.currency', string='Moneda (USD)',
+                                         default=lambda self: self.env.ref('base.USD'), readonly=True)
+
+    capital_initial = fields.Monetary(string='Capital inicial',currency_field='currency_id_dollar')
+    capital_index_initial = fields.Monetary(string='Capital',currency_field='currency_id_dollar')
+    mount = fields.Monetary(string='Cuota fija',currency_field='currency_id_dollar')
+    interest = fields.Monetary(string='Interes', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
+    interest_base = fields.Monetary(string='0.7%', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
+    interest_mortgage = fields.Monetary(string='Interes H.', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
+    interest_base_mortgage = fields.Monetary(string='0.207%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    res_social = fields.Monetary(string='F.C. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    res_mortgage = fields.Monetary(string='P.H. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    balance_capital = fields.Monetary(string='Saldo capital', compute='_compute_interest', digits=(16, 2),currency_field='currency_id_dollar', store=True)
+    percentage_amount_min_def = fields.Monetary(string='%MINDEF', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    commission_min_def = fields.Monetary(string='0.25% MINDEF', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    coa_commission = fields.Monetary(string='%COA',currency_field='currency_id_dollar')
+    coa_commission_bs = fields.Monetary(string='%COA Bs',currency_field='currency_id')
+    interest_month_surpluy = fields.Monetary(string='D/E', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    amount_total = fields.Monetary(string='D/MINDEF $', digits=(16, 2),currency_field='currency_id_dollar')
+    amount_total_bs = fields.Monetary(string='D/MINDEF Bs', compute='_change_amount_total_bs', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_returned_coa = fields.Monetary(string='Monto devuelto COA', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_payment = fields.Monetary(string='Monto a pagar', digits=(16, 2), store=True,currency_field='currency_id')
     state = fields.Selection(
         [('draft', 'Borrador'),
          ('scheduled', 'Programado'),
@@ -64,10 +73,7 @@ class LoanPayment(models.Model):
          ('debt_settlement_deposit', 'Liquidacion de deuda por deposito'),
          ('amortization','Amortizacion')], string='Estado',
         default='draft', tracking=True)
-    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
-    currency_id = fields.Many2one('res.currency', string='Moneda', related='loan_application_ids.currency_id')
-    currency_id_dollar = fields.Many2one('res.currency', string='Moneda en Dólares',
-                                         default=lambda self: self.env.ref('base.USD'))
+
     flag_state = fields.Selection([
         ('init', 'Inicio'),
         ('verificate', 'Verificación'),
@@ -78,16 +84,16 @@ class LoanPayment(models.Model):
         ('cancel', 'Cancelado')
     ], string='Flag state', related='loan_application_ids.state')
 
-    capital_index_initial_bolivianos = fields.Float(string='Capital BS', compute='_compute_bolivianos', store=True,
-                                                    digits=(16, 2))
-    interest_base_bolivianos = fields.Float(string='0.7% BS', compute='_compute_bolivianos', store=True, digits=(16, 2))
-    res_social_bolivianos = fields.Float(string='F.C. BS', compute='_compute_bolivianos', store=True, digits=(16, 2))
-    percentage_amount_min_def_bolivianos = fields.Float(string='%MINDEF BS', compute='_compute_bolivianos', store=True,
-                                                        digits=(16, 2))
-    interest_month_surpluy_bolivianos = fields.Float(string='D/E BS', compute='_compute_bolivianos', store=True,
-                                                     digits=(16, 2))
-    amount_total_bolivianos = fields.Float(string='D/MINDEF Bs', compute='_compute_bolivianos', digits=(16, 2),
-                                           store=True)
+    capital_index_initial_bolivianos = fields.Monetary(string='Capital BS', compute='_compute_bolivianos', store=True,
+                                                    digits=(16, 2),currency_field='currency_id')
+    interest_base_bolivianos = fields.Monetary(string='0.7% BS', compute='_compute_bolivianos', store=True, digits=(16, 2),currency_field='currency_id')
+    res_social_bolivianos = fields.Monetary(string='F.C. BS', compute='_compute_bolivianos', store=True, digits=(16, 2),currency_field='currency_id')
+    percentage_amount_min_def_bolivianos = fields.Monetary(string='%MINDEF BS', compute='_compute_bolivianos', store=True,
+                                                        digits=(16, 2),currency_field='currency_id')
+    interest_month_surpluy_bolivianos = fields.Monetary(string='D/E BS', compute='_compute_bolivianos', store=True,
+                                                     digits=(16, 2),currency_field='currency_id')
+    amount_total_bolivianos = fields.Monetary(string='D/MINDEF Bs', compute='_compute_bolivianos', digits=(16, 2),
+                                           store=True,currency_field='currency_id')
 
     account_move_id = fields.Many2one('account.move', string='Asiento contable')
     state_account = fields.Selection([('draft', 'Borrador'), ('posted', 'Contabilizado'), ('cancel', 'Cancelado')],
@@ -102,23 +108,23 @@ class LoanPayment(models.Model):
     account_overage_amount = fields.Many2one('account.account', string='Cuenta Monto excedente')
 
     journal_id = fields.Many2one('account.journal', string='Diario')
-    amount_income = fields.Float(string='Monto ingreso')
-    amount_capital_index = fields.Float(string='Monto Capital', digits=(16, 2), store=True)
-    amount_interest = fields.Float(string='Monto interes', digits=(16, 2), store=True)
-    amount_res_social = fields.Float(string='Monto contingencia', digits=(16, 2), store=True)
-    amount_percentage_mindef = fields.Float(string='Monto porcentaje MINDEF', digits=(16, 2), store=True)
-    amount_overage_days = fields.Float(string='Monto Dias D/E', digits=(16, 2), store=True)
-    amount_overage = fields.Float(string='Monto excedente', digits=(16, 2), store=True)
+    amount_income = fields.Monetary(string='Monto ingreso')
+    amount_capital_index = fields.Monetary(string='Monto Capital', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    amount_interest = fields.Monetary(string='Monto interes', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    amount_res_social = fields.Monetary(string='Monto contingencia', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    amount_percentage_mindef = fields.Monetary(string='Monto porcentaje MINDEF', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    amount_overage_days = fields.Monetary(string='Monto Dias D/E', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    amount_overage = fields.Monetary(string='Monto excedente', digits=(16, 2), store=True,currency_field='currency_id_dollar')
 
-    amount_interest_bs = fields.Float(string='Monto interes Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
-    amount_capital_index_bs = fields.Float(string='Monto Capital Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
-    amount_res_social_bs = fields.Float(string='Monto contingencia Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
-    amount_percentage_mindef_bs = fields.Float(string='Monto porcentaje MINDEF Bs', compute='_onchange_values_amount', digits=(16, 4), store=True)
-    amount_overage_days_bs = fields.Float(string='Monto Dias D/E Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
-    amount_overage_bs = fields.Float(string='Monto excedente Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
+    amount_interest_bs = fields.Monetary(string='Monto interes Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_capital_index_bs = fields.Monetary(string='Monto Capital Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_res_social_bs = fields.Monetary(string='Monto contingencia Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_percentage_mindef_bs = fields.Monetary(string='Monto porcentaje MINDEF Bs', compute='_onchange_values_amount', digits=(16, 4), store=True,currency_field='currency_id')
+    amount_overage_days_bs = fields.Monetary(string='Monto Dias D/E Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_overage_bs = fields.Monetary(string='Monto excedente Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
 
-    amount_sum = fields.Float(string='Total', compute='_sum_total', digits=(16, 2), store=True)
-    amount_sum_bs = fields.Float(string='Total Bs', compute='_onchange_values_amount', digits=(16, 2), store=True)
+    amount_sum = fields.Monetary(string='Total', compute='_sum_total', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_sum_bs = fields.Monetary(string='Total Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
 
     date_scheduled = fields.Date(string='Fecha programada', help="Fecha programada para el pago del préstamo")
     special_case = fields.Boolean(string='Caso especial', related='loan_application_ids.special_case', store=True)
