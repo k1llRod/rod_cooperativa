@@ -69,6 +69,7 @@ class LoanPayment(models.Model):
          ('scheduled', 'Programado'),
          ('transfer', 'Transferencia bancaria'),
          ('ministry_defense', 'Ministerio de defensa'),
+         ('ministry_defense_warrantor', 'Ministerio de defensa garantes'),
          ('debt_settlement_mindef', 'Liquidacion de deuda MINDEF'),
          ('debt_settlement_deposit', 'Liquidacion de deuda por deposito'),
          ('amortization','Amortizacion')], string='Estado',
@@ -379,3 +380,8 @@ class LoanPayment(models.Model):
             'active_ids': self.ids,
         }
         return action
+
+    def confirm_ministry_defense_warrantor(self):
+        for record in self:
+            if record.state == 'draft' or record.state == 'scheduled':
+                record.write({'state': 'ministry_defense_warrantor'})
