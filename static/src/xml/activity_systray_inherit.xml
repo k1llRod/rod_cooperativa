@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+  <!-- Añade el botón "Ver lista" dentro del título de cada preview -->
+    <t t-extend="mail.systray.ActivityMenu.Previews">
+    <!-- Insertar el botón dentro del contenedor del título -->
+        <t t-jquery=".o_preview_title" t-operation="append">
+      <button type="button"
+              class="btn btn-link o_mail_activity_action_open_list"
+              t-att-data-action_xmlid="'rod_cooperativa.action_mail_activity_list_systray'"
+              t-att-data-res_model="activity.model"
+              t-att-data-model_name="activity.name"
+              t-att-data-domain="activity.domain"
+              title="Ver lista">
+        <i class="fa fa-list-ul"/>
+          Ver lista
+      </button>
+    </t>
+
+        <!-- Hacer que los filtros del contador abran la lista -->
+        <t t-jquery="button.o_activity_filter_button[data-filter='overdue']" t-operation="attributes">
+      <attribute name="data-action_xmlid">rod_cooperativa.action_mail_activity_list_systray</attribute>
+    </t>
+        <t t-jquery="button.o_activity_filter_button[data-filter='today']" t-operation="attributes">
+      <attribute name="data-action_xmlid">rod_cooperativa.action_mail_activity_list_systray</attribute>
+    </t>
+        <t t-jquery="button.o_activity_filter_button[data-filter='upcoming_all']" t-operation="attributes">
+      <attribute name="data-action_xmlid">rod_cooperativa.action_mail_activity_list_systray</attribute>
+    </t>
+  </t>
+
+</templates>

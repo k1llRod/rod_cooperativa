@@ -70,6 +70,7 @@ class LoanPayment(models.Model):
          ('transfer', 'Transferencia bancaria'),
          ('ministry_defense', 'Ministerio de defensa'),
          ('ministry_defense_warrantor', 'Ministerio de defensa garantes'),
+         ('not_discounted','No descontado'),
          ('debt_settlement_mindef', 'Liquidacion de deuda MINDEF'),
          ('debt_settlement_deposit', 'Liquidacion de deuda por deposito'),
          ('amortization','Amortizacion')], string='Estado',
@@ -385,3 +386,13 @@ class LoanPayment(models.Model):
         for record in self:
             if record.state == 'draft' or record.state == 'scheduled':
                 record.write({'state': 'ministry_defense_warrantor'})
+
+
+    def not_discounted_loan(self):
+        for rec in self:
+            if rec.state == 'draft' or rec.state == 'scheduled':
+                rec.state = 'not_discounted'
+                rec.message_post(body="El prestamo ha sido marcado como NO DESCONTADO correctamente.")
+                # Aquí podrías agregar lógica adicional si es necesario, como enviar notificaciones o actualizar otros registros.
+            else:
+                raise ValidationError('No se puede marcar como no descontado este pago.')

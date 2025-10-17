@@ -60,6 +60,39 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="loan_payment_report_tree_id">
+            <field name="name">loan.payment.tree</field>
+            <field name="model">loan.payment</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense')"
+                      decoration-danger="state == 'not_discounted'">
+                    <field name="loan_application_ids" optional="hide"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
+                    <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
+                    <field name="special_case" invisible="1"/>
+                    <field name="partner_id" optional="show"/>
+                    <field name="type_loan" optional="show"/>
+                    <field name="with_guarantor" optional="hide"/>
+                    <field name="partner_status_especific" optional="hide"/>
+                    <field name="name" optional="show"/>
+                    <field name="date"/>
+                    <field name="date_payment"/>
+                    <field name="period"/>
+                    <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
+                    <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
+                    <field name="amount_total_bs" widget="monetary" sum="Total"/>
+                    <field name="amount_total_bolivianos" sum="Total" optional="hidden"/>
+                    <field name="amount_payment" widget="monetary" sum="Total"/>
+                    <field name="amount_returned_coa" optional="hidden" sum="Total"/>
+                    <field name="state" decoration-info="state == 'init' or state == 'in_queue'" decoration-success="state == 'progress' or state == 'done'" widget="badge"/>
+                    <field name="state_account" widget="badge"/>
+                    <button name="open_loan_payment" type="object" class="oe_highlight"
+                                                icon="fa-eye"/>
+                </tree>
+            </field>
+        </record>
+
         <!-- Vista Formulario loan.application  -->
 
         <record model="ir.ui.view" id="loan_payment_form_id">
@@ -93,6 +126,10 @@
                                 attrs="{'invisible': [('flag_collect_guarantors', '!=', True)]}"
                                 groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
                                 />
+                        <button name="not_discounted_loan" string="No descontado" type="object"
+                                class="oe_highlight"
+                                groups="base.group_no_one"
+                                />
 
 
                         <field name="state" widget="statusbar" statusbar_visible="draft,transfer,ministry_defense"/>
@@ -102,6 +139,7 @@
                             <group>
                                 <field name="name"/>
                                 <field name="loan_application_ids"/>
+                                <field name="partner_id"/>
                                 <field name="flag_state"/>
                                 <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                                 <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
@@ -249,6 +287,15 @@
             <field name="name">Pagos</field>
             <field name="res_model">loan.payment</field>
             <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="action_loan_payments_not_discounted" model="ir.actions.act_window">
+            <field name="name">Pagos no descontados por MINDEF</field>
+            <field name="res_model">loan.payment</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', 'in', ['not_discounted'])]</field>
+            <field name="help">Este reporte muestra los pagos no descontados por MINDEF.</field>
+            <field name="view_id" ref="loan_payment_report_tree_id"/>
         </record>
 
     </data>

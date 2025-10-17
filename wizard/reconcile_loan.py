@@ -59,33 +59,50 @@ class ReconcileLoan(models.TransientModel):
             [('period_process', '=', period), ('state', '=', 'draft')])
         partner_loan_ids = self.env['loan.application'].search(
             [('state', '=', 'progress')])
+
         for partner in partner_loan_ids:
             search_partner = filing_cabinet_ids.filtered(lambda x: x.eit_item == partner.partner_id.code_contact)
+
+            # --- CAMBIO 1: obtenemos TODOS los pagos del período (sin filtrar por estado) ---
+            payments_period = partner.loan_payment_ids.filtered(lambda x: x.period == period)
+
             if search_partner:
-                verify_period = partner.loan_payment_ids.filtered(lambda x:x.period == period and x.state == 'scheduled')
-                verify_amount_returned_coa = partner.loan_payment_ids.filtered(lambda x:x.amount_returned_coa == 0)
+                # (antes filtrabas solo scheduled)
+                verify_period = payments_period.filtered(
+                    lambda x: x.state in ('scheduled', 'draft', 'pending', 'not_discounted', False))
+
                 if verify_period:
+                    verify_amount_returned_coa = partner.loan_payment_ids.filtered(lambda x: x.amount_returned_coa == 0)
+
                     verify_period.commission_min_def = search_partner.comision
                     verify_period.amount_returned_coa = search_partner.tot2
                     verify_period.confirm_ministry_defense()
+
                     if verify_amount_returned_coa:
                         verify_period.amount_returned_coa = search_partner.tot2
+
                     if verify_period.amount_total_bs >= search_partner.amount_bs:
-
-
                         search_partner.loan_regular = True
-                        # verify_period.confirm_ministry_defense()
                     else:
                         search_partner.loan_regular = False
+
                     search_partner.date_process = self.date_field_select
                     search_partner.state = 'reconciled'
                     search_partner.period_process = self.month + '/' + self.year
+
+                    # --- CAMBIO 1: si concilia -> marcar pago(s) como scheduled ---
+                    verify_period.write({'state': 'scheduled'})
+
                 else:
+                    # No hay pago del período que concilie → filing queda como no_reconciled
                     search_partner.write({'state': 'no_reconciled'})
                     search_partner.write({'period_process': self.month + '/' + self.year})
                     search_partner.write({'date_process': self.date_field_select})
-                # mo.ministry_defense()
-                # mo.onchange_income()
+
+                    # --- CAMBIO 1: si NO concilia -> marcar pago(s) del período como not_discounted ---
+                    # (si existiera alguno del período; si no, no habrá efecto)
+                    payments_period.write({'state': 'not_discounted'})
+
         array_no_reconciled = filing_cabinet_ids.filtered(lambda x: x.period_process == period and x.state == 'draft')
         no_reconciled = len(array_no_reconciled)
         context = {'default_message': 'Se han conciliado ' + str(

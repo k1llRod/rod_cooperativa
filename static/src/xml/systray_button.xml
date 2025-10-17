@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+  <!-- Botón simple en systray -->
+    <t t-name="rod_cooperativa.MySystrayButton">
+    <div class="o_mail_systray_item dropdown"> <!-- usar misma clase para mantener estilos -->
+        <a class="o-no-caret o-dropdown--narrow o_my_systray_button"
+           role="button"
+           href="#"
+           title="Abrir lista de pagos no descontados">
+        <i class="fa fa-list-ul" role="img" aria-label="Abrir lista de pagos no descontados"/>
+            <!-- Badge de contador (Odoo ya lo posiciona con CSS) -->
+        <span class="o_notification_counter badge badge-pill"
+              t-esc="widget.counter"/>
+      </a>
+    </div>
+  </t>
+</templates>

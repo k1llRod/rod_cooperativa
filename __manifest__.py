@@ -24,6 +24,7 @@
 
     # always loaded
     'data': [
+        'data/activity_list.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/res_config_settings.xml',
@@ -51,5 +52,16 @@
         'reports/loan_application_pdf.xml',
         'reports/payment_statement_loan.xml',
     ],
+    "assets": {
+        "web.assets_qweb": [
+            "rod_cooperativa/static/src/xml/systray_button.xml",
+            "rod_cooperativa/static/src/xml/activity_systray_inherit.xml",
+        ],
+        'web.assets_backend': [
+            "rod_cooperativa/static/src/xml/activity_systray_inherit.xml",
+            "rod_cooperativa/static/src/xml/systray_button.xml",
+            "rod_cooperativa/static/src/js/systray_button.js",
+        ],
+    },
 
 }

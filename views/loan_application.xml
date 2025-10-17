@@ -226,7 +226,11 @@
                         <notebook>
                             <page string="Pagos">
                                 <field name="loan_payment_ids" >
-                                    <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense', 'debt_settlement_mindef', 'debt_settlement_deposit', 'ministry_defense_warrantor') " decoration-warning="state in ('scheduled')"  >
+                                    <tree editable="bottom"
+                                          decoration-info="state in ('transfer', 'ministry_defense', 'debt_settlement_mindef', 'debt_settlement_deposit', 'ministry_defense_warrantor') "
+                                          decoration-warning="state in ('scheduled')"
+                                          decoration-danger="state in ('not_discounted')"
+                                    >
                                         <field name="company_id" invisible="1"/>
                                         <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
                                         <field name="currency_id_dollar" invisible="1" groups="base.group_multi_currency"/>
@@ -250,7 +254,8 @@
                                         <field name="amount_payment" optional="hidden"/>
                                         <field name="state" decoration-info="state == 'init' or state == 'in_queue'"
                                                decoration-success="state in ('ministry_defense', 'debt_settlement_mindef', 'debt_settlement_deposit', 'transfer')"
-                                               decoration-danger="state == 'ministry_defense_warrantor'"
+                                               decoration-warning="state == 'ministry_defense_warrantor'"
+                                               decoration-danger="state == 'not_discounted'"
                                                widget="badge"/>
                                         <field name="state_account" decoration-info="state_account == 'init' or state_account == 'in_queue'"
                                                decoration-success="state_account == 'progress' or state_account == 'done'"

@@ -807,3 +807,5 @@ class LoanApplication(models.Model):
             # rec.loan_payment_ids.write({'state': 'done'})
             rec.message_post(body="El prestamo ha sido finalizado correctamente.")
             # Aquí podrías agregar lógica adicional si es necesario, como enviar notificaciones o actualizar otros registros.
+
+
