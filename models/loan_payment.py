@@ -1,7 +1,7 @@
 from odoo import api, fields, models, tools, _
 from odoo.exceptions import ValidationError
 
-from server.odoo.tools.populate import compute
+# from server.odoo.tools.populate import compute
 
 
 class LoanPayment(models.Model):
@@ -416,31 +416,12 @@ class LoanPayment(models.Model):
         self.ensure_one()
         if self.state == 'payment_mora':
             as_of = as_of or fields.Date.context_today(self)
-            grace_days, _recognition = self._get_mora_params()
+            grace_days, mora_interest = self._get_mora_params()
+            overdue_capital = self.capital_index_initial * grace_days * mora_interest
         # Si la cuota ya está completamente pagada, no hay mora
-            return 0, 0.0
-
-        # Determinar base
-        # Asumimos que lo pagado primero va contra intereses/otros y luego capital (política común).
-        # Por tanto, el capital vencido efectivo ≈ capital_due - max(0, amount_paid - (interest_due + other_due))
-        paid_over_interest_other = max(0.0, (self.amount_paid or 0.0) - (
-                    (self.interest_due or 0.0) + (self.other_due or 0.0)))
-        capital_already_paid = min(self.capital_due or 0.0, paid_over_interest_other)
-        capital_vencido = max((self.capital_due or 0.0) - capital_already_paid, 0.0)
-
-        if base == 'cuota':
-            # cuota vencida = capital + interés (no incluye otros)
-            cuota_vencida = max((self.capital_due or 0.0) + (self.interest_due or 0.0) - (self.amount_paid or 0.0), 0.0)
-            base_amt = cuota_vencida
+            return as_of, overdue_capital
         else:
-            # base = capital vencido (recomendado en Bolivia)
-            base_amt = capital_vencido
-
-        if base_amt <= 0.0:
-            return 0, 0.0
-
-        mora = base_amt * rate_daily * days_chargeable
-        return days_chargeable, self.currency_id.round(mora)
+            return 0, 0
 
     @api.depends('state')
     def _calculate_mora(self):

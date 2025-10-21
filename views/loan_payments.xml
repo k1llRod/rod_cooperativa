@@ -167,6 +167,12 @@
                                 <field name="commission_min_def"/>
                                 <field name="loan_application_ids" invisible="1"/>
 <!--                                <field name="type_payment" />-->
+                                <label for="date_initial_mora" string="Fecha inicial de mora" class="text-danger"/>
+                                <field name="date_initial_mora" class="text-danger" nolabel="1"/>
+                                <label for="date_end_mora" string="Fecha final de mora" class="text-danger"/>
+                                <field name="date_end_mora" class="text-danger" nolabel="1"/>
+                                <label for="amount_mora" string="Monto de mora" class="text-danger"/>
+                                <field name="amount_mora" class="text-danger" nolabel="1"/>
                                 <field name="amount_total" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="amount_total_bs" widget="monetary"/>
