@@ -81,13 +81,26 @@
                             </div>
                             <div class="o_setting_right_pane">
                                 <div class="content-group mt16">
-                                    <label string="Interes mensual hipotecario%" for="monthly_interest_mortgage"/>
+                                    <label string="Porcentaje Mora %" for="mora_interest"/>
                                     <div class="text-muted">
                                         Establecer el porcentaje.
                                     </div>
                                     <div>
-                                        <field name="monthly_interest_mortgage" colspan="4" nolabel="1"/>
+                                        <field name="mora_interest" colspan="4" nolabel="1"/>
                                     </div>
+
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <div class="content-group mt16">
+                                    <label string="Dias de gracias" for="days_grace"/>
+                                    <div class="text-muted">
+                                        Establecer el porcentaje.
+                                    </div>
+                                    <div>
+                                        <field name="days_grace" colspan="4" nolabel="1"/>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -159,10 +172,8 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </xpath>
         </field>

@@ -10,8 +10,8 @@
            title="Abrir lista de pagos no descontados">
         <i class="fa fa-list-ul" role="img" aria-label="Abrir lista de pagos no descontados"/>
             <!-- Badge de contador (Odoo ya lo posiciona con CSS) -->
-        <span class="o_notification_counter badge badge-pill"
-              t-esc="widget.counter"/>
+            <span class="o_notification_counter badge badge-pill"
+                  t-esc="widget.counter"/>
       </a>
     </div>
   </t>

@@ -16,6 +16,10 @@ class ResConfigSettings(models.TransientModel):
     account_monto_refinanciamiento = fields.Many2one('account.account', string='Cuenta contable de monto refinanciamiento')
     account_monto_meses_interes = fields.Many2one('account.account', string='Cuenta contable de monto meses de interes')
 
+    mora_interest = fields.Float(string='Interes por mora %', digits=(6, 3))
+
+    days_grace = fields.Integer(string='Días de gracia')
+
 
     @api.model
     def get_values(self):
@@ -43,7 +47,10 @@ class ResConfigSettings(models.TransientModel):
                 self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_monto_refinanciamiento', default=False) or False),
             account_monto_meses_interes=int(
                 self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_monto_meses_interes', default=False) or False),
-
+            mora_interest=float(
+                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mora_interest', default=0) or False),
+            days_grace=int(
+                self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.days_grace', default=0) or False),
         )
         return res
 
@@ -68,5 +75,7 @@ class ResConfigSettings(models.TransientModel):
                                                             str(self.account_monto_refinanciamiento.id if self.account_monto_refinanciamiento else ''))
         self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_monto_meses_interes',
                                                             str(self.account_monto_meses_interes.id if self.account_monto_meses_interes else ''))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.mora_interest', str(self.mora_interest))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.days_grace', str(self.days_grace))
 
     #crear get y set
