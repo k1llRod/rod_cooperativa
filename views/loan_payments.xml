@@ -130,8 +130,10 @@
                                 class="oe_highlight"
                                 groups="base.group_no_one"
                                 />
-
-
+                        <button name="action_pay_mora" string="Descuento con mora" type="object"
+                                class="oe_highlight"
+                                groups="base.group_no_one"
+                                />
                         <field name="state" widget="statusbar" statusbar_visible="draft,transfer,ministry_defense"/>
                     </header>
                     <sheet>
@@ -171,8 +173,12 @@
                                 <field name="date_initial_mora" class="text-danger" nolabel="1"/>
                                 <label for="date_end_mora" string="Fecha final de mora" class="text-danger"/>
                                 <field name="date_end_mora" class="text-danger" nolabel="1"/>
+                                <label for="days_mora" string="Dias de mora" class="text-danger"/>
+                                <field name="days_mora" class="text-danger" nolabel="1"/>
                                 <label for="amount_mora" string="Monto de mora" class="text-danger"/>
                                 <field name="amount_mora" class="text-danger" nolabel="1"/>
+                                <label for="amount_mora_bs" string="Monto de mora Bs." class="text-danger"/>
+                                <field name="amount_mora_bs" class="text-danger" nolabel="1"/>
                                 <field name="amount_total" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="amount_total_bs" widget="monetary"/>

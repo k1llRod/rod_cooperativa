@@ -716,6 +716,15 @@ class LoanApplication(models.Model):
     def finalized_loan(self):
         if self.state != 'progress':
             raise ValidationError('No se puede liquidar este prestamo.')
+        if self.balance_capital_scheduled > 0:
+            balance = self.balance_capital_scheduled
+        else:
+            balance = self.balance_capital
+        if self.balance_total_interest_month_scheduled > 0:
+            balance_interest = self.balance_total_interest_month_scheduled
+        else:
+            balance_interest = self.balance_total_interest_month
+
         context = {
             'default_loan_application_id': self.id,
             'default_amount_loan_dollars_initial': self.amount_loan_dollars,
@@ -724,8 +733,8 @@ class LoanApplication(models.Model):
             'default_payment_count': self.total_payments_confirm,
             'default_date_application': self.date_application,
             'default_date_approval': self.date_approval,
-            'default_balance_capital': self.balance_capital if self.balance_capital != 0 else self.balance_capital_auxiliar,
-            'default_balance_total_interest_month': self.balance_total_interest_month if self.balance_total_interest_month != 0 else self.balance_total_interest_month_auxiliar,
+            'default_balance_capital': balance if balance != 0 else self.balance_capital_auxiliar,
+            'default_balance_total_interest_month': balance_interest if balance_interest != 0 else self.balance_total_interest_month_auxiliar,
 
         }
         return {

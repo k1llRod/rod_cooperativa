@@ -136,7 +136,9 @@ class LoanPayment(models.Model):
 
     date_initial_mora = fields.Date(string='Fecha inicial de mora')
     date_end_mora = fields.Date(string='Fecha fin de mora')
-    amount_mora = fields.Float(string='Monto de mora', digits=(16, 2), compute='_calculate_mora', store=True)
+    days_mora = fields.Integer(string='Días de mora')
+    amount_mora = fields.Monetary(string='Monto de mora', digits=(16, 2), compute='_calculate_mora', store=True,currency_field='currency_id_dollar')
+    amount_mora_bs = fields.Monetary(string='Monto de mora Bs', compute='_onchange_amount_mora', digits=(16, 2), store=True,currency_field='currency_id')
 
     @api.depends('capital_index_initial', 'interest', 'res_social', 'percentage_amount_min_def',
                  'interest_month_surpluy')
@@ -417,22 +419,33 @@ class LoanPayment(models.Model):
         if self.state == 'payment_mora':
             as_of = as_of or fields.Date.context_today(self)
             grace_days, mora_interest = self._get_mora_params()
-            overdue_capital = self.capital_index_initial * grace_days * mora_interest
+            if mora_interest == 0:
+                validation = 'El interés de mora no ha sido configurado. Por favor, configurelo en los parámetros del sistema.'
+                raise ValidationError(validation)
+            days_mora = (as_of - self.date_initial_mora).days
+            overdue_capital = round(self.capital_index_initial * days_mora * (mora_interest/100),2)
         # Si la cuota ya está completamente pagada, no hay mora
-            return as_of, overdue_capital
+            return days_mora, overdue_capital
         else:
             return 0, 0
 
     @api.depends('state')
     def _calculate_mora(self):
         for rec in self:
-            days, mora_amount = rec._compute_mora_core()
-            rec.amount_mora = mora_amount
+            days, overdue_capital = rec._compute_mora_core()
+            rec.amount_mora = overdue_capital
+            rec.days_mora = days
+            rec.write({'amount_total': rec.amount_total + overdue_capital})
 
     def action_pay_mora(self):
         for record in self:
-            if record.state == 'draft' or record.state == 'scheduled':
+            if record.state == 'not_discounted':
                 record.write({'state': 'payment_mora'})
+
+    @api.depends('amount_mora')
+    def _onchange_amount_mora(self):
+        for rec in self:
+            rec.amount_mora_bs = rec.amount_mora * rec.currency_id_dollar.inverse_rate
 
 
 
