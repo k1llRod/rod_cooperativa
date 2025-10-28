@@ -241,7 +241,7 @@
                                     <tbody style="font-size:12px;">
                                         <tr t-set="acumulador" t-value="0"/>
                                         <t t-set="line_number" t-value="0"/>
-                                        <t t-foreach="o.loan_payment_ids.filtered(lambda x:x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization' or x.state == 'scheduled')" t-as="p">
+                                        <t t-foreach="o.loan_payment_ids.filtered(lambda x:x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization' or x.state=='scheduled' or x.state=='ministry_defense_warrantor' or x.state=='payment_mora')" t-as="p">
                                             <style>
                                                 .table th, .table td {
                                                     padding: 0px;
@@ -300,24 +300,9 @@
                                                     <t t-esc="p.amount_total"/>
                                                 </td>
                                                 <td>
-                                                    <t t-if="p.state == 'ministry_defense'">
-                                                        Ministerio de Defensa
-                                                    </t>
-                                                    <t t-if="p.state == 'transfer'">
-                                                        Transferencia
-                                                    </t>
-                                                    <t t-if="p.state == 'debt_settlement_deposit'">
-                                                        Liquidacion deuda DEP
-                                                    </t>
-                                                    <t t-if="p.state == 'debt_settlement_mindef'">
-                                                        Liquidacion deuda MINDEF
-                                                    </t>
-                                                    <t t-if="p.state == 'amortization'">
-                                                        Amortizacion
-                                                    </t>
-                                                    <t t-if="p.state == 'scheduled'">
-                                                        <span style="color:red;">Programado</span>
-                                                    </t>
+                                                    <span t-attf-class="#{ 'text-danger' if p.state == 'scheduled' else '' }">
+                                                        <t t-esc="dict(p._fields['state']._description_selection(env)).get(p.state)"/>
+                                                    </span>
                                                 </td>
                                             </tr>
 
