@@ -1,7 +1,7 @@
 import calendar
 from odoo import api, fields, models, tools, _
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from odoo.exceptions import UserError, ValidationError
 from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
@@ -785,9 +785,43 @@ class LoanApplication(models.Model):
         }
 
     def update_loan_refinance(self):
+        draft_to_show = self.env['loan.payment']
+        start = date(2023, 1, 1)
         for record in self:
             if record.state == 'refinanced' or record.state == 'expansion':
                 record.loan_payment_ids.filtered(lambda x:x.state == 'draft').unlink()
+            if record.state == 'progress':
+                draft_payments = record.loan_payment_ids.filtered(lambda x:x.state == 'draft' and x.date <= fields.Date.today())
+                draft_to_show |= draft_payments
+            if not draft_payments:
+                # Notificación agradable
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _("Revisión completada"),
+                        'message': _("No se encontraron pagos en borrador vinculados a esta solicitud."),
+                        'sticky': False,
+                        'type': 'success',
+                    }
+                }
+
+
+                # Abre una ventana con solo esos pagos en borrador
+        action = {
+            'name': _('Pagos en borrador'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'loan.payment',
+            'view_mode': 'tree,form',
+            'domain': [('id', 'in', draft_payments.ids)],
+            'context': {
+                'search_default_draft': 1,
+                # 'default_loan_application_id': self.id,
+            },
+            'target': 'current',
+        }
+        return action
+
     # @api.depends('fixed_fee')
     # def _compute_total_fixed_fee(self):
     #     for rec in self:
