@@ -793,29 +793,27 @@ class LoanApplication(models.Model):
             if record.state == 'progress':
                 draft_payments = record.loan_payment_ids.filtered(lambda x:x.state == 'draft' and x.date <= fields.Date.today())
                 draft_to_show |= draft_payments
-            if not draft_payments:
-                # Notificación agradable
-                return {
-                    'type': 'ir.actions.client',
-                    'tag': 'display_notification',
-                    'params': {
-                        'title': _("Revisión completada"),
-                        'message': _("No se encontraron pagos en borrador vinculados a esta solicitud."),
-                        'sticky': False,
-                        'type': 'success',
-                    }
+        if not draft_to_show:
+            # Notificación agradable
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _("Revisión completada"),
+                    'message': _("No se encontraron pagos en borrador vinculados a esta solicitud."),
+                    'sticky': False,
+                    'type': 'success',
                 }
-
-
+            }
                 # Abre una ventana con solo esos pagos en borrador
         action = {
             'name': _('Pagos en borrador'),
             'type': 'ir.actions.act_window',
             'res_model': 'loan.payment',
             'view_mode': 'tree,form',
-            'domain': [('id', 'in', draft_payments.ids)],
+            'domain': [('id', 'in', draft_to_show.ids)],
             'context': {
-                'search_default_draft': 1,
+                # 'search_default_draft': 1,
                 # 'default_loan_application_id': self.id,
             },
             'target': 'current',
