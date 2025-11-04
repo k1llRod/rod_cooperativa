@@ -179,6 +179,8 @@
                                 <field name="amount_mora" class="text-danger" nolabel="1"/>
                                 <label for="amount_mora_bs" string="Monto de mora Bs." class="text-danger"/>
                                 <field name="amount_mora_bs" class="text-danger" nolabel="1"/>
+<!--                                <label for="amount_total_with_mora" string="Monto total con mora" class="text-danger"/>-->
+<!--                                <field name="amount_total_with_mora" class="text-danger" nolabel="1"/>-->
                                 <field name="amount_total" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="amount_total_bs" widget="monetary"/>

@@ -139,6 +139,8 @@ class LoanPayment(models.Model):
     days_mora = fields.Integer(string='Días de mora')
     amount_mora = fields.Monetary(string='Monto de mora', digits=(16, 2), compute='_calculate_mora', store=True,currency_field='currency_id_dollar')
     amount_mora_bs = fields.Monetary(string='Monto de mora Bs', compute='_onchange_amount_mora', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_total_original = fields.Monetary(string='Desc Original', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    mora_applied = fields.Boolean(string='Mora aplicada', store=True, default=False)
 
     @api.depends('capital_index_initial', 'interest', 'res_social', 'percentage_amount_min_def',
                  'interest_month_surpluy')
@@ -417,7 +419,7 @@ class LoanPayment(models.Model):
     def _compute_mora_core(self, as_of=None):
         self.ensure_one()
         if self.state == 'payment_mora':
-            as_of = as_of or fields.Date.context_today(self)
+            as_of = self.date_end_mora or fields.Date.context_today(self.env) if as_of is None else as_of
             grace_days, mora_interest = self._get_mora_params()
             if mora_interest == 0:
                 validation = 'El interés de mora no ha sido configurado. Por favor, configurelo en los parámetros del sistema.'
@@ -429,13 +431,17 @@ class LoanPayment(models.Model):
         else:
             return 0, 0
 
-    @api.depends('state')
+    @api.depends('state', 'date_initial_mora', 'date_end_mora', 'capital_index_initial')
     def _calculate_mora(self):
         for rec in self:
             days, overdue_capital = rec._compute_mora_core()
             rec.amount_mora = overdue_capital
             rec.days_mora = days
-            rec.write({'amount_total': rec.amount_total + overdue_capital})
+            # rec.amount_total = round(rec.mount, 2) + round(rec.percentage_amount_min_def, 2) + round(
+            #                     rec.interest_month_surpluy,
+            #                     2) if rec.mount > 0 else rec.capital_index_initial + rec.interest_month_surpluy
+            # if rec.state == 'payment_mora':
+            #     rec.amount_total =  rec.amount_total + overdue_capital
 
     def action_pay_mora(self):
         for record in self:
@@ -446,6 +452,66 @@ class LoanPayment(models.Model):
     def _onchange_amount_mora(self):
         for rec in self:
             rec.amount_mora_bs = rec.amount_mora * rec.currency_id_dollar.inverse_rate
+
+    def _compute_base_total_now(self):
+        self.ensure_one()
+        if (self.amount_total or 0.0) > 0.0:
+            return round(self.mount, 2) + round(self.percentage_amount_min_def, 2) + round(
+                self.interest_month_surpluy, 2)
+        return (self.capital_index_initial or 0.0) + (self.interest_month_surpluy or 0.0)
+
+    def _apply_mora_to_amount_total(self):
+        self.ensure_one()
+        days, overdue_capital = self._compute_mora_core()
+        self.write({
+            'amount_mora': overdue_capital,
+            'days_mora': days,
+        })
+        base_total = self.amount_total_original or self._compute_base_total_now()
+        new_total = base_total + (overdue_capital or 0.0)
+        self.write({
+            'amount_total_original': base_total,
+            'amount_total': new_total,
+            'mora_applied': True,
+        })
+
+    def _unapply_mora_if_any(self):
+        self.ensure_one()
+        if self.mora_applied:
+            base_total = self.amount_total_original or self._compute_base_total_now()
+            self.write({
+                'amount_mora': 0.0,
+                'days_mora': 0,
+                'amount_total': base_total,
+                'amount_total_original': 0.0,
+                'mora_applied': False,
+            })
+
+    @api.model
+    def create(self, vals):
+        rec = super().create(vals)
+        # Fija el original a la creación si no viene
+        if not rec.amount_total_original:
+            rec.amount_total_original = rec._compute_base_total_now()
+        return rec
+
+    def write(self, vals):
+        # Estados previos para detectar transición
+        prev = {r.id: (r.state, r.mora_applied) for r in self}
+        res = super().write(vals)
+
+        if 'state' in vals:
+            for rec in self:
+                old_state, old_mora_applied = prev.get(rec.id, (None, False))
+                # Si entra a payment_mora y aún no aplicamos
+                if old_state != 'payment_mora' and rec.state == 'payment_mora' and not rec.mora_applied:
+                    rec._apply_mora_to_amount_total()
+                # (Opcional) Si sale de payment_mora, revertir
+                elif old_state == 'payment_mora' and rec.state != 'payment_mora' and rec.mora_applied:
+                    rec._unapply_mora_if_any()
+        return res
+
+
 
 
 
