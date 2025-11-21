@@ -475,31 +475,58 @@ class LoanApplication(models.Model):
 
     @api.depends('loan_payment_ids.state')
     def _compute_balance_capital(self):
+        paid_states = (
+            'transfer',
+            'ministry_defense',
+            'debt_settlement_deposit',
+            'debt_settlement_mindef',
+            'amortization',
+        )
+        paid_and_scheduled_states = paid_states + ('scheduled',)
+
         for rec in self:
-            if len(rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense' or
-                                                           x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization')) > 0:
-                rec.balance_capital = rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense' or
-                                                            x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or
-                                                                    x.state == 'amortization' )[
-                        -1].balance_capital
-                rec.balance_capital_scheduled = rec.loan_payment_ids.filtered(lambda x: x.state == 'transfer' or x.state == 'ministry_defense' or
-                                                            x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or
-                                                                    x.state == 'amortization' or x.state == 'scheduled')[
-                        -1].balance_capital if len(rec.loan_payment_ids.filtered(lambda x: x.state == 'scheduled')) > 0 else 0
-                rec.balance_total_interest_month = rec.total_interest_month_surpluy - sum(
-                    rec.loan_payment_ids.filtered(
-                        lambda
-                            x: x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization').mapped(
-                        'interest_month_surpluy'))
-                rec.balance_total_interest_month_scheduled = rec.total_interest_month_surpluy - sum(
-                    rec.loan_payment_ids.filtered(
-                        lambda
-                            x: x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization' or x.state == 'scheduled').mapped(
-                        'interest_month_surpluy'))
+            if rec.loan_payment_ids:
+                payment_states = {p.state for p in rec.loan_payment_ids}
+                # Solo hay borradores (o sea, no hay líneas confirmadas / programadas)
+                if payment_states <= {'draft'}:
+                    continue
+            payments = rec.loan_payment_ids.filtered(
+                lambda x: x.state in paid_states
+            )
+            payments_with_scheduled = rec.loan_payment_ids.filtered(
+                lambda x: x.state in paid_and_scheduled_states
+            )
+            scheduled_payments = rec.loan_payment_ids.filtered(
+                lambda x: x.state == 'scheduled'
+            )
+
+            if payments:
+                # Capital real (según últimos pagos efectivos)
+                rec.balance_capital = payments[-1].balance_capital
+
+                # Capital considerando programaciones
+                if scheduled_payments:
+                    rec.balance_capital_scheduled = payments_with_scheduled[-1].balance_capital
+                else:
+                    rec.balance_capital_scheduled = 0
+
+                # Interés pendiente real
+                rec.balance_total_interest_month = (
+                        rec.total_interest_month_surpluy
+                        - sum(payments.mapped('interest_month_surpluy'))
+                )
+
+                # Interés pendiente considerando programaciones
+                rec.balance_total_interest_month_scheduled = (
+                        rec.total_interest_month_surpluy
+                        - sum(payments_with_scheduled.mapped('interest_month_surpluy'))
+                )
             else:
+                # Sin pagos todavía: todo el capital y todo el interés está pendiente
                 rec.balance_capital = rec.amount_loan_dollars
                 rec.balance_capital_scheduled = rec.amount_loan_dollars
                 rec.balance_total_interest_month = rec.total_interest_month_surpluy
+                rec.balance_total_interest_month_scheduled = rec.total_interest_month_surpluy
 
     @api.depends('interest_month_surpluy', 'months_quantity')
     def _compute_total_interest_month_surpluy(self):
@@ -708,6 +735,7 @@ class LoanApplication(models.Model):
 
     def update_loan(self):
         for record in self:
+            record._compute_balance_capital()
             record._compute_change_dollars_bolivian()
             record._onchange_interest_day_rest()
             record._onchange_amount_devolution()
