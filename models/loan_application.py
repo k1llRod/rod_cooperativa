@@ -784,31 +784,60 @@ class LoanApplication(models.Model):
             rec.balance_total_interest_month_scheduled_bs = rec.balance_total_interest_month_scheduled * rec.value_dolar
 
     def amortization(self):
-        id = self.id
-        auxiliar = self.balance_total_interest_month
-        auxiliar_balance = self.balance_capital
-        if self.balance_total_interest_month_auxiliar > 0:
-            auxiliar = self.balance_total_interest_month_auxiliar
-        if self.balance_capital_auxiliar > 0:
-            auxiliar_balance = self.balance_capital_auxiliar
+        self.ensure_one()
+
+        # Inicializamos las variables con 0 por seguridad
+        capital_rest = 0
+        capital_rest_bs = 0
+        interest_rest = 0
+        interest_rest_bs = 0
+        scheduled = False
+
+        # === 1. NORMAL ===
+        if self.balance_capital > 0:
+            capital_rest = self.balance_capital
+            capital_rest_bs = self.balance_capital_bs
+
+        if self.balance_total_interest_month > 0:
+            interest_rest = self.balance_total_interest_month
+            interest_rest_bs = self.balance_total_interest_month_bs
+
+        # === 2. SCHEDULED (tiene prioridad sobre normal) ===
+        if self.balance_capital_scheduled > 0:
+            capital_rest = self.balance_capital_scheduled
+            capital_rest_bs = self.balance_capital_scheduled_bs
+            scheduled = True
+
+        if self.balance_total_interest_month_scheduled > 0:
+            interest_rest = self.balance_total_interest_month_scheduled
+            interest_rest_bs = self.balance_total_interest_month_scheduled_bs
+            scheduled = True
         return {
             'name': 'Formulario de amortizacion',
             'type': 'ir.actions.act_window',
             'res_model': 'form.amortization',
             'view_mode': 'form',
-            'view_type': 'form',
             'target': 'new',
             'context': {
                 'default_capital_initial': self.amount_loan_dollars,
-                'default_data_loan_id': id,
-                'default_capital_rest': auxiliar_balance,
-                'default_total_capital_rest': self.balance_capital_bs,
-                'default_interest_days_rest': auxiliar,
-                'default_interest_days_rest_bs': self.balance_total_interest_month_bs,
+                'default_data_loan_id': self.id,
+
+                # USD
+                'default_capital_rest': capital_rest,
+                'default_interest_days_rest': interest_rest,
+
+                # BS
+                'default_total_capital_rest': capital_rest_bs,
+                'default_interest_days_rest_bs': interest_rest_bs,
+
                 'default_quantity_month_initial': self.months_quantity,
                 'default_fixed_fee': self.fixed_fee,
                 'default_total_fixed_fee': self.total_fixed_fee,
                 'default_quantity_month_payment': self.total_payments_confirm,
+                'default_scheduled': scheduled,
+
+                # Flag para pintar en rojo
+                'default_scheduled': self.balance_capital_scheduled > 0 or self.balance_total_interest_month_scheduled > 0,
             },
         }
 

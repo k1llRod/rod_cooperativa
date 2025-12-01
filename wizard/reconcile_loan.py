@@ -91,7 +91,7 @@ class ReconcileLoan(models.TransientModel):
                     search_partner.period_process = self.month + '/' + self.year
 
                     # --- CAMBIO 1: si concilia -> marcar pago(s) como scheduled ---
-                    verify_period.write({'state': 'scheduled'})
+                    verify_period.write({'state': 'ministry_defense'})
 
                 else:
                     # No hay pago del período que concilie → filing queda como no_reconciled

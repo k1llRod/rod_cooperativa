@@ -32,6 +32,7 @@ class FormAmortization(models.TransientModel):
         string='Tipo de prestamo regular', related='data_loan_id.with_guarantor', store=True)
     monthly_interest_mortgage = fields.Float(string='Interes mensual hipotecario', related='data_loan_id.monthly_interest_mortgage', store=True)
     mortgage_loan = fields.Float(string='Prestamo hipotecario', related='data_loan_id.mortgage_loan', store=True)
+    scheduled = fields.Boolean(string='Prestamo programado', store=True)
     @api.depends('month_amortization','amount_amortization')
     def _compute_recalculate_capital_rest(self):
         for record in self:

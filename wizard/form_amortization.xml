@@ -8,12 +8,16 @@
                     <group>
                         <group string="Datos del prestamo">
                             <field name="data_loan_id" readonly="1"/>
+                            <field name="scheduled" invisible="1"/>
                             <field name="with_guarantor"/>
                             <field name="capital_initial" readonly="1"/>
                             <field name="quantity_month_initial" readonly="1"/>
                             <field name="quantity_month_payment" readonly="1"/>
-                            <field name="capital_rest" readonly="1"/>
-                            <field name="total_capital_rest" readonly="1"/>
+                            <field name="capital_rest" readonly="1"
+                                   class="oe_inline"
+                                   decoration-danger="scheduled == True"/>
+                            <field name="capital_rest" readonly="1"
+                                   decoration-danger="scheduled"/>
                             <field name="interest_days_rest" readonly="1"/>
                             <field name="interest_days_rest_bs" readonly="1"/>
                             <field name="total_fixed_fee" readonly="1"/>
