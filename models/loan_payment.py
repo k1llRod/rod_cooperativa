@@ -76,7 +76,7 @@ class LoanPayment(models.Model):
          ('debt_settlement_mindef', 'Liquidacion de deuda MINDEF'),
          ('debt_settlement_deposit', 'Liquidacion de deuda por deposito'),
          ('amortization','Amortizacion'),
-         ('payment_mora','Descuento en mora'),
+         ('payment_mora','Descuento con mora'),
          ('scheduled_mora','Programado con mora')], string='Estado',
         default='draft', tracking=True)
 
