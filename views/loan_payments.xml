@@ -134,6 +134,11 @@
                                 class="oe_highlight"
                                 groups="base.group_no_one"
                                 />
+                        <button name="scheduled_mora" string="Programado con mora" type="object"
+                                class="oe_highlight"
+                                groups="base.group_no_one"
+                                />
+
                         <field name="state" widget="statusbar" statusbar_visible="draft,transfer,ministry_defense"/>
                     </header>
                     <sheet>

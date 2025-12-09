@@ -76,7 +76,8 @@ class LoanPayment(models.Model):
          ('debt_settlement_mindef', 'Liquidacion de deuda MINDEF'),
          ('debt_settlement_deposit', 'Liquidacion de deuda por deposito'),
          ('amortization','Amortizacion'),
-         ('payment_mora','Descuento en mora')], string='Estado',
+         ('payment_mora','Descuento en mora'),
+         ('scheduled_mora','Programado con mora')], string='Estado',
         default='draft', tracking=True)
 
     flag_state = fields.Selection([
@@ -418,7 +419,7 @@ class LoanPayment(models.Model):
 
     def _compute_mora_core(self, as_of=None):
         self.ensure_one()
-        if self.state == 'payment_mora':
+        if self.state == 'payment_mora' or self.state == 'scheduled_mora':
             as_of = self.date_end_mora or fields.Date.context_today(self.env) if as_of is None else as_of
             grace_days, mora_interest = self._get_mora_params()
             if mora_interest == 0:
@@ -504,12 +505,24 @@ class LoanPayment(models.Model):
             for rec in self:
                 old_state, old_mora_applied = prev.get(rec.id, (None, False))
                 # Si entra a payment_mora y aún no aplicamos
-                if old_state != 'payment_mora' and rec.state == 'payment_mora' and not rec.mora_applied:
+                if old_state != 'payment_mora' and rec.state in ['payment_mora','scheduled_mora']   and not rec.mora_applied:
                     rec._apply_mora_to_amount_total()
+                    rec._onchange_amount_mora()
                 # (Opcional) Si sale de payment_mora, revertir
                 elif old_state == 'payment_mora' and rec.state != 'payment_mora' and rec.mora_applied:
                     rec._unapply_mora_if_any()
         return res
+
+    def scheduled_mora(self):
+        for record in self:
+            if record.state == 'draft':
+                # Validación: ambos campos deben tener valor
+                if not record.date_initial_mora or not record.date_end_mora:
+                    raise ValidationError(
+                        "Debes completar las fechas de inicio y fin de mora antes de programar la mora."
+                    )
+                record.write({'state': 'scheduled_mora'})
+
 
 
 
