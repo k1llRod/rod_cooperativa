@@ -63,7 +63,7 @@ class LoanPayment(models.Model):
     coa_commission_bs = fields.Monetary(string='%COA Bs',currency_field='currency_id')
     interest_month_surpluy = fields.Monetary(string='D/E', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     amount_total = fields.Monetary(string='D/MINDEF $', digits=(16, 2),currency_field='currency_id_dollar')
-    amount_total_bs = fields.Monetary(string='D/MINDEF Bs', compute='_change_amount_total_bs', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_total_bs = fields.Monetary(string='D/MINDEF Bs', digits=(16, 2), store=True,currency_field='currency_id')
     amount_returned_coa = fields.Monetary(string='Monto devuelto COA', digits=(16, 2), store=True,currency_field='currency_id')
     amount_payment = fields.Monetary(string='Monto a pagar', digits=(16, 2), store=True,currency_field='currency_id')
     state = fields.Selection(
