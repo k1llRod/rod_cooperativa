@@ -1,6 +1,7 @@
 from odoo import models, fields, api, _
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
+from odoo.exceptions import UserError
 
 
 class ReconcileLoan(models.TransientModel):
@@ -51,68 +52,103 @@ class ReconcileLoan(models.TransientModel):
                 [('outstanding_payments', '>', '0'), ('state', '=', 'process')]))
 
     def action_reconcile(self):
-        partner_loan = self.env['loan.application'].search([('state', '=', 'progress')])
-        nominal_relationship = self.env['nominal.relationship.mindef.loan']
-        # Acción para conciliar los pagos de aportes
-        period = self.month + '/' + self.year
-        filing_cabinet_ids = self.env['nominal.relationship.mindef.loan'].search(
-            [('period_process', '=', period), ('state', '=', 'draft')])
-        partner_loan_ids = self.env['loan.application'].search(
-            [('state', '=', 'progress')])
+        self.ensure_one()
 
-        for partner in partner_loan_ids:
-            search_partner = filing_cabinet_ids.filtered(lambda x: x.eit_item == partner.partner_id.code_contact)
+        period = f"{self.month}/{self.year}"
 
-            # --- CAMBIO 1: obtenemos TODOS los pagos del período (sin filtrar por estado) ---
-            payments_period = partner.loan_payment_ids.filtered(lambda x: x.period == period)
+        Filing = self.env['nominal.relationship.mindef.loan']
+        Loan = self.env['loan.application']
 
-            if search_partner:
-                # (antes filtrabas solo scheduled)
-                verify_period = payments_period.filtered(
-                    lambda x: x.state in ('scheduled', 'draft', 'pending', 'not_discounted', False))
+        # 1) Traer gabinetes (draft) del periodo
+        filing_cabinet_ids = Filing.search([
+            ('period_process', '=', period),
+            ('state', '=', 'draft')
+        ])
 
-                if verify_period:
-                    verify_amount_returned_coa = partner.loan_payment_ids.filtered(lambda x: x.amount_returned_coa == 0)
+        if not filing_cabinet_ids:
+            raise UserError(_("No hay registros en borrador para el período %s.") % period)
 
-                    verify_period.commission_min_def = search_partner.comision
-                    verify_period.amount_returned_coa = search_partner.tot2
-                    verify_period.confirm_ministry_defense()
+        # 2) Indexar por eit_item para búsqueda O(1)
+        #    OJO: si hay duplicados por eit_item, esto se pisa. Ver nota al final.
+        filing_by_eit = {rec.eit_item: rec for rec in filing_cabinet_ids if rec.eit_item}
 
-                    if verify_amount_returned_coa:
-                        verify_period.amount_returned_coa = search_partner.tot2
+        # 3) Traer préstamos en progreso (una sola vez)
+        partner_loan_ids = Loan.search([('state', '=', 'progress')])
+        if not partner_loan_ids:
+            raise UserError(_("No hay préstamos en progreso para conciliar."))
 
-                    if verify_period.amount_total_bs >= search_partner.amount_bs:
-                        search_partner.loan_regular = True
-                    else:
-                        search_partner.loan_regular = False
+        reconciled_count = 0
 
-                    search_partner.date_process = self.date_field_select
-                    search_partner.state = 'reconciled'
-                    search_partner.period_process = self.month + '/' + self.year
+        # Estados válidos para “encontré pago del periodo pero aún conciliable”
+        conciliable_states = ('scheduled', 'draft', 'pending', 'not_discounted', False)
 
-                    # --- CAMBIO 1: si concilia -> marcar pago(s) como scheduled ---
-                    verify_period.write({'state': 'ministry_defense'})
+        for loan in partner_loan_ids:
+            code_contact = loan.partner_id.code_contact
+            if not code_contact:
+                continue
 
-                else:
-                    # No hay pago del período que concilie → filing queda como no_reconciled
-                    search_partner.write({'state': 'no_reconciled'})
-                    search_partner.write({'period_process': self.month + '/' + self.year})
-                    search_partner.write({'date_process': self.date_field_select})
+            filing = filing_by_eit.get(code_contact)
+            if not filing:
+                continue
 
-                    # --- CAMBIO 1: si NO concilia -> marcar pago(s) del período como not_discounted ---
-                    # (si existiera alguno del período; si no, no habrá efecto)
-                    payments_period.write({'state': 'not_discounted'})
+            # Pagos del período (una sola vez)
+            payments_period = loan.loan_payment_ids.filtered(lambda p: p.period == period)
+            if not payments_period:
+                # No hay pagos del periodo -> marca gabinete como no conciliado
+                filing.write({
+                    'state': 'no_reconciled',
+                    'period_process': period,
+                    'date_process': self.date_field_select,
+                })
+                continue
 
-        array_no_reconciled = filing_cabinet_ids.filtered(lambda x: x.period_process == period and x.state == 'draft')
-        no_reconciled = len(array_no_reconciled)
-        context = {'default_message': 'Se han conciliado ' + str(
-            len(filing_cabinet_ids) - no_reconciled) + ' registros de ' + str(len(filing_cabinet_ids))}
+            # Pagos del período que estén en estados conciliables
+            verify_period = payments_period.filtered(lambda p: p.state in conciliable_states)
+            if not verify_period:
+                # Si hay pagos del período pero ninguno conciliable -> lo marco igual como no conciliado
+                filing.write({
+                    'state': 'no_reconciled',
+                    'period_process': period,
+                    'date_process': self.date_field_select,
+                })
+                # y marco esos pagos del período como no descontados
+                payments_period.write({'state': 'not_discounted'})
+                continue
+
+            # 4) Conciliar: aplicar comisión / retorno solo al/los pagos del periodo conciliables
+            vals_payment = {
+                # 'commission_min_def': filing.comision,
+                'amount_returned_coa': filing.tot2,
+            }
+            verify_period.write(vals_payment)
+            verify_period.confirm_ministry_defense()
+            verify_period.write({'state': 'ministry_defense'})
+
+            # 5) Marcar regularidad del préstamo según tu regla
+            filing.write({
+                'loan_regular': bool(verify_period.amount_total_bs >= filing.amount_bs),
+                'date_process': self.date_field_select,
+                'state': 'reconciled',
+                'period_process': period,
+            })
+
+            reconciled_count += 1
+
+        # 6) Resumen final correcto según estados reales
+        total = len(filing_cabinet_ids)
+        no_reconciled = len(filing_cabinet_ids.filtered(lambda r: r.state != 'reconciled'))
+
+        context = {
+            'default_message': _(
+                "Se han conciliado %s registros de %s"
+            ) % (reconciled_count, total)
+        }
+
         return {
-            'name': 'Registros conciliados',
+            'name': _('Registros conciliados'),
             'type': 'ir.actions.act_window',
             'res_model': 'alert.message',
             'view_mode': 'form',
-            'view_type': 'form',
             'target': 'new',
             'context': context,
         }
