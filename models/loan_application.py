@@ -481,6 +481,7 @@ class LoanApplication(models.Model):
             'debt_settlement_deposit',
             'debt_settlement_mindef',
             'amortization',
+            'payment_mora',
         )
         paid_and_scheduled_states = paid_states + ('scheduled',)
 
