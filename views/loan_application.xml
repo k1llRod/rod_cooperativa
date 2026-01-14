@@ -351,22 +351,17 @@
                     <!--                            string="Capital inicial"-->
                     <!--                            domain="[('capital_initial', '!=', 0)]"/>-->
                     <separator />
-
                     <filter name="state_progress"
                             string="En proceso"
                             domain="[('state', '=', 'progress')]"/>
-                    <!--                    <filter name="partner_passive_reserve_a"-->
-                    <!--                            string="Asociados Pasivo categoria 'A'"-->
-                    <!--                            domain="[('partner_status_especific','=','passive_reserve_a')]"/>-->
-                    <!--                    <filter name="partner_passive_reserve_b"-->
-                    <!--                            string="Asociados Pasivo categoria 'B'"-->
-                    <!--                            domain="[('partner_status_especific','=','passive_reserve_b')]"/>-->
-<!--                    <group expand="0" string="Group by">-->
-<!--                        <filter string="Pagos pendientes"-->
-<!--                                name="group_pendings_payments"-->
-<!--                                context="{'group_by': 'missing_payments'}"/>-->
+                    <filter string="Fecha de aprobacion" name="date_approval" date="date_approval"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Fecha de aprobacion" name="by_date" domain="[]" context="{'group_by': 'date_approval'}" help="Journal Entries by Date"/>
+                        <filter string="Tipo de Prestamo" name="by_with_guarantor" domain="[]" context="{'group_by': 'with_guarantor'}"/>
+                        <filter string="Estado" name="by_state" domain="[]" context="{'group_by': 'state'}"/>
+                    </group>
 
-<!--                    </group>-->
                 </search>
             </field>
         </record>

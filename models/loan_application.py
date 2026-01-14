@@ -610,6 +610,7 @@ class LoanApplication(models.Model):
 
             rec.missing_payments = max(0, len(due_payments) - len(confirmed_due))
             rec.total_payments_confirm = len(confirmed_due)
+            rec.report_missing_payments = rec.missing_payments
 
     @api.onchange('interest_day_rest')
     def _onchange_interest_day_rest(self):
