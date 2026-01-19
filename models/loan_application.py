@@ -16,6 +16,7 @@ class LoanApplication(models.Model):
         'partner_id': fields.Many2one('res.partner', string='Socio solicitante', required=True)
     },
 
+
     name = fields.Char(string='Código de solicitud', tracking=True)
     state = fields.Selection([
         ('init', 'Inicio'),
@@ -490,6 +491,7 @@ class LoanApplication(models.Model):
                 payment_states = {p.state for p in rec.loan_payment_ids}
                 # Solo hay borradores (o sea, no hay líneas confirmadas / programadas)
                 if payment_states <= {'draft'}:
+                    rec.balance_capital = rec.loan_payment_ids[0].capital_initial
                     continue
             payments = rec.loan_payment_ids.filtered(
                 lambda x: x.state in paid_states
@@ -516,6 +518,8 @@ class LoanApplication(models.Model):
                         rec.total_interest_month_surpluy
                         - sum(payments.mapped('interest_month_surpluy'))
                 )
+                if rec.balance_total_interest_month < 0:
+                    rec.balance_total_interest_month = 0
 
                 # Interés pendiente considerando programaciones
                 rec.balance_total_interest_month_scheduled = (

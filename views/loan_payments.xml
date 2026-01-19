@@ -186,6 +186,7 @@
                                 <field name="amount_mora_bs" class="text-danger" nolabel="1"/>
 <!--                                <label for="amount_total_with_mora" string="Monto total con mora" class="text-danger"/>-->
 <!--                                <field name="amount_total_with_mora" class="text-danger" nolabel="1"/>-->
+                                <field name="amount_total_original" class="text-danger"/>
                                 <field name="amount_total" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="amount_total_bs" widget="monetary"/>
@@ -291,6 +292,13 @@
             <field name="binding_model_id" ref="model_loan_payment"/>
             <field name="state">code</field>
             <field name="code">action = records.draft_massive()</field>
+        </record>
+        <record id="action_updated_amount_total" model="ir.actions.server">
+            <field name="name">Actualizar monto original</field>
+            <field name="model_id" ref="model_loan_payment"/>
+            <field name="binding_model_id" ref="model_loan_payment"/>
+            <field name="state">code</field>
+            <field name="code">action = records.update_amount_total_original()</field>
         </record>
         <record id="action_publish_accounting_loan" model="ir.actions.server">
             <field name="name">Publicar asiento contable</field>

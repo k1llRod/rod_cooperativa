@@ -252,6 +252,7 @@
                                         <field name="amount_total"/>
                                         <field name="amount_total_bs"/>
                                         <field name="amount_payment" optional="hidden"/>
+                                        <field name="amount_returned_coa" optional="hidden"/>
                                         <field name="state" decoration-info="state == 'init' or state == 'in_queue'"
                                                decoration-success="state in ('ministry_defense', 'debt_settlement_mindef', 'debt_settlement_deposit', 'transfer')"
                                                decoration-warning="state == 'ministry_defense_warrantor'"

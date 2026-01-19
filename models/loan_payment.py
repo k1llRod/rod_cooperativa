@@ -8,6 +8,7 @@ class LoanPayment(models.Model):
     _name = 'loan.payment'
     _description = 'Pagos de prestamos'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'date asc'
 
     name = fields.Char(string='Codigo de pago', required=True)
     loan_application_ids = fields.Many2one('loan.application', string='Solicitud de prestamo', required=True)
@@ -199,6 +200,11 @@ class LoanPayment(models.Model):
                 if rec.mount > 0:
                     rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
+            if rec.balance_capital < 0:
+                rec.balance_capital = 0
+            if rec.balance_capital > 0 and rec.balance_capital < 1:
+                rec.balance_capital = 0
+
             if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
                 rec.res_social = rec.capital_initial * round((contingency_found / 100), 4) if rec.mount > 0 else 0
             if rec.loan_application_ids.with_guarantor == 'mortgage':
@@ -457,8 +463,7 @@ class LoanPayment(models.Model):
     def _compute_base_total_now(self):
         self.ensure_one()
         if (self.amount_total or 0.0) > 0.0:
-            return round(self.mount, 2) + round(self.percentage_amount_min_def, 2) + round(
-                self.interest_month_surpluy, 2)
+            return round(self.amount_total, 2)
         return (self.capital_index_initial or 0.0) + (self.interest_month_surpluy or 0.0)
 
     def _apply_mora_to_amount_total(self):
@@ -473,6 +478,7 @@ class LoanPayment(models.Model):
         self.write({
             'amount_total_original': base_total,
             'amount_total': new_total,
+            'amount_total_bs': new_total * self.currency_id_dollar.inverse_rate,
             'mora_applied': True,
         })
 
@@ -484,6 +490,7 @@ class LoanPayment(models.Model):
                 'amount_mora': 0.0,
                 'days_mora': 0,
                 'amount_total': base_total,
+                'amount_total_bs': base_total * self.currency_id_dollar.inverse_rate,
                 'amount_total_original': 0.0,
                 'mora_applied': False,
             })
@@ -524,7 +531,9 @@ class LoanPayment(models.Model):
                 record.write({'state': 'scheduled_mora'})
 
 
-
+    def update_amount_total_original(self):
+        for rec in self:
+            rec.amount_total_original = rec.amount_total
 
 
 
