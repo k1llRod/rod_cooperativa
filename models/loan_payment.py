@@ -432,7 +432,8 @@ class LoanPayment(models.Model):
                 validation = 'El interés de mora no ha sido configurado. Por favor, configurelo en los parámetros del sistema.'
                 raise ValidationError(validation)
             days_mora = (as_of - self.date_initial_mora).days
-            overdue_capital = round(self.capital_index_initial * days_mora * (mora_interest/100),2)
+            daily_rate = (mora_interest / 100) / 30
+            overdue_capital = round(self.capital_index_initial * days_mora * daily_rate)
         # Si la cuota ya está completamente pagada, no hay mora
             return days_mora, overdue_capital
         else:
