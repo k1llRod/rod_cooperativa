@@ -143,6 +143,7 @@ class LoanPayment(models.Model):
     amount_mora_bs = fields.Monetary(string='Monto de mora Bs', compute='_onchange_amount_mora', digits=(16, 2), store=True,currency_field='currency_id')
     amount_total_original = fields.Monetary(string='Desc Original', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     mora_applied = fields.Boolean(string='Mora aplicada', store=True, default=False)
+    sancion = fields.Boolean(string='Sanción', store=True, default=False)
 
     @api.depends('capital_index_initial', 'interest', 'res_social', 'percentage_amount_min_def',
                  'interest_month_surpluy')
@@ -432,7 +433,10 @@ class LoanPayment(models.Model):
                 validation = 'El interés de mora no ha sido configurado. Por favor, configurelo en los parámetros del sistema.'
                 raise ValidationError(validation)
             days_mora = (as_of - self.date_initial_mora).days
-            daily_rate = (mora_interest / 100) / 30
+            if self.sancion == True:
+                daily_rate = (mora_interest / 100)
+            else:
+                daily_rate = (mora_interest / 100) / 30
             overdue_capital = round(self.capital_index_initial * days_mora * daily_rate)
         # Si la cuota ya está completamente pagada, no hay mora
             return days_mora, overdue_capital
