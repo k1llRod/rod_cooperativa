@@ -9,13 +9,17 @@
                     <group>
                         <group string="Datos de los beneficiarios">
                             <field name="partner_id"/>
-                            <field name="family_ids" widget="many2many_tags"/>
+<!--                            <field name="partner_payroll_id"/>-->
+                            <field name="family_ids"
+                                   widget="many2many_tags"
+                                   domain="[('partner_id', '=', partner_id)]"
+                                   options="{'no_create': True}"/>
                             <field name="type_payment"/>
                             <field name="return_amount"/>
                         </group>
                         <group string="Datos base">
-                            <field name="since"/>
-                            <field name="until"/>
+<!--                            <field name="since"/>-->
+<!--                            <field name="until"/>-->
 <!--                            <field name="global_amount"/>-->
                         </group>
                     </group>
@@ -31,8 +35,8 @@
                     <field name="family_ids" />
                     <field name="partner_id"/>
                     <field name="type_payment"/>
-                    <field name="since"/>
-                    <field name="until"/>
+<!--                    <field name="since"/>-->
+<!--                    <field name="until"/>-->
                     <field name="return_amount"/>
                 </tree>
             </field>

@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="category_partner_id"/>
-                    <field name="partner_name" string="Beneficiario/a"/>
+                    <field name="partner_name" string="Socio/a"/>
                     <field name="graduation_year"/>
                     <field name="type_discount_post_mortem"/>
                     <field name="since"/>
@@ -70,15 +70,45 @@
                 </form>
             </field>
         </record>
-        <record model="ir.actions.server" id="action_server_view_widow">
-            <field name="name">Beneficiarios</field>
-            <field name="model_id" ref="rod_cooperativa.model_family"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">
-                action = model.init_widow()
+        <record id="family_view_search" model="ir.ui.view">
+            <field name="name">family.search</field>
+            <field name="model">family</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Familiar">
+                    <field name="name" string="Nombre Beneficiario"/>
+                    <field name="partner_name" string="Nombre del Socio"/>
+                    <field name="partner_id" string="Socio (Relación)"/>
+                    <field name="nro_celular" string="Celular"/>
+
+                    <filter string="Es Beneficiario" name="is_beneficiary" domain="[('beneficiary', '=', True)]"/>
+                    <separator/>
+                    <filter string="Cónyuges" name="kinship_spouses" domain="[('kinship', 'in', ('wife', 'husband'))]"/>
+                    <filter string="Hijos/as" name="kinship_sons" domain="[('kinship', '=', 'son')]"/>
+                    <separator/>
+                    <filter string="Fecha de Pago (Mes)" name="payment_month" date="payment_date"/>
+
+                    <group expand="0" string="Agrupar por...">
+                        <filter string="Socio" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
+                        <filter string="Parentesco" name="group_by_kinship" context="{'group_by': 'kinship'}"/>
+                        <filter string="Categoría de Socio" name="group_by_category"
+                                context="{'group_by': 'category_partner_id'}"/>
+                        <filter string="Año de Promoción" name="group_by_grad_year"
+                                context="{'group_by': 'graduation_year'}"/>
+                        <filter string="Tipo de Retorno" name="group_by_discount_type"
+                                context="{'group_by': 'type_discount_post_mortem'}"/>
+                    </group>
+                </search>
             </field>
         </record>
+<!--        <record model="ir.actions.server" id="action_server_view_widow">-->
+<!--            <field name="name">Beneficiarios</field>-->
+<!--            <field name="model_id" ref="rod_cooperativa.model_family"/>-->
+<!--            <field name="type">ir.actions.server</field>-->
+<!--            <field name="state">code</field>-->
+<!--            <field name="code">-->
+<!--                action = model.init_widow()-->
+<!--            </field>-->
+<!--        </record>-->
 
         <!-- Accion para visualizar Family -->
 
@@ -86,7 +116,13 @@
             <field name="name">Familiar</field>
             <field name="res_model">family</field>
             <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="rod_cooperativa.family_view_search"/>
+            <field name="context">{'search_default_is_beneficiary': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Registra un nuevo familiar o beneficiario.
+                </p>
+            </field>
         </record>
-
     </data>
 </odoo>
