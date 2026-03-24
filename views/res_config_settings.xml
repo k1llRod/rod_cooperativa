@@ -162,13 +162,59 @@
                             <div class="o_setting_box mt16">
                                 <div class="o_setting_right_pane">
                                     <div class="content-group mt16">
-                                        <label string="Cuenta de saldos dias excedentes" for="account_monto_meses_interes"/>
+                                        <label string="Cuenta de saldos dias excedentes"
+                                               for="account_monto_meses_interes"/>
                                         <div class="text-muted">
                                             Establecer la cuenta contable para saldo dias excedentes.
                                         </div>
                                         <div>
                                             <field name="account_monto_meses_interes" colspan="4" nolabel="1"/>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2>Configuración Post-Mortem</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="account_pm_debe_id" string="Cuenta de Gasto (DEBE)" class="o_form_label"/>
+                                <div class="text-muted">
+                                    Cuenta donde se registrará el egreso o auxilio funerario.
+                                </div>
+                                <div class="content-group mt16">
+                                    <field name="account_pm_debe_id" options="{'no_create': True}"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label" style="font-weight: bold;">Cuentas de Distribución (HABER)
+                                </span>
+                                <div class="text-muted">
+                                    Cuentas para la repartición del monto liquidado.
+                                </div>
+                                <div class="content-group mt16">
+                                    <div class="row">
+                                        <label for="account_pm_post_mortem_id" class="col-lg-9 o_light_label"
+                                               string="Cuenta Post-Mortem (Haber)"/>
+                                        <field name="account_pm_post_mortem_id" class="col-lg-12"
+                                               options="{'no_create': True}"/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="account_pm_regulation_cup_id" class="col-lg-9 o_light_label"
+                                               string="Cuenta tasa de regulacion CUP (Haber)"/>
+                                        <field name="account_pm_regulation_cup_id" class="col-lg-12"
+                                               options="{'no_create': True}"/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="account_pm_inscription_id" class="col-lg-9 o_light_label"
+                                               string="Cuenta desvinculacion Post-Mortem (Haber)"/>
+                                        <field name="account_pm_inscription_id" class="col-lg-12"
+                                               options="{'no_create': True}"/>
                                     </div>
                                 </div>
                             </div>

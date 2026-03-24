@@ -5,24 +5,83 @@
             <field name="name">post.mortem.form</field>
             <field name="model">post.mortem</field>
             <field name="arch" type="xml">
-                <form string="Registro pago">
-                    <group>
-                        <group string="Datos de los beneficiarios">
-                            <field name="partner_id"/>
-<!--                            <field name="partner_payroll_id"/>-->
-                            <field name="family_ids"
-                                   widget="many2many_tags"
-                                   domain="[('partner_id', '=', partner_id)]"
-                                   options="{'no_create': True}"/>
-                            <field name="type_payment"/>
-                            <field name="return_amount"/>
+                <form string="Registro Pago Post-Mortem">
+                    <header>
+                        <button name="action_verification" string="Verificar" type="object"
+                                states="draft" class="oe_highlight"/>
+                        <button name="action_draft" string="Borrador" type="object" states="verification"
+                                class="oe_highlight"/>
+                        <button name="action_paid" string="Registrar Pago" type="object"
+                                states="verify" class="oe_highlight"
+                                confirm="¿Está seguro de registrar este pago? Esta acción es irreversible."/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,verify,paid"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Información del Socio">
+                                <field name="partner_id" options="{'no_create': True}"
+                                       readonly="1"/>
+                                <field name="observation" placeholder="Notas adicionales sobre el deceso..."
+                                       attrs="{'readonly': [('state', '=', 'paid')]}"/>
+                            </group>
+                            <group string="Liquidación y Pago">
+                                <field name="type_payment"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="return_amount" decoration-bf="1"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            </group>
                         </group>
-                        <group string="Datos base">
-<!--                            <field name="since"/>-->
-<!--                            <field name="until"/>-->
-<!--                            <field name="global_amount"/>-->
-                        </group>
-                    </group>
+                        <notebook>
+                            <page string="Beneficiarios" name="beneficiaries" attrs="{'invisible': [('type_payment', '=', 'longevity')]}">
+                                <group>
+                                    <field name="family_ids"
+                                           domain="[('partner_id', '=', partner_id), ('beneficiary', '=', True)]"
+                                           attrs="{'readonly': [('state', '!=', 'draft')]}">
+                                        <tree editable="bottom" create="0" delete="0">
+                                            <field name="name"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Contabilidad" name="accounting">
+                                <group>
+                                    <field name="journal_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="account_move_id" readonly="1"/>
+                                </group>
+                                <group>
+                                    <group string="Debe">
+                                        <field name="account_pm_debe_id"
+                                               attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                        <field name="amount_pm_debe"
+                                               attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    </group>
+                                    <group string="Haber">
+                                        <field name="account_pm_post_mortem_id"
+                                               attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                        <field name="amount_pm_post_mortem"
+                                               attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                        <field name="account_pm_regulation_cup_id"
+                                               attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                        <field name="amount_pm_regulation_cup"
+                                               attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                        <field name="account_pm_inscription_id"
+                                               attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                        <field name="amount_pm_inscription"
+                                               attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="message_ids"/>
+                    </div>
                 </form>
             </field>
         </record>

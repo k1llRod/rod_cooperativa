@@ -20,6 +20,15 @@ class ResConfigSettings(models.TransientModel):
 
     days_grace = fields.Integer(string='Días de gracia')
 
+    # Cuentas para Post-Mortem
+    # Cuenta DEBE (Gasto)
+    account_pm_debe_id = fields.Many2one('account.account', string='Cuenta salida Post-Mortem (Debe)')
+
+    # Cuentas HABER (Distribución/Pago)
+    account_pm_post_mortem_id = fields.Many2one('account.account', string='Cuenta Post-Mortem (Haber)')
+    account_pm_regulation_cup_id = fields.Many2one('account.account', string='Cuenta tasa de regulacion CUP (Haber)')
+    account_pm_inscription_id = fields.Many2one('account.account', string='Cuenta desvincualcion Post-Mortem (Haber)')
+
 
     @api.model
     def get_values(self):
@@ -51,6 +60,10 @@ class ResConfigSettings(models.TransientModel):
                 self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mora_interest', default=0) or False),
             days_grace=int(
                 self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.days_grace', default=0) or False),
+            account_pm_debe_id=int(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_pm_debe_id', default=False) or False),
+            account_pm_post_mortem_id=int(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_pm_post_mortem_id', default=False) or False),
+            account_pm_regulation_cup_id=int(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_pm_regulation_cup_id', default=False) or False),
+            account_pm_inscription_id=int(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_pm_inscription_id', default=False) or False),
         )
         return res
 
@@ -77,5 +90,10 @@ class ResConfigSettings(models.TransientModel):
                                                             str(self.account_monto_meses_interes.id if self.account_monto_meses_interes else ''))
         self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.mora_interest', str(self.mora_interest))
         self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.days_grace', str(self.days_grace))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_pm_debe_id', str(self.account_pm_debe_id.id if self.account_pm_debe_id else ''))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_pm_post_mortem_id', str(self.account_pm_post_mortem_id.id if self.account_pm_post_mortem_id else ''))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_pm_regulation_cup_id', str(self.account_pm_regulation_cup_id.id if self.account_pm_regulation_cup_id else ''))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_pm_inscription_id', str(self.account_pm_inscription_id.id if self.account_pm_inscription_id else ''))
+
 
     #crear get y set

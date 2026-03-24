@@ -21,7 +21,7 @@
                     <field name="date_of_birth"/>
                     <field name="age"/>
                     <field name="nro_celular" />
-                    <field name="partner_id" readonly="1"/>
+<!--                    <field name="partner_id" readonly="1"/>-->
                 </tree>
             </field>
         </record>
