@@ -60,7 +60,7 @@
         'web.assets_backend': [
             "rod_cooperativa/static/src/xml/activity_systray_inherit.xml",
             "rod_cooperativa/static/src/xml/systray_button.xml",
-            "rod_cooperativa/static/src/js/systray_button.js",
+            # "rod_cooperativa/static/src/js/systray_button.js",
         ],
     },
 

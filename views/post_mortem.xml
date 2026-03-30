@@ -9,10 +9,10 @@
                     <header>
                         <button name="action_verification" string="Verificar" type="object"
                                 states="draft" class="oe_highlight"/>
-                        <button name="action_draft" string="Borrador" type="object" states="verification"
-                                class="oe_highlight"/>
+                        <button name="action_draft" string="Borrador" type="object" states="verification,paid" class="oe_highlight"/>
+
                         <button name="action_paid" string="Registrar Pago" type="object"
-                                states="verify" class="oe_highlight"
+                                states="verification" class="oe_highlight"
                                 confirm="¿Está seguro de registrar este pago? Esta acción es irreversible."/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,verify,paid"/>
                     </header>
