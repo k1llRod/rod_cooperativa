@@ -264,7 +264,7 @@ class LoanApplication(models.Model):
     interest_day_rest = fields.Float(string='Interes dias restantes', digits=(6, 2))
     interest_day_rest_bs = fields.Float(string='Interes dias restantes Bs.', digits=(6, 2))
 
-    ending_date_period = fields.Char(string='Fecha de finalizacion', compute='_compute_ending_date_period', store=True)
+    ending_date_period = fields.Date(string='Fecha de finalizacion', compute='_compute_ending_date_period', store=True)
     last_payment_id = fields.Many2one('loan.payment', string='Ultimo pago', compute='_compute_ending_date_period')
     state_last_payment = fields.Char(string='Estado ultimo pago', compute='_compute_ending_date_period')
     
@@ -893,7 +893,8 @@ class LoanApplication(models.Model):
         for rec in self:
             if rec.loan_payment_ids:
                 last_payment = rec.loan_payment_ids[-1]
-                rec.ending_date_period = last_payment.date.strftime('%d/%m/%Y')
+                # rec.ending_date_period = last_payment.date.strftime('%d/%m/%Y')
+                rec.ending_date_period = last_payment.date
                 rec.last_payment_id = last_payment
                 state_value = last_payment.state
                 selection = rec.loan_payment_ids._fields['state'].selection

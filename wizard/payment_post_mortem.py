@@ -36,7 +36,6 @@ class PaymentPostMortem(models.TransientModel):
             'family_ids': [(6, 0, self.family_ids.ids)] if self.type_payment != 'longevity' else [],
             'partner_id': self.partner_id.id,
             'type_payment': self.type_payment,
-            'payment_date': self.payment_date,
             'return_amount': self.return_amount,
             'return_amount_beneficiary': self.return_amount_beneficiary,
             'return_logevity_amount': self.return_logevity_amount,
