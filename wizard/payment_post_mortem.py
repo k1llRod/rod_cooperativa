@@ -25,10 +25,10 @@ class PaymentPostMortem(models.TransientModel):
     def register_payment(self):
         self.ensure_one()
         if self.type_payment == 'post_mortem':
-            if self.return_amount > self.partner_id.balance_post_mortem:
+            if self.return_amount > self.base_amount:
                 raise ValidationError(_('El monto a devolver no puede ser mayor al saldo post mortem'))
         if self.type_payment == 'longevity':
-            if self.return_amount > self.partner_id.balance_longevity:
+            if self.return_amount > self.base_longevity_amount:
                 raise ValidationError(_('El monto a devolver no puede ser mayor al saldo longevidad'))
 
         create = self.env['post.mortem'].create({
