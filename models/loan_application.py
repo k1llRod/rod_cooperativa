@@ -481,6 +481,7 @@ class LoanApplication(models.Model):
             'ministry_defense',
             'debt_settlement_deposit',
             'debt_settlement_mindef',
+            'scheduled',
             'amortization',
             'payment_mora',
         )
