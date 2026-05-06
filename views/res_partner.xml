@@ -6,9 +6,13 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='action_view_sale_order']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
+<!--                <xpath expr="//button[@name='action_view_sale_order']" position="attributes"-->
+<!--                       groups="sales_team.group_sale_salesman">-->
+<!--                    <attribute name="invisible">1</attribute>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//button[@name='action_view_sale_order']" position="attributes">-->
+<!--                    <attribute name="invisible">1</attribute>-->
+<!--                </xpath>-->
                 <xpath expr="//button[@name='action_view_partner_invoices']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
