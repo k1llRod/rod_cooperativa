@@ -908,10 +908,17 @@ class LoanApplication(models.Model):
     def done_loan(self):
         for rec in self:
             if rec.state != 'liquidation_process':
-                raise ValidationError('No se puede finalizar este prestamo.')
+                pending_payments = rec.loan_payment_ids.filtered(
+                    lambda x: x.state in ('draft', 'scheduled')
+                )
+                if pending_payments:
+                    raise ValidationError(_(
+                        'No se puede finalizar el préstamo porque existen %s cuotas pendientes '
+                        '(en borrador o programadas). Debe procesar todos los pagos antes de concluir.'
+                    ) % len(pending_payments))
+
             rec.state = 'done'
-            # rec.loan_payment_ids.write({'state': 'done'})
-            rec.message_post(body="El prestamo ha sido finalizado correctamente.")
-            # Aquí podrías agregar lógica adicional si es necesario, como enviar notificaciones o actualizar otros registros.
+            rec.message_post(
+                body=_("El préstamo ha sido finalizado correctamente tras verificar que no existen pagos pendientes."))
 
 
