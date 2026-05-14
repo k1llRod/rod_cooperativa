@@ -46,11 +46,13 @@
         'wizard/form_finalized_loan.xml',
         'wizard/form_amortization.xml',
         'wizard/loan_refinance_confirm_wizard.xml',
+        'wizard/mindef_loan_report_wizard.xml',
         'views/res_partner.xml',
         'views/report_res_partner.xml',
         'reports/report.xml',
         'reports/loan_application_pdf.xml',
         'reports/payment_statement_loan.xml',
+        'reports/report_mindef_loan_report.xml',
     ],
     "assets": {
         "web.assets_qweb": [

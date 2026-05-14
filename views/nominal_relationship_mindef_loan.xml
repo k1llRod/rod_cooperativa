@@ -9,6 +9,7 @@
                 <tree editable="bottom">
                     <header>
                         <button name="homologate_data_mindef_loan" string="Homologar" type="object" class="oe_highlight"/>
+                        <button name="mindef_loan_report_wizard" string="Reporte mensual" type="object" class="oe_highlight"/>
                     </header>
                     <field name="name" optional="hide"/>
                     <field name="management"/>
@@ -47,32 +48,43 @@
 
         <!-- Vista Formulario nominal.relationship.mindef.contributions  -->
 
-        <record model="ir.ui.view" id="nominal_relationship_mindef_contributions_form_id">
-            <field name="name">nominal.relationship.mindef.loan.form</field>
+        <record id="view_nominal_relationship_mindef_loan_search" model="ir.ui.view">
+            <field name="name">nominal.relationship.mindef.loan.search</field>
             <field name="model">nominal.relationship.mindef.loan</field>
             <field name="arch" type="xml">
-                <form string="Archivador" class="oe_left oe_edit_only oe_form_required">
-                    <sheet>
-                        <div class="oe_title">
-                            <h1>
-                                <field name="name" string="Nombre"/>
-                            </h1>
-                        </div>
-                        <group>
-                            <group>
-                                <field name="organism"/>
-                                <field name="eit_item"/>
-                                <field name="ci"/>
-                                <field name="degree"/>
-                                <field name="mension"/>
-                                <field name="name_complete"/>
-                                <field name="amount_bs"/>
-                                <field name="amount_usd"/>
-                                <field name="date_register"/>
-                            </group>
-                        </group>
-                    </sheet>
-                </form>
+                <search string="Buscar Archivador">
+                    <field name="name"/>
+                    <field name="ci"/>
+                    <field name="name_complete"/>
+                    <field name="personal_code"/>
+
+                    <separator/>
+
+                    <filter string="Fecha de Registro" name="filter_date_register" date="date_register"/>
+
+                    <separator/>
+
+                    <filter string="Borrador" name="state_draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Conciliado" name="state_reconciled" domain="[('state', '=', 'reconciled')]"/>
+                    <filter string="No Conciliado" name="no_reconciled" domain="[('state', '=', 'no_reconciled')]"/>
+                    <separator/>
+                    <filter string="Gestión Actual"
+                            name="current_year"
+                            domain="[('period_process', 'ilike', context_today().strftime('%Y'))]"/>
+
+<!--                    <group expand="0" string="Agrupar por...">-->
+<!--                        <filter string="Organismo" name="group_organism" context="{'group_by': 'organism'}"/>-->
+<!--                        <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>-->
+<!--                        <filter string="Mes de Registro" name="group_date_register"-->
+<!--                                context="{'group_by': 'date_register'}"/>-->
+<!--                        <filter string="Gestión" name="group_management" context="{'group_by': 'management'}"/>-->
+<!--                    </group>-->
+                    <group expand="0" string="Agrupar por...">
+                        <filter string="Periodo (Mes/Año)" name="group_by_period"
+                                context="{'group_by': 'period_process'}"/>
+                        <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
             </field>
         </record>
 
@@ -82,6 +94,14 @@
             <field name="name">Archivador</field>
             <field name="res_model">nominal.relationship.mindef.loan</field>
             <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_nominal_relationship_mindef_loan_search"/>
+            <field name="context">{
+                'search_default_filter_current_year': 1,
+
+                'search_default_group_by_period': 1,
+                'search_default_group_by_state': 1
+                }
+            </field>
         </record>
 
     </data>

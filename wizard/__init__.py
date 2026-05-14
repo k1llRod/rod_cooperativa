@@ -7,3 +7,4 @@ from . import payment_post_mortem
 from . import form_finalized_loan
 from . import form_amortization
 from . import loan_refinance_confirm_wizard
+from . import mindef_loan_report_wizard

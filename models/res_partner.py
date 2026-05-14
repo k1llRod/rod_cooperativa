@@ -142,14 +142,23 @@ class ResPartner(models.Model):
     # Funcion para contar cuantos garantias dio el contacto
     guarantor_count = fields.Integer(compute='_compute_guarantor_count', string='Garantías asignadas')
 
-    @api.depends('guarantor')
+    @api.depends('guarantor')  # Asegúrate de que dependa del campo inverso si existe
     def _compute_guarantor_count(self):
-        guarantor_one = self.env['loan.application'].search([('guarantor_one','=',self.id)])
-        guarantor_two = self.env['loan.application'].search([('guarantor_two', '=', self.id)])
-        loan = len(guarantor_one) if guarantor_one else 0
-        loan1 = len(guarantor_two) if guarantor_two else 0
-        # loan = self.env['loan.application'].search([]).filtered(lambda x: x.guarantor.id == self.id)
-        self.guarantor_count = loan + loan1
+        for rec in self:
+            # Definimos los estados que queremos filtrar
+            target_states = ['approval', 'progress']
+
+            # Realizamos una sola búsqueda contando los registros donde el socio es garante 1 o 2
+            # y el estado es uno de los permitidos
+            count = self.env['loan.application'].search_count([
+                '&',  # Operador AND para la condición de estado
+                '|',  # Operador OR para los garantes
+                ('guarantor_one', '=', rec.id),
+                ('guarantor_two', '=', rec.id),
+                ('state', 'in', target_states)
+            ])
+
+            rec.guarantor_count = count
 
     def action_view_guarantor(self):
         self.ensure_one()

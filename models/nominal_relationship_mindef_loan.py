@@ -39,6 +39,7 @@ class NominalRelationshipMindefLoan(models.Model):
     period_process = fields.Char(string='Periodo de proceso')
     diference = fields.Float(string='Diferencia')
     observation = fields.Char(string='Observacion')
+    loan_payment_id = fields.Many2one('loan.payment', string='Cuota de prestamo')
     state = fields.Selection([('draft', 'Borrador'), ('no_reconciled', 'No conciliado'), ('reconciled', 'Conciliado'),
                               ('observed', 'Observado')], string='Estado')
 
@@ -47,6 +48,16 @@ class NominalRelationshipMindefLoan(models.Model):
             'name': 'Homologar cuotas de prestamos MINDEF',
             'type': 'ir.actions.act_window',
             'res_model': 'homolagate.form.loan',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new',
+        }
+
+    def mindef_loan_report_wizard(self):
+        return {
+            'name': 'Reporte mensual de planillas mindef',
+            'type': 'ir.actions.act_window',
+            'res_model': 'mindef.loan.report.wizard',
             'view_mode': 'form',
             'view_type': 'form',
             'target': 'new',

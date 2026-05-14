@@ -69,3 +69,5 @@ access_mail_activity_loan_admin,mail.activity,mail.model_mail_activity,rod_coope
 access_mail_activity_loan_operator,mail.activity,mail.model_mail_activity,rod_cooperativa.group_rod_cooperativa_operator,1,1,0,0
 access_mail_activity_loan_user,mail.activity,mail.model_mail_activity,rod_cooperativa.group_rod_cooperativa_user,1,0,0,0
 
+access_mindef_loan_report_wizard,mindef.loan.report.wizard,model_mindef_loan_report_wizard,rod_cooperativa.group_rod_cooperativa_administrator,1,1,1,1
+

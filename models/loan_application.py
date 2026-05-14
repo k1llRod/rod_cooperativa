@@ -540,24 +540,29 @@ class LoanApplication(models.Model):
             rec.total_interest_month_surpluy = rec.interest_month_surpluy * rec.months_quantity
 
     @api.onchange('guarantor_one', 'guarantor_two')
-    def _onchange_guarantor_one(self):
+    def _onchange_guarantors(self):
+        # 1. Validar que los garantes no sean iguales entre sí
         if self.guarantor_one and self.guarantor_two:
             if self.guarantor_one == self.guarantor_two:
-                raise ValidationError('No puede seleccionar el mismo garante')
-        if self.guarantor_one == self.partner_id:
-            raise ValidationError('No puede seleccionar el mismo socio como garante')
-        if self.guarantor_one.guarantor_count == 3:
-            raise ValidationError('El garante,' + self.guarantor_one.name + ', ya tiene 3 prestamos')
+                raise ValidationError('No puede seleccionar al mismo garante en ambos campos.')
 
-    @api.onchange('guarantor_two')
-    def _onchange_guarantor_two(self):
-        if self.guarantor_one and self.guarantor_two:
-            if self.guarantor_one == self.guarantor_two:
-                raise ValidationError('No puede seleccionar el mismo garante')
-        if self.guarantor_two == self.partner_id:
-            raise ValidationError('No puede seleccionar el mismo socio como garante')
-        if self.guarantor_two.guarantor_count == 3:
-            raise ValidationError('El garante,' + self.guarantor_two.name + ', ya tiene 3 prestamos')
+        # 2. Validar cada garante individualmente usando un bucle
+        # Esto evita repetir la lógica para el garante 1 y el 2
+        for guarantor in [self.guarantor_one, self.guarantor_two]:
+            if not guarantor:
+                continue
+
+            # El garante no puede ser el mismo socio solicitante
+            if guarantor == self.partner_id:
+                raise ValidationError(
+                    f'El socio {guarantor.name} no puede ser su propio garante.'
+                )
+
+            # Validar el límite de préstamos como garante
+            if guarantor.guarantor_count >= 3:
+                raise ValidationError(
+                    f'El garante {guarantor.name} ya alcanzó el límite máximo de 3 préstamos como garante.'
+                )
 
     def reset_payroll(self):
         for rec in self:

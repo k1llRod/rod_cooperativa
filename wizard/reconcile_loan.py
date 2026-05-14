@@ -51,6 +51,108 @@ class ReconcileLoan(models.TransientModel):
             self.outstanding_payments = len(self.env['partner.payroll'].search(
                 [('outstanding_payments', '>', '0'), ('state', '=', 'process')]))
 
+    # def action_reconcile(self):
+    #     self.ensure_one()
+    #
+    #     period = f"{self.month}/{self.year}"
+    #
+    #     Filing = self.env['nominal.relationship.mindef.loan']
+    #     Loan = self.env['loan.application']
+    #
+    #     # 1) Traer gabinetes (draft) del periodo
+    #     filing_cabinet_ids = Filing.search([
+    #         ('period_process', '=', period),
+    #         ('state', '=', 'draft')
+    #     ])
+    #
+    #     if not filing_cabinet_ids:
+    #         raise UserError(_("No hay registros en borrador para el período %s.") % period)
+    #
+    #     # 2) Indexar por eit_item para búsqueda O(1)
+    #     #    OJO: si hay duplicados por eit_item, esto se pisa. Ver nota al final.
+    #     filing_by_eit = {rec.eit_item: rec for rec in filing_cabinet_ids if rec.eit_item}
+    #
+    #     # 3) Traer préstamos en progreso (una sola vez)
+    #     partner_loan_ids = Loan.search([('state', '=', 'progress')])
+    #     if not partner_loan_ids:
+    #         raise UserError(_("No hay préstamos en progreso para conciliar."))
+    #
+    #     reconciled_count = 0
+    #
+    #     # Estados válidos para “encontré pago del periodo pero aún conciliable”
+    #     conciliable_states = ('scheduled', 'draft', 'pending', 'not_discounted', False)
+    #
+    #     for loan in partner_loan_ids:
+    #         code_contact = loan.partner_id.code_contact
+    #         if not code_contact:
+    #             continue
+    #
+    #         filing = filing_by_eit.get(code_contact)
+    #         if not filing:
+    #             continue
+    #
+    #         # Pagos del período (una sola vez)
+    #         payments_period = loan.loan_payment_ids.filtered(lambda p: p.period == period)
+    #         if not payments_period:
+    #             # No hay pagos del periodo -> marca gabinete como no conciliado
+    #             filing.write({
+    #                 'state': 'no_reconciled',
+    #                 'period_process': period,
+    #                 'date_process': self.date_field_select,
+    #             })
+    #             continue
+    #
+    #         # Pagos del período que estén en estados conciliables
+    #         verify_period = payments_period.filtered(lambda p: p.state in conciliable_states)
+    #         if not verify_period:
+    #             # Si hay pagos del período pero ninguno conciliable -> lo marco igual como no conciliado
+    #             filing.write({
+    #                 'state': 'no_reconciled',
+    #                 'period_process': period,
+    #                 'date_process': self.date_field_select,
+    #             })
+    #             # y marco esos pagos del período como no descontados
+    #             payments_period.write({'state': 'not_discounted'})
+    #             continue
+    #
+    #         # 4) Conciliar: aplicar comisión / retorno solo al/los pagos del periodo conciliables
+    #         vals_payment = {
+    #             # 'commission_min_def': filing.comision,
+    #             'amount_returned_coa': filing.tot2,
+    #         }
+    #         verify_period.write(vals_payment)
+    #         verify_period.confirm_ministry_defense()
+    #         verify_period.write({'state': 'ministry_defense'})
+    #
+    #         # 5) Marcar regularidad del préstamo según tu regla
+    #         filing.write({
+    #             'loan_regular': bool(verify_period.amount_total_bs >= filing.amount_bs),
+    #             'date_process': self.date_field_select,
+    #             'state': 'reconciled',
+    #             'period_process': period,
+    #         })
+    #
+    #         reconciled_count += 1
+    #
+    #     # 6) Resumen final correcto según estados reales
+    #     total = len(filing_cabinet_ids)
+    #     no_reconciled = len(filing_cabinet_ids.filtered(lambda r: r.state != 'reconciled'))
+    #
+    #     context = {
+    #         'default_message': _(
+    #             "Se han conciliado %s registros de %s"
+    #         ) % (reconciled_count, total)
+    #     }
+    #
+    #     return {
+    #         'name': _('Registros conciliados'),
+    #         'type': 'ir.actions.act_window',
+    #         'res_model': 'alert.message',
+    #         'view_mode': 'form',
+    #         'target': 'new',
+    #         'context': context,
+    #     }
+
     def action_reconcile(self):
         self.ensure_one()
 
@@ -69,17 +171,14 @@ class ReconcileLoan(models.TransientModel):
             raise UserError(_("No hay registros en borrador para el período %s.") % period)
 
         # 2) Indexar por eit_item para búsqueda O(1)
-        #    OJO: si hay duplicados por eit_item, esto se pisa. Ver nota al final.
         filing_by_eit = {rec.eit_item: rec for rec in filing_cabinet_ids if rec.eit_item}
 
-        # 3) Traer préstamos en progreso (una sola vez)
+        # 3) Traer préstamos en progreso
         partner_loan_ids = Loan.search([('state', '=', 'progress')])
         if not partner_loan_ids:
             raise UserError(_("No hay préstamos en progreso para conciliar."))
 
         reconciled_count = 0
-
-        # Estados válidos para “encontré pago del periodo pero aún conciliable”
         conciliable_states = ('scheduled', 'draft', 'pending', 'not_discounted', False)
 
         for loan in partner_loan_ids:
@@ -91,10 +190,10 @@ class ReconcileLoan(models.TransientModel):
             if not filing:
                 continue
 
-            # Pagos del período (una sola vez)
+            # Pagos del período
             payments_period = loan.loan_payment_ids.filtered(lambda p: p.period == period)
+
             if not payments_period:
-                # No hay pagos del periodo -> marca gabinete como no conciliado
                 filing.write({
                     'state': 'no_reconciled',
                     'period_process': period,
@@ -104,29 +203,36 @@ class ReconcileLoan(models.TransientModel):
 
             # Pagos del período que estén en estados conciliables
             verify_period = payments_period.filtered(lambda p: p.state in conciliable_states)
+
             if not verify_period:
-                # Si hay pagos del período pero ninguno conciliable -> lo marco igual como no conciliado
                 filing.write({
                     'state': 'no_reconciled',
                     'period_process': period,
                     'date_process': self.date_field_select,
                 })
-                # y marco esos pagos del período como no descontados
                 payments_period.write({'state': 'not_discounted'})
                 continue
 
-            # 4) Conciliar: aplicar comisión / retorno solo al/los pagos del periodo conciliables
+            # --- AQUÍ CAPTURAMOS EL PAGO ---
+            # Tomamos el primer pago encontrado del periodo
+            pago_encontrado = verify_period[0]
+
+            # 4) Conciliar pago
             vals_payment = {
-                # 'commission_min_def': filing.comision,
                 'amount_returned_coa': filing.tot2,
             }
-            verify_period.write(vals_payment)
-            verify_period.confirm_ministry_defense()
-            verify_period.write({'state': 'ministry_defense'})
+            pago_encontrado.write(vals_payment)
+            pago_encontrado.confirm_ministry_defense()
+            pago_encontrado.write({'state': 'ministry_defense'})
 
-            # 5) Marcar regularidad del préstamo según tu regla
+            # 5) Marcar archivador y VINCULAR loan_payment_id
+            # Calculamos la diferencia: Monto Mindef - Monto Sistema
+            diferencia_calculada = filing.amount_bs - pago_encontrado.amount_total_bs
+
             filing.write({
-                'loan_regular': bool(verify_period.amount_total_bs >= filing.amount_bs),
+                'loan_payment_id': pago_encontrado.id,  # <--- CAPTURA DEL ID
+                'diference': diferencia_calculada,  # <--- ALMACENA LA DIFERENCIA
+                'loan_regular': bool(pago_encontrado.amount_total_bs >= filing.amount_bs),
                 'date_process': self.date_field_select,
                 'state': 'reconciled',
                 'period_process': period,
@@ -134,14 +240,10 @@ class ReconcileLoan(models.TransientModel):
 
             reconciled_count += 1
 
-        # 6) Resumen final correcto según estados reales
+        # 6) Resumen final
         total = len(filing_cabinet_ids)
-        no_reconciled = len(filing_cabinet_ids.filtered(lambda r: r.state != 'reconciled'))
-
         context = {
-            'default_message': _(
-                "Se han conciliado %s registros de %s"
-            ) % (reconciled_count, total)
+            'default_message': _("Se han conciliado %s registros de %s") % (reconciled_count, total)
         }
 
         return {
