@@ -89,7 +89,7 @@ class LoanPayment(models.Model):
         ('refinanced', 'Refinanciado'),
         ('expansion', 'Ampliación'),
         ('cancel', 'Cancelado')
-    ], string='Flag state', related='loan_application_ids.state')
+    ], string='Flag state', related='loan_application_ids.state',store=True)
 
     capital_index_initial_bolivianos = fields.Monetary(string='Capital BS', compute='_compute_bolivianos', store=True,
                                                     digits=(16, 2),currency_field='currency_id')

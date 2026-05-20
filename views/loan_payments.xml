@@ -259,30 +259,46 @@
         <record id="loan_payment_view_search_cooperativa" model="ir.ui.view">
             <field name="name">loan.payment.view.search.cooperativa</field>
             <field name="model">loan.payment</field>
-            <!--            <field name="inherit_id" ref="base.view_res_partner_filter"/>-->
             <field name="arch" type="xml">
                 <search string="Buscar asociados">
-                    <field name="code_contact"/>
+                    <field name="code_contact" string="Código Socio"/>
                     <field name="ci_partner" string="C.I."/>
-                    <field name="partner_id"/>
-<!--                    <filter name="quantity_capital_initial"-->
-<!--                            string="Capital inicial"-->
-<!--                            domain="[('capital_initial', '!=', 0)]"/>-->
-                    <separator />
-<!--                    <filter name="partner_active_service"-->
-<!--                            string="Asociados servicio activo"-->
-<!--                            domain="[('partner_status_especific', '=', 'active_service')]"/>-->
-<!--                    <filter name="partner_passive_reserve_a"-->
-<!--                            string="Asociados Pasivo categoria 'A'"-->
-<!--                            domain="[('partner_status_especific','=','passive_reserve_a')]"/>-->
-<!--                    <filter name="partner_passive_reserve_b"-->
-<!--                            string="Asociados Pasivo categoria 'B'"-->
-<!--                            domain="[('partner_status_especific','=','passive_reserve_b')]"/>-->
-                    <group expand="0" string="Group By">
-                        <filter string="Por asociado"
-                                name="group_partner_status"
-                                context="{'group_by': 'partner_id'}"/>
+                    <field name="partner_id" string="Socio"/>
+                    <field name="name" string="ID Pago"/>
 
+<!--                    <field name="flag_state" string="Estado del préstamo (Flag)"/>-->
+
+                    <separator/>
+                    <filter string="Estado del prestamo " name="flag_state" />
+                    <filter string="Fecha Registro" name="filter_date" date="date"/>
+                    <filter string="Fecha de Pago" name="filter_date_payment" date="date_payment"/>
+
+                    <separator/>
+
+                    <filter string="Borrador" name="state_draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Confirmado (Transferencia)" name="state_transfer"
+                            domain="[('state', '=', 'transfer')]"/>
+                    <filter string="Ministerio de Defensa" name="state_mindef"
+                            domain="[('state', '=', 'ministry_defense')]"/>
+                    <filter string="No Descontado" name="state_not_discounted"
+                            domain="[('state', '=', 'not_discounted')]"/>
+
+                    <separator/>
+
+                    <group expand="0" string="Agrupar Por">
+<!--                        <filter string="Periodo / Estado"-->
+<!--                                name="group_period_state"-->
+<!--                                context="{'group_by': ['period', 'state']}"/>-->
+                        <filter string="Estado del Préstamo (Flag)"
+                                name="group_flag_state"
+                                context="{'group_by': 'flag_state'}"/>
+                        <separator/>
+<!--                        <filter string="Marcados (Flag)" name="flag_active" domain="[('flag_state', '=', True)]"/>-->
+                        <filter string="Periodo" name="group_period" context="{'group_by': 'period'}"/>
+                        <filter string="Fecha Registro" name="group_date" context="{'group_by': 'date'}"/>
+                        <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Asociado" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                        <filter string="Tipo de Préstamo" name="group_type" context="{'group_by': 'type_loan'}"/>
                     </group>
                 </search>
             </field>

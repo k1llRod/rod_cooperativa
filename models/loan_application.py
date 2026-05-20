@@ -752,6 +752,8 @@ class LoanApplication(models.Model):
             record._onchange_interest_day_rest()
             record._onchange_amount_devolution()
             record._compute_balance_capital_bs()
+            record._compute_ending_date_period()
+
 
     def finalized_loan(self):
         if self.state != 'progress':
@@ -894,7 +896,7 @@ class LoanApplication(models.Model):
     #     for rec in self:
     #         percentage_min_def = rec.fixed_fee * rec.amount_min_def
     #         rec.total_fixed_fee = rec.fixed_fee + percentage_min_def
-    @api.depends('loan_payment_ids')
+    @api.depends('loan_payment_ids','date_approval')
     def _compute_ending_date_period(self):
         for rec in self:
             if rec.loan_payment_ids:

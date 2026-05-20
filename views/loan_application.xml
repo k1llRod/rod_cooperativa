@@ -428,7 +428,7 @@
             <field name="name">loan.application.tree.custom</field>
             <field name="model">loan.application</field>
             <field name="arch" type="xml">
-                <tree string="Solicitud de prestamos">
+                <tree string="Solicitud de prestamos" default_order="name asc">
                     <field name="category_partner" string="GRADO"/>
                     <field name="partner_id" string="APELLIDOS Y NOMBRES"/>
                     <field name="partner_status_especific" string="TIPO DE ASOCIADO"/>
@@ -461,12 +461,13 @@
         </record>
 
         <record id="action_loan_application_custom" model="ir.actions.act_window">
-            <field name="name">Reporte de prestamos</field>
+            <field name="name">Reporte de préstamos en Progreso</field>
             <field name="res_model">loan.application</field>
             <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="view_loan_application_search_custom"/>
-<!--            <field name="context">{'search_default_state_progress': 1}</field>-->
-            <field name="view_id" ref="rod_cooperativa.view_loan_application_tree_custom"/>
+            <field name="domain">[('state', '=', 'progress')]</field>
+            <field name="view_id" ref="view_loan_application_tree_custom"/>
+            <field name="search_view_id" ref="loan_application_view_search_cooperativa"/>
+            <field name="context">{}</field>
         </record>
     </data>
 </odoo>
