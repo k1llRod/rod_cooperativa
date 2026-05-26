@@ -586,7 +586,7 @@ class LoanApplication(models.Model):
                 )
 
             # Validar el límite de préstamos como garante
-            if guarantor.guarantor_count >= 3:
+            if guarantor.guarantor_count >= 4:
                 raise ValidationError(
                     f'El garante {guarantor.name} ya alcanzó el límite máximo de 3 préstamos como garante.'
                 )
