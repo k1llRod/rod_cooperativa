@@ -121,6 +121,11 @@
                                 attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'liquidation_process')]}"
                                 groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
                                 />
+                        <button name="debt_settlement_contributions" string="Liquidacion de deuda con aportes" type="object"
+                                class="oe_highlight"
+                                attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'liquidation_process')]}"
+                                groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
+                                />
                         <button name="confirm_ministry_defense_warrantor" string="Por ministerio de defensa garantes" type="object"
                                 class="oe_highlight"
                                 attrs="{'invisible': [('flag_collect_guarantors', '!=', True)]}"

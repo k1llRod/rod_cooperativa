@@ -289,56 +289,82 @@ class LoanApplication(models.Model):
             rec.amount_loan = rec.amount_loan_dollars * rec.value_dolar
 
     def approve_loan(self):
-        for rec in self:
-            if rec.letter_of_request == False: raise ValidationError('Falta carta de solicitud')
-            if rec.contact_request == False: raise ValidationError('Falta solicitud de prestamo')
-            if rec.last_copy_paid_slip == False: raise ValidationError('Falta ultima copia de boleta de pago')
-            # if rec.ci_fothocopy == False: raise ValidationError('Falta fotocopia de CI')
-            # if rec.photocopy_military_ci == False: raise ValidationError('Falta fotocopia de carnet militar')
-            # rec.date_approval = fields.Date.today()
-            if rec.date_approval < rec.date_application: raise ValidationError(
-                'La FECHA DE APROBACION no puede ser anterior a la FECHA DE SOLICITUD')
-            for i in range(1, rec.months_quantity + 1):
-                commission_min_def = float(
-                    self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.commission_min_def'))
-                # amount_commission = (commission_min_def / 100) * rec.amount_total_bs
-                coa_commission = (1.25 / 100) * rec.fixed_fee
-                percentage_amount_min_def = rec.fixed_fee * rec.amount_min_def
-                if len(rec.loan_payment_ids) == 0:
-                    capital_init = rec.amount_loan_dollars
-                    # date_payment = datetime.today()
-                    date_payment = rec.date_approval
-                    if rec.special_case == True:
-                        if date_payment.day >= 1 and date_payment.day <= 15:
-                            date_payment = rec.date_approval
-                        else:
-                            raise ValidationError('La solicitud de prestamo esta fuera de rango')
-                    else:
-                        date_pivot = date_payment
-                        date_payment = date_payment.replace(day=1)
-                        date_payment = date_payment.replace(
-                            month=date_payment.month + 1 if date_pivot.month < 12 else 1)
-                        date_payment = date_payment.replace(
-                            year=date_payment.year + 1 if date_pivot.month == 12 else date_payment.year)
-                else:
-                    capital_init = rec.loan_payment_ids[i - 2].balance_capital
-                    date_payment = rec.loan_payment_ids[i - 2].date
-                    date_payment = date_payment + relativedelta(months=+1)
-                    date_payment = date_payment.replace(day=1)
+        commission_obj = self.env['ir.config_parameter'].sudo()
+        commission_min_def = float(commission_obj.get_param('rod_cooperativa.commission_min_def', default=0.0))
 
+        for rec in self:
+            # =================================================================
+            # CRITICAL CANDADO: Control de duplicación del plan de pagos
+            # =================================================================
+            if rec.loan_payment_ids:
+                raise ValidationError(
+                    f"¡Acción Cancelada! Ya existe un plan de pagos registrado para la solicitud '{rec.name}'.\n\n"
+                    f"Si desea volver a generar las cuotas desde cero, primero debe eliminar manualmente "
+                    f"las cuotas actuales que se encuentran en la parte inferior."
+                )
+
+            # 1. Validaciones de Documentación Obligatoria
+            if not rec.letter_of_request:
+                raise ValidationError('Falta la carta de solicitud.')
+            if not rec.contact_request:
+                raise ValidationError('Falta la solicitud de préstamo.')
+            if not rec.last_copy_paid_slip:
+                raise ValidationError('Falta la última copia de la boleta de pago.')
+
+            # 2. Gestión de Fechas de Aprobación
+            if not rec.date_approval:
+                rec.date_approval = fields.Date.today()
+
+            if rec.date_approval < rec.date_application:
+                raise ValidationError('La FECHA DE APROBACIÓN no puede ser anterior a la FECHA DE SOLICITUD.')
+
+            # 3. Preparación de variables de cálculo de comisiones
+            coa_commission = (1.25 / 100) * rec.fixed_fee
+            percentage_amount_min_def = rec.fixed_fee * rec.amount_min_def
+
+            # 4. Inicialización de la Fecha del Primer Pago
+            date_payment = rec.date_approval
+
+            if rec.special_case:
+                if not (1 <= date_payment.day <= 15):
+                    raise ValidationError(
+                        'La solicitud de préstamo por caso especial está fuera del rango permitido (Días 1 al 15).')
+            else:
+                # Comportamiento estándar: El primer pago va al día 1 del mes siguiente de forma segura
+                date_payment = (date_payment + relativedelta(months=+1)).replace(day=1)
+
+            capital_init = rec.amount_loan_dollars
+
+            # 5. Generación Lineal de Cuotas Predictivas
+            for i in range(1, rec.months_quantity + 1):
+
+                # Para la cuota 2 en adelante, calculamos el capital basado en la cuota generada previa
+                if i > 1:
+                    cuota_anterior = rec.loan_payment_ids.filtered(lambda p: p.name == f'Cuota {i - 1}')
+                    if cuota_anterior:
+                        capital_init = cuota_anterior[0].balance_capital
+
+                    # Avanzar un mes exacto al día 1
+                    date_payment = (date_payment + relativedelta(months=+1)).replace(day=1)
+
+                # Creación del Registro de Pago en la base de datos
                 self.env['loan.payment'].create({
-                    'name': 'Cuota ' + str(i),
+                    'name': f'Cuota {i}',
                     'date': date_payment,
                     'capital_initial': capital_init,
                     'mount': rec.fixed_fee,
                     'loan_application_ids': rec.id,
                     'percentage_amount_min_def': percentage_amount_min_def,
                     'interest_month_surpluy': rec.interest_month_surpluy,
-                    # 'commission_min_def': amount_commission,
                     'coa_commission': coa_commission,
                     'state': 'draft',
                 })
-            self.progress()
+
+                # Forzar refresco de la relación en el bucle para que Odoo reconozca secuencialmente la cuota nueva
+                rec.invalidate_cache(['loan_payment_ids'], [rec.id])
+
+            # 6. Cambiar estado de la solicitud a progreso
+            rec.progress()
 
     def create_activity(self, activity_type, summary, user_id, note, deadline):
         if activity_type:
@@ -481,6 +507,7 @@ class LoanApplication(models.Model):
             'ministry_defense',
             'debt_settlement_deposit',
             'debt_settlement_mindef',
+            'debt_settlement_contributions',
             'scheduled',
             'amortization',
             'payment_mora',

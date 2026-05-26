@@ -76,6 +76,7 @@ class LoanPayment(models.Model):
          ('not_discounted','No descontado'),
          ('debt_settlement_mindef', 'Liquidacion de deuda MINDEF'),
          ('debt_settlement_deposit', 'Liquidacion de deuda por deposito'),
+         ('debt_settlement_contributions','Liquidacion de deuda con aportes'),
          ('amortization','Amortizacion'),
          ('payment_mora','Descuento con mora'),
          ('scheduled_mora','Programado con mora')], string='Estado',
@@ -253,6 +254,11 @@ class LoanPayment(models.Model):
         for record in self:
             if record.state == 'draft':
                 record.write({'state': 'debt_settlement_deposit'})
+
+    def debt_settlement_contributions(self):
+        for record in self:
+            if record.state == 'draft':
+                record.write({'state': 'debt_settlement_contributions'})
 
     @api.onchange('amount_payment')
     def _onchange_amount_payment(self):

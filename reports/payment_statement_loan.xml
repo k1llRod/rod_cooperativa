@@ -127,10 +127,10 @@
                                         </td>
                                         <td>
                                             <t t-if="o.balance_capital_scheduled &gt; 0">
-                                                <span t-esc="round(o.balance_capital_scheduled,2)" style="color:red;"/>
+                                                <span t-field="o.balance_capital_scheduled" style="color:red;"/>
                                             </t>
                                             <t t-else="">
-                                                <span t-esc="round(o.balance_capital,2)"></span>
+                                                <span t-esc="o.balance_capital"></span>
                                             </t>
                                         </td>
                                     </tr>
@@ -145,10 +145,10 @@
                                         </td>
                                         <td>
                                             <t t-if="o.balance_capital_scheduled &gt; 0">
-                                                <span t-esc="round(o.balance_total_interest_month_scheduled,2)" style="color:red;"/>
+                                                <span t-field="o.balance_total_interest_month_scheduled" style="color:red;"/>
                                             </t>
                                             <t t-else="">
-                                                <span t-esc="round(o.balance_total_interest_month, 2)"></span>
+                                                <span t-field="o.balance_total_interest_month"></span>
                                             </t>
                                         </td>
                                     </tr>
@@ -164,10 +164,20 @@
                                         </td>
                                         <td>
                                             <t t-if="o.balance_capital_scheduled &gt; 0">
-                                                <span t-esc="round(o.balance_capital_scheduled + o.balance_total_interest_month_scheduled,2)" style="color:red;"/>
+                                                <t t-set="total_usd_scheduled"
+                                                   t-value="(o.balance_capital_scheduled or 0.0) + (o.balance_total_interest_month_scheduled or 0.0)"/>
+                                                <span style="color:red;">
+                                                    <t t-esc="o.currency_id_dollar.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(total_usd_scheduled).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
                                             </t>
                                             <t t-else="">
-                                                <span t-esc="round(o.balance_capital + o.balance_total_interest_month,2)"></span>
+                                                <t t-set="total_usd"
+                                                   t-value="(o.balance_capital or 0.0) + (o.balance_total_interest_month or 0.0)"/>
+                                                <span>
+                                                    <t t-esc="o.currency_id_dollar.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(total_usd).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
                                             </t>
                                         </td>
                                     </tr>
@@ -183,12 +193,21 @@
                                         </td>
                                         <td>
                                             <t t-if="o.balance_capital_scheduled &gt; 0">
-                                                <span t-esc="round(o.balance_capital_scheduled_bs + o.balance_total_interest_month_scheduled_bs,2)" style="color:red;"/>
+                                                <t t-set="total_bs_scheduled"
+                                                   t-value="(o.balance_capital_scheduled_bs or 0.0) + (o.balance_total_interest_month_scheduled_bs or 0.0)"/>
+                                                <span style="color:red;">
+                                                    <t t-esc="o.company_id.currency_id.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(total_bs_scheduled).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
                                             </t>
                                             <t t-else="">
-                                                <span t-esc="round(o.balance_capital_bs + o.balance_total_interest_month_bs, 2)"></span>
+                                                <t t-set="total_bs"
+                                                   t-value="(o.balance_capital_bs or 0.0) + (o.balance_total_interest_month_bs or 0.0)"/>
+                                                <span>
+                                                    <t t-esc="o.company_id.currency_id.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(total_bs).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
                                             </t>
-
                                         </td>
                                     </tr>
 <!--                                    <tr>-->
@@ -241,7 +260,7 @@
                                     <tbody style="font-size:12px;">
                                         <tr t-set="acumulador" t-value="0"/>
                                         <t t-set="line_number" t-value="0"/>
-                                        <t t-foreach="o.loan_payment_ids.filtered(lambda x:x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'amortization' or x.state=='scheduled' or x.state=='ministry_defense_warrantor' or x.state=='payment_mora' or x.state=='scheduled_mora')" t-as="p">
+                                        <t t-foreach="o.loan_payment_ids.filtered(lambda x:x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'debt_settlement_contributions' or x.state == 'amortization' or x.state=='scheduled' or x.state=='ministry_defense_warrantor' or x.state=='payment_mora' or x.state=='scheduled_mora')" t-as="p">
                                             <style>
                                                 .table th, .table td {
                                                     padding: 0px;
