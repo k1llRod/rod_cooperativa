@@ -6,18 +6,19 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-<!--                <xpath expr="//button[@name='action_view_sale_order']" position="attributes"-->
-<!--                       groups="sales_team.group_sale_salesman">-->
-<!--                    <attribute name="invisible">1</attribute>-->
-<!--                </xpath>-->
-<!--                <xpath expr="//button[@name='action_view_sale_order']" position="attributes">-->
-<!--                    <attribute name="invisible">1</attribute>-->
-<!--                </xpath>-->
+                <!--                <xpath expr="//button[@name='action_view_sale_order']" position="attributes"-->
+                <!--                       groups="sales_team.group_sale_salesman">-->
+                <!--                    <attribute name="invisible">1</attribute>-->
+                <!--                </xpath>-->
+                <!--                <xpath expr="//button[@name='action_view_sale_order']" position="attributes">-->
+                <!--                    <attribute name="invisible">1</attribute>-->
+                <!--                </xpath>-->
                 <xpath expr="//button[@name='action_view_partner_invoices']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='name'][2]" position="replace">
-                    <field name="name" placeholder="p. ej. JUAN PEREZ" required="1" attrs="{'readonly': [('name_contact','=', False)]}"/>
+                    <field name="name" placeholder="p. ej. JUAN PEREZ" required="1"
+                           attrs="{'readonly': [('name_contact','=', False)]}"/>
                 </xpath>
 
                 <xpath expr="//field[@name='parent_id']" position="attributes">
@@ -96,11 +97,11 @@
                 </xpath>
 
                 <xpath expr="//sheet/notebook/page[1]" position="before">
-                    <page string="Familiares" >
+                    <page string="Familiares">
                         <field name="family_id">
                             <tree string="Familiar">
                                 <field name="name"/>
-                                <field name="beneficiary" />
+                                <field name="beneficiary"/>
                                 <field name="kinship"/>
                                 <field name="date_of_birth"/>
                                 <field name="age"/>
@@ -127,6 +128,13 @@
                 <xpath expr="//sheet/group/group[4]" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+<!--                <xpath expr="//header" position="inside">-->
+<!--                    <button name="action_generate_birthday_card"-->
+<!--                            string="Generar Tarjeta Cumpleaños"-->
+<!--                            type="object"-->
+<!--                            class="oe_highlight"-->
+<!--                            icon="fa-birthday-cake"/>-->
+<!--                    </xpath>-->
             </field>
         </record>
 
@@ -162,7 +170,7 @@
                         <field name="vat" string="C.I."/>
                         <field name="name"/>
                         <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
-                        <separator />
+                        <separator/>
                         <filter name="partner_active_service"
                                 string="Asociados servicio activo"
                                 domain="[('partner_status_especific', '=', 'active_service')]"/>
@@ -174,30 +182,30 @@
                                 domain="[('partner_status_especific','=','passive_reserve_b')]"/>
                         <group expand="0" string="Group By">
                             <filter string="Tipos de asociados"
-                                name="group_partner_status"
-                                context="{'group_by': 'partner_status_especific'}"/>
+                                    name="group_partner_status"
+                                    context="{'group_by': 'partner_status_especific'}"/>
                             <filter string="Estado de asociados"
-                                name="group_partner_status"
-                                context="{'group_by': 'state'}"/>
-                            <separator />
+                                    name="group_partner_status"
+                                    context="{'group_by': 'state'}"/>
+                            <separator/>
                             <filter string="Por año de egreso"
-                                name="group_partner_status"
-                                context="{'group_by': 'graduation_year'}"/>
+                                    name="group_partner_status"
+                                    context="{'group_by': 'graduation_year'}"/>
                             <filter string="Por años de servicio"
-                                name="group_partner_status"
-                                context="{'group_by': 'year_service'}"/>
+                                    name="group_partner_status"
+                                    context="{'group_by': 'year_service'}"/>
                             <separator string="test"/>
                             <filter string="Por especialidad"
-                                name="group_partner_speciality"
-                                context="{'group_by':'specialty'}"/>
-                            <separator />
+                                    name="group_partner_speciality"
+                                    context="{'group_by':'specialty'}"/>
+                            <separator/>
                             <filter string="Lugar de nacimiento"
-                                name="group_state_id"
-                                context="{'group_by':'state_id'}"/>
-                            <separator />
+                                    name="group_state_id"
+                                    context="{'group_by':'state_id'}"/>
+                            <separator/>
                             <filter string="Baja por"
-                                name="group_type_disengagements"
-                                context="{'group_by':'type_disengagements'}"/>
+                                    name="group_type_disengagements"
+                                    context="{'group_by':'type_disengagements'}"/>
                         </group>
                     </search>
                 </xpath>

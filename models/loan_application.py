@@ -683,94 +683,119 @@ class LoanApplication(models.Model):
             rec.state = 'approval'
 
     def approve_egreso(self):
-        val = []
-        for record in self:
-            data = (0, 0, {'account_id': record.account_loan_id.id,
-                           'debit': record.amount_loan, 'credit': 0,
-                           'partner_id': record.partner_id.id,
-                           'amount_currency': 0
-                           })
-            val.append(data)
-            if record.loan_historical_coaa > 0:
-                amount = record.amount_loan - record.loan_historical_coaa
-                # data = (0, 0, {'account_id': record.account_loan_id.id,
-                #                          'debit': record.amount_loan, 'credit': 0, 'partner_id': record.partner_id.id,
-                #                          'amount_currency': 0
-                #                          })
-                # val.append(data)
-                data = (0, 0, {'account_id': record.account_loan_id.id,
-                               'debit': 0, 'credit': record.loan_historical_coaa, 'partner_id': record.partner_id.id,
-                               'name': 'COAA',
-                               'amount_currency': 0
-                               })
-                val.append(data)
-                data = (0, 0, {'account_id': record.account_loan_id.id,
-                               'debit': 0, 'credit': amount, 'partner_id': record.partner_id.id,
-                               'name': 'BENEFICIARIO',
-                               'amount_currency': 0
-                               })
-                val.append(data)
-            else:
-                if record.refinance_loan_id:
-                    amount_amortizacion = record.amount_loan - record.amount_devolution_bs - record.interest_day_rest_bs
-                    amount_loan = record.amount_loan - (amount_amortizacion + record.interest_day_rest_bs)
+            val = []
+            account_move_id = False
 
-                    data = (0, 0, {'account_id': record.account_egreso_id.id,
-                                   'debit': 0, 'credit': amount_loan,
-                                   # 'partner_id': record.partner_id.id,
+            for record in self:
+                # =================================================================
+                # ALERTA DE ESTADO: Validar que la solicitud esté "En Proceso"
+                # =================================================================
+                if record.state != 'progress':
+                    raise ValidationError(_(
+                        "No se puede generar el asiento de egreso. El préstamo "
+                        "debe encontrarse estrictamente en estado 'En Proceso' "
+                        "(actualmente está en '%s')."
+                    ) % dict(self._fields['state'].selection).get(record.state, record.state))
+
+                # =================================================================
+                # CANDADO DE DUPLICADOS: Si el asiento ya existe, evita recrearlo
+                # =================================================================
+                if record.accounting_entry_id:
+                    account_move_id = record.accounting_entry_id
+                    continue  # Salta la creación para este registro y evita duplicados
+
+                data = (0, 0, {'account_id': record.account_loan_id.id,
+                               'debit': record.amount_loan, 'credit': 0,
+                               'partner_id': record.partner_id.id,
+                               'amount_currency': 0
+                               })
+                val.append(data)
+
+                if record.loan_historical_coaa > 0:
+                    amount = record.amount_loan - record.loan_historical_coaa
+                    data = (0, 0, {'account_id': record.account_loan_id.id,
+                                   'debit': 0, 'credit': record.loan_historical_coaa, 'partner_id': record.partner_id.id,
+                                   'name': 'COAA',
                                    'amount_currency': 0
                                    })
                     val.append(data)
-                    data = (0, 0, {'account_id': record.account_monto_refinanciamiento.id,
-                                   'debit': 0, 'credit': amount_amortizacion,
-                                   # 'partner_id': record.partner_id.id,
-                                   'amount_currency': 0
-                                   })
-                    val.append(data)
-                    data = (0, 0, {'account_id': record.account_monto_meses_interes.id,
-                                   'debit': 0, 'credit': record.interest_day_rest_bs,
-                                   # 'partner_id': record.partner_id.id,
+                    data = (0, 0, {'account_id': record.account_loan_id.id,
+                                   'debit': 0, 'credit': amount, 'partner_id': record.partner_id.id,
+                                   'name': 'BENEFICIARIO',
                                    'amount_currency': 0
                                    })
                     val.append(data)
                 else:
-                    data = (0, 0, {'account_id': record.account_egreso_id.id,
-                                   'debit': 0, 'credit': record.amount_loan,
-                                   # 'partner_id': record.partner_id.id,
-                                   'amount_currency': 0
-                                   })
-                    val.append(data)
-            if record.with_guarantor == 'loan_guarantor':
-                glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(record.amount_loan_dollars) + " INT " + str(round(record.monthly_interest,2))+"% " + "F.CONTIGENCIA: " + str(round(record.contingency_fund,2)) + "% PLAZO: " + str(record.months_quantity) + " MESES EXCED " + str(record.surplus_days) + " DIAS "+ "CUOTA FIJA $US: "+ str(round(record.loan_payment_ids[0].amount_total,2)) +" GARANTES " + record.guarantor_one.category_partner_id.code_loan + " " +record.guarantor_one.name + " "+ record.guarantor_two.category_partner_id.code_loan + " " + record.guarantor_two.name
+                    if record.refinance_loan_id:
+                        amount_amortizacion = record.amount_loan - record.amount_devolution_bs - record.interest_day_rest_bs
+                        amount_loan = record.amount_loan - (amount_amortizacion + record.interest_day_rest_bs)
+
+                        data = (0, 0, {'account_id': record.account_egreso_id.id,
+                                       'debit': 0, 'credit': amount_loan,
+                                       'amount_currency': 0
+                                       })
+                        val.append(data)
+                        data = (0, 0, {'account_id': record.account_monto_refinanciamiento.id,
+                                       'debit': 0, 'credit': amount_amortizacion,
+                                       'amount_currency': 0
+                                       })
+                        val.append(data)
+                        data = (0, 0, {'account_id': record.account_monto_meses_interes.id,
+                                       'debit': 0, 'credit': record.interest_day_rest_bs,
+                                       'amount_currency': 0
+                                       })
+                        val.append(data)
+                    else:
+                        data = (0, 0, {'account_id': record.account_egreso_id.id,
+                                       'debit': 0, 'credit': record.amount_loan,
+                                       'amount_currency': 0
+                                       })
+                        val.append(data)
+
+                if record.with_guarantor == 'loan_guarantor':
+                    glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(
+                        record.amount_loan_dollars) + " INT " + str(
+                        round(record.monthly_interest, 2)) + "% " + "F.CONTIGENCIA: " + str(
+                        round(record.contingency_fund, 2)) + "% PLAZO: " + str(
+                        record.months_quantity) + " MESES EXCED " + str(
+                        record.surplus_days) + " DIAS " + "CUOTA FIJA $US: " + str(
+                        round(record.loan_payment_ids[0].amount_total,
+                              2)) + " GARANTES " + record.guarantor_one.category_partner_id.code_loan + " " + record.guarantor_one.name + " " + record.guarantor_two.category_partner_id.code_loan + " " + record.guarantor_two.name
+                else:
+                    glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(
+                        record.amount_loan_dollars) + " INT " + str(
+                        round(record.monthly_interest, 2)) + "% " + "F.CONTIGENCIA: " + str(
+                        round(record.contingency_fund, 2)) + "% PLAZO: " + str(
+                        record.months_quantity) + " MESES EXCED " + str(
+                        record.surplus_days) + " DIAS " + "CUOTA FIJA $US: " + str(
+                        round(record.loan_payment_ids[0].amount_total, 2))
+
+                move_vals = {
+                    "date": record.date_approval,
+                    "journal_id": record.journal_id.id,
+                    "ref": "PRESTAMOS ASIGNADO AL ASOCIADO" + " " + record.partner_id.name + " EN LA FECHA " + str(
+                        record.date_approval),
+                    "glosa": glosa,
+                    "state": "draft",
+                    "line_ids": val,
+                }
+
+                account_move_id = record.env['account.move'].create(move_vals)
+                record.accounting_entry_id = account_move_id.id
+                account_move_id.loan_application_id = record.id
+
+            if account_move_id:
+                return {
+                    'name': 'Asiento de Egreso de Préstamo',
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'account.move',
+                    'view_mode': 'form',
+                    'res_id': account_move_id.id,
+                    'views': [(False, 'form')],
+                    'target': 'current',
+                }
             else:
-                glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(
-                    record.amount_loan_dollars) + " INT " + str(
-                    round(record.monthly_interest, 2)) + "% " + "F.CONTIGENCIA: " + str(
-                    round(record.contingency_fund, 2)) + "% PLAZO: " + str(
-                    record.months_quantity) + " MESES EXCED " + str(
-                    record.surplus_days) + " DIAS " + "CUOTA FIJA $US: " + str(round(record.loan_payment_ids[0].amount_total,2))
-            move_vals = {
-                "date": record.date_approval,
-                "journal_id": record.journal_id.id,
-                "ref": "PRESTAMOS ASIGNADO AL ASOCIADO" + " " + record.partner_id.name + " EN LA FECHA " + str(
-                    record.date_approval),
-                # "company_id": payment.company_id.id,
-                # "name": "name test",
-                "glosa": glosa,
-                "state": "draft",
-                "line_ids": val,
-            }
-            account_move_id = record.env['account.move'].create(move_vals)
-            record.accounting_entry_id = account_move_id.id
-            account_move_id.loan_application_id = record.id
-        return {
-            'name': 'Pagos de planilla',
-            'type': 'ir.actions.act_window',
-            'res_model': 'account.move',
-            'view_mode': 'form',
-            'res_id': account_move_id.id,
-            'views': [(False, 'form')],
-        }
+                raise UserError("No se pudo procesar el asiento debido a que no hay datos válidos de préstamo.")
 
     def update_loan(self):
         for record in self:

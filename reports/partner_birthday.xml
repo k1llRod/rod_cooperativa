@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_birthday_card">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page" style="
+                        width: 595px;
+                        height: 842px;
+                        background-image: url('/rod_cooperativa/static/src/img/template_cumpleanos.png');
+                        background-size: cover;
+                        position: relative;
+                        font-family: 'Georgia', serif;
+                        color: #1a1a1a;">
+
+                        <div style="position: absolute; top: 220px; left: 60px; right: 60px; text-align: center; line-height: 1.6; font-size: 14px; font-style: italic;">
+
+                            <p style="margin-bottom: 20px;">
+                                A nombre de los miembros del Directorio y el Consejo de Administración, Socios y mío en particular, saludo muy atentamente al
+                                <strong>
+                                    <span t-field="o.category_partner_id"/> <span t-field="o.name"/>
+                                </strong>,
+                                a objeto de expresarle las más sinceras felicitaciones en ocasión de conmemorar su...
+                            </p>
+
+                            <h3 style="font-family: Arial, sans-serif; font-weight: bold; letter-spacing: 2px; color: #b38600; margin: 15px 0; text-transform: uppercase; font-size: 18px;">
+                                "ANIVERSARIO NATAL"
+                            </h3>
+
+                            <p style="margin-bottom: 25px;">
+                                acontecimiento de suma importancia, manifestándole su trayectoria, liderazgo impecable y entrega incondicional a nuestro Ejército y las FF.AA., es un vivo ejemplo para las nuevas generaciones y nuestra Institución.
+                            </p>
+
+                            <p style="margin-bottom: 35px;">
+                                Le deseo el mayor de los éxitos, en sus actividades y que este nuevo año de vida esté lleno de bendiciones junto a su distinguida familia.
+                            </p>
+
+                            <p>
+                                Con este especial motivo, saludo a Ud. con las consideraciones más distinguidas.
+                            </p>
+                        </div>
+
+                        <div style="position: absolute; bottom: 60px; right: 80px; font-size: 13px; font-style: italic;">
+                            <span t-esc="'La Paz, ' + context_timestamp(datetime.datetime.now()).strftime('%B de %Y')"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

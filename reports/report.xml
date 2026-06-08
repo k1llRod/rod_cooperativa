@@ -40,5 +40,16 @@
         <field name="binding_type">report</field>
     </record>
 
+    <record id="action_report_partner_birthday" model="ir.actions.report">
+        <field name="name">Tarjeta de cumpleaños</field>
+        <field name="model">res.partner</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">rod_cooperativa.report_birthday_card</field>
+        <field name="report_file">rod_cooperativa.report.report_birthday_card</field>
+        <field name="binding_model_id" ref="model_res_partner"/>
+<!--        <field name="paperformat_id" ref="rod_cooperativa_aportes.paperformat_certificate" />-->
+        <field name="binding_type">report</field>
+    </record>
+
 
 </odoo>
