@@ -17,7 +17,10 @@ class LoanPayment(models.Model):
     type_loan = fields.Selection([('regular', 'Regular'), ('emergency', 'Emergencia')], string='Tipo de prestamo',
                                  related='loan_application_ids.type_loan')
     with_guarantor = fields.Selection(
-        [('loan_guarantor', 'Prestamo regular con garantes'), ('no_loan_guarantor', 'Prestamo regular sin garantes')],
+        [('loan_guarantor', 'Prestamo regular con garantes'),
+         ('no_loan_guarantor', 'Prestamo regular sin garantes'),
+         ('mortgage', 'Prestamo hipotecario'),
+         ('mortgage_especial', 'Prestamo especial')],
         string='Tipo de prestamo regular', related='loan_application_ids.with_guarantor', store=True)
     code_contact = fields.Char(string='Codigo de contacto', related='loan_application_ids.code_contact', store=True)
     ci_partner = fields.Char(string='Carnet de identidad', related='loan_application_ids.ci_partner', store=True)
@@ -55,6 +58,7 @@ class LoanPayment(models.Model):
     interest_base = fields.Monetary(string='0.7%', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
     interest_mortgage = fields.Monetary(string='Interes H.', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
     interest_base_mortgage = fields.Monetary(string='0.207%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+
     res_social = fields.Monetary(string='F.C. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     res_mortgage = fields.Monetary(string='P.H. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     balance_capital = fields.Monetary(string='Saldo capital', compute='_compute_interest', digits=(16, 2),currency_field='currency_id_dollar', store=True)
@@ -178,47 +182,80 @@ class LoanPayment(models.Model):
 
     @api.depends('capital_initial', 'balance_capital', 'interest', 'res_social')
     def _compute_interest(self):
+        # 1. Carga de parámetros para Préstamos Regulares
         percentage_interest = float(
-            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest'))
-        contingency_found = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund'))
+            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest', default=0.0))
+        contingency_found = float(
+            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund', default=0.0))
+        interest_regular = (percentage_interest + contingency_found) / 100
 
-        interest = (percentage_interest + contingency_found) / 100
-
-        mortgage_loan = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_loan'))
+        # 2. Carga de parámetros para Préstamos Hipotecarios Normales
+        mortgage_loan = float(
+            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_loan', default=0.0))
         percentage_interest_mortgage = float(
-            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage'))
-
+            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage', default=0.0))
         interest_mortgage = (percentage_interest_mortgage + mortgage_loan) / 100
 
+        # 3. NUEVO: Carga de parámetros para Préstamos Hipotecarios Especiales
+        mortgage_especial_loan = float(
+            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_especial_loan', default=0.0))
+        monthly_interest_mortgage_especial = float(
+            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage_especial', default=0.0))
+        interest_mortgage_especial = (monthly_interest_mortgage_especial + mortgage_especial_loan) / 100
+
         for rec in self:
-            if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
-                rec.interest = rec.capital_initial * interest if rec.mount > 0 else 0
+            tipo_prestamo = rec.loan_application_ids.with_guarantor
+
+            # --- RAMA A: PRÉSTAMOS REGULARES ---
+            if tipo_prestamo in ('loan_guarantor', 'no_loan_guarantor'):
+                rec.interest = rec.capital_initial * interest_regular if rec.mount > 0 else 0
                 rec.interest_base = rec.capital_initial * round((percentage_interest / 100), 3) if rec.mount > 0 else 0
+                rec.res_social = rec.capital_initial * round((contingency_found / 100), 4) if rec.mount > 0 else 0
+                rec.interest_mortgage = 0
+                rec.interest_base_mortgage = 0
+                rec.res_mortgage = 0
                 if rec.mount > 0:
                     rec.capital_index_initial = round(rec.mount - rec.interest, 2)
-            if rec.loan_application_ids.with_guarantor == 'mortgage':
+
+            # --- RAMA B: PRÉSTAMOS HIPOTECARIOS NORMALES ---
+            elif tipo_prestamo == 'mortgage':
                 rec.interest_mortgage = rec.capital_initial * interest_mortgage
                 rec.interest_base_mortgage = rec.capital_initial * (percentage_interest_mortgage / 100)
+                rec.res_mortgage = rec.capital_initial * round((mortgage_loan / 100), 4)
+                rec.interest = 0
+                rec.interest_base = 0
+                rec.res_social = 0
                 if rec.mount > 0:
                     rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
+
+            # --- RAMA C: NUEVO - PRÉSTAMOS HIPOTECARIOS ESPECIALES ---
+            elif tipo_prestamo == 'mortgage_especial':
+                # El préstamo especial utiliza sus propias cuentas de interés y recargo
+                rec.interest_mortgage = rec.capital_initial * interest_mortgage_especial
+                rec.interest_base_mortgage = rec.capital_initial * (monthly_interest_mortgage_especial / 100)
+                rec.res_mortgage = rec.capital_initial * round((mortgage_especial_loan / 100), 4)
+                rec.interest = 0
+                rec.interest_base = 0
+                rec.res_social = 0
+                if rec.mount > 0:
+                    rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
+
+            # --- CÁLCULOS GENERALES POST-CLASIFICACIÓN ---
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
             if rec.balance_capital < 0:
                 rec.balance_capital = 0
-            if rec.balance_capital > 0 and rec.balance_capital < 1:
+            if 0 < rec.balance_capital < 1:
                 rec.balance_capital = 0
 
-            if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
-                rec.res_social = rec.capital_initial * round((contingency_found / 100), 4) if rec.mount > 0 else 0
-            if rec.loan_application_ids.with_guarantor == 'mortgage':
-                rec.res_mortgage = rec.capital_initial * round((mortgage_loan / 100), 4)
             rec.amount_total = round(rec.mount, 2) + round(rec.percentage_amount_min_def, 2) + round(
-                rec.interest_month_surpluy, 2) if rec.mount > 0 else rec.capital_index_initial + rec.interest_month_surpluy
+                rec.interest_month_surpluy,
+                2) if rec.mount > 0 else rec.capital_index_initial + rec.interest_month_surpluy
+
             if rec.capital_index_initial >= rec.capital_initial:
-                rec.amount_payment = round((rec.capital_index_initial + rec.interest_month_surpluy) * rec.loan_application_ids.value_dolar,2)
+                rec.amount_payment = round(
+                    (rec.capital_index_initial + rec.interest_month_surpluy) * rec.loan_application_ids.value_dolar, 2)
+
             rec._change_amount_total_bs()
-            # rec.commission_min_def = round((commission_min_def / 100) * rec.amount_total_bs,2)
-            # commision_auxiliar = rec.commission_min_def
-            # rec.amount_returned_coa = round(rec.amount_total_bs,2) - commision_auxiliar
 
     def open_loan_payment(self, context=None):
         return {

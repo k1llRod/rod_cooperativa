@@ -3,222 +3,72 @@
     <record id="res_config_settings_view_cooperativa" model="ir.ui.view">
         <field name="name">res.config.settings.view.form.inherit.cooperativa</field>
         <field name="model">res.config.settings</field>
-<!--        <field name="priority" eval="95"/>-->
         <field name="inherit_id" ref="base.res_config_settings_view_form" />
         <field name="arch" type="xml">
             <xpath expr="//div[hasclass('settings')]" position="inside">
-                <div class="app_settings_block" data-string="Point of sale" string="Cooperativa de ahorro y credito de vinculo laboral" >
-                    <h2>Valores para tabla de prestamos</h2>
-                    <div class="row mt16 o_settings_container" name="taxes_setting_container">
-                        <div class="col-12 col-lg-6 o_setting_box"
-                            id="default_sales_tax_setting"
-                            title="Valores para parametrizar prestamos.">
+                <div class="app_settings_block"
+                     data-string="Cooperativa"
+                     string="Cooperativa de Ahorro y Crédito"
+                     data-key="rod_cooperativa_aportes">
+
+                    <h2>Valores para Tabla de Préstamos</h2>
+                    <div class="row mt16 o_settings_container" name="cooperativa_setting_container">
+
+                        <div class="col-12 col-lg-6 o_setting_box" id="cooperativa_rates_setting">
                             <div class="o_setting_right_pane">
                                 <div class="content-group mt16">
-                                    <label string="Interes mensual%" for="monthly_interest"/>
-                                    <div class="text-muted">
-                                        Establecer el porcentaje de interes mensual.
-                                    </div>
-                                    <div>
-                                        <field name="monthly_interest" colspan="4" nolabel="1"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="o_setting_right_pane">
-                                <div class="content-group mt16">
-                                    <label string="Fondo de contingencia%" for="contingency_fund"/>
-                                    <div class="text-muted">
-                                        Establecer el porcentaje de fondo de contingencia.
-                                    </div>
-                                    <div>
-                                        <field name="contingency_fund" colspan="4" nolabel="1"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="o_setting_right_pane">
-                                <div class="content-group mt16">
-                                    <label string="Porcentaje al ministerio de defensa" for="percentage_min_def"/>
-                                    <div class="text-muted">
-                                        Establecer el porcentaje.
-                                    </div>
-                                    <div>
-                                        <field name="percentage_min_def" colspan="4" nolabel="1"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="o_setting_right_pane">
-                                <div class="content-group mt16">
-                                    <label string="Comision al ministerio de defensa %" for="percentage_min_def"/>
-                                    <div class="text-muted">
-                                        Establecer el porcentaje.
-                                    </div>
-                                    <div>
-                                        <field name="commission_min_def" colspan="4" nolabel="1"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="o_setting_right_pane">
-                                <div class="content-group mt16">
-                                    <label string="Seguro de desgravamen" for="insurance_relief"/>
-                                    <div class="text-muted">
-                                        Establecer el porcentaje.
-                                    </div>
-                                    <div>
-                                        <field name="insurance_relief" colspan="4" nolabel="1"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="o_setting_right_pane">
-                                <div class="content-group mt16">
-                                    <label string="Seguro hipotecario" for="insurance_relief"/>
-                                    <div class="text-muted">
-                                        Establecer el porcentaje.
-                                    </div>
-                                    <div>
-                                        <field name="mortgage_loan" colspan="4" nolabel="1"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="o_setting_right_pane">
-                                <div class="content-group mt16">
-                                    <label string="Porcentaje Mora %" for="mora_interest"/>
-                                    <div class="text-muted">
-                                        Establecer el porcentaje.
-                                    </div>
-                                    <div>
-                                        <field name="mora_interest" colspan="4" nolabel="1"/>
+
+                                    <label string="Interés mensual %" for="monthly_interest"/>
+                                    <div class="text-muted">Establecer el porcentaje de interés mensual.</div>
+                                    <div class="mb16">
+                                        <field name="monthly_interest" class="oe_inline"/> %%
                                     </div>
 
-                                </div>
-                            </div>
-                            <div class="o_setting_right_pane">
-                                <div class="content-group mt16">
-                                    <label string="Dias de gracias" for="days_grace"/>
-                                    <div class="text-muted">
-                                        Establecer el porcentaje.
+                                    <label string="Fondo de contingencia %" for="contingency_fund"/>
+                                    <div class="mb16">
+                                        <field name="contingency_fund" class="oe_inline"/> %%
                                     </div>
-                                    <div>
-                                        <field name="days_grace" colspan="4" nolabel="1"/>
+
+                                    <label string="Préstamo hipotecario %" for="mortgage_loan"/>
+                                    <div class="mb16">
+                                        <field name="mortgage_loan" class="oe_inline"/> %%
+                                    </div>
+                                    <label string="Interés mensual hipotecario %" for="monthly_interest_mortgage"/>
+                                    <div class="mb16">
+                                        <field name="monthly_interest_mortgage" class="oe_inline"/> %%
+                                    </div>
+
+                                    <label string="Préstamo hipotecario especial %" for="mortgage_especial_loan"/>
+                                    <div class="text-muted">Establecer el recargo/fondo para préstamo hipotecario especial.</div>
+                                    <div class="mb16">
+                                        <field name="mortgage_especial_loan" class="oe_inline"/> %%
+                                    </div>
+
+                                    <label string="Interés mensual hipotecario especial %" for="monthly_interest_mortgage_especial"/>
+                                    <div class="text-muted">Establecer la tasa de interés mensual para préstamo hipotecario especial.</div>
+                                    <div class="mb16">
+                                        <field name="monthly_interest_mortgage_especial" class="oe_inline"/> %%
                                     </div>
 
                                 </div>
                             </div>
                         </div>
 
-                    </div>
-                    <h2>Parametros Contabilidad de egresos</h2>
-                    <div class="row mt16 o_settings_container" name="taxes_setting_container">
-
-                        <!-- IZQUIERDA: solo account_loan_id -->
-                        <div class="col-12 col-lg-6">
-                            <div class="o_setting_box">
-                                <div class="o_setting_right_pane">
-                                    <div class="content-group mt16">
-                                        <label string="Cuenta de prestamo" for="account_loan_id"/>
-                                        <div class="text-muted">
-                                            Establecer la cuenta contable de prestamo.
-                                        </div>
-                                        <div>
-                                            <field name="account_loan_id" colspan="4" nolabel="1"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- DERECHA: el resto apilados -->
-                        <div class="col-12 col-lg-6">
-
-                            <div class="o_setting_box">
-                                <div class="o_setting_right_pane">
-                                    <div class="content-group mt16">
-                                        <label string="Cuenta de egresos"
-                                               for="account_egreso_id"/>
-                                        <div class="text-muted">
-                                            Establecer la cuenta contable para egresos.
-                                        </div>
-                                        <div>
-                                            <field name="account_egreso_id" colspan="4" nolabel="1"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="o_setting_box mt16">
-                                <div class="o_setting_right_pane">
-                                    <div class="content-group mt16">
-                                        <label string="Cuenta de saldo anterior"
-                                               for="account_monto_refinanciamiento"/>
-                                        <div class="text-muted">
-                                            Establecer la cuenta contable saldo anterior.
-                                        </div>
-                                        <div>
-                                            <field name="account_monto_refinanciamiento" colspan="4" nolabel="1"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="o_setting_box mt16">
-                                <div class="o_setting_right_pane">
-                                    <div class="content-group mt16">
-                                        <label string="Cuenta de saldos dias excedentes"
-                                               for="account_monto_meses_interes"/>
-                                        <div class="text-muted">
-                                            Establecer la cuenta contable para saldo dias excedentes.
-                                        </div>
-                                        <div>
-                                            <field name="account_monto_meses_interes" colspan="4" nolabel="1"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h2>Configuración Post-Mortem</h2>
-                    <div class="row mt16 o_settings_container">
-                        <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="col-12 col-lg-6 o_setting_box" id="cooperativa_accounts_setting">
                             <div class="o_setting_right_pane">
-                                <label for="account_pm_debe_id" string="Cuenta de Gasto (DEBE)" class="o_form_label"/>
-                                <div class="text-muted">
-                                    Cuenta donde se registrará el egreso o auxilio funerario.
-                                </div>
                                 <div class="content-group mt16">
-                                    <field name="account_pm_debe_id" options="{'no_create': True}"/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 col-lg-6 o_setting_box">
-                            <div class="o_setting_right_pane">
-                                <span class="o_form_label" style="font-weight: bold;">Cuentas de Distribución (HABER)
-                                </span>
-                                <div class="text-muted">
-                                    Cuentas para la repartición del monto liquidado.
-                                </div>
-                                <div class="content-group mt16">
-                                    <div class="row">
-                                        <label for="account_pm_post_mortem_id" class="col-lg-9 o_light_label"
-                                               string="Cuenta Post-Mortem (Haber)"/>
-                                        <field name="account_pm_post_mortem_id" class="col-lg-12"
-                                               options="{'no_create': True}"/>
+                                    <div class="row mt8">
+                                        <label for="account_loan_id" class="col-lg-9 o_light_label" string="Cuenta contable de préstamos (Debe)"/>
+                                        <field name="account_loan_id" class="col-lg-12" options="{'no_create': True}"/>
                                     </div>
                                     <div class="row mt8">
-                                        <label for="account_pm_regulation_cup_id" class="col-lg-9 o_light_label"
-                                               string="Cuenta tasa de regulacion CUP (Haber)"/>
-                                        <field name="account_pm_regulation_cup_id" class="col-lg-12"
-                                               options="{'no_create': True}"/>
+                                        <label for="account_egreso_id" class="col-lg-9 o_light_label" string="Cuenta contable de egreso de intereses (Haber)"/>
+                                        <field name="account_egreso_id" class="col-lg-12" options="{'no_create': True}"/>
                                     </div>
-                                    <div class="row mt8">
-                                        <label for="account_pm_inscription_id" class="col-lg-9 o_light_label"
-                                               string="Cuenta desvinculacion Post-Mortem (Haber)"/>
-                                        <field name="account_pm_inscription_id" class="col-lg-12"
-                                               options="{'no_create': True}"/>
                                     </div>
-                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </xpath>
@@ -232,6 +82,4 @@
         <field name="view_mode">form</field>
         <field name="target">inline</field>
     </record>
-
-
 </odoo>

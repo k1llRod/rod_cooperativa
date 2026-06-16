@@ -6,6 +6,7 @@ from odoo.exceptions import UserError, ValidationError
 from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
 from docutils.parsers.rst.directives import percentage
+from encodings.punycode import digits
 
 
 class LoanApplication(models.Model):
@@ -79,7 +80,8 @@ class LoanApplication(models.Model):
     with_guarantor = fields.Selection(string='Tipo de prestamo regular',
                                       selection=[('loan_guarantor', 'Prestamo regular con garantes'),
                                                  ('no_loan_guarantor', 'Prestamo regular sin garantes'),
-                                                 ('mortgage', 'Prestamo hipotecario')])
+                                                 ('mortgage', 'Prestamo hipotecario'),
+                                                 ('mortgage_especial','Prestamo especial')])
     signature_recognition = fields.Boolean(string='Reconocimiento de firmas')
     contract = fields.Boolean(string='Contrato')
     surplus_days = fields.Integer(string='Dias excedentes')
@@ -217,22 +219,31 @@ class LoanApplication(models.Model):
     @api.onchange('months_quantity', 'with_guarantor')
     def _compute_index_loan_fixed_fee(self):
         try:
-            if self.with_guarantor == 'loan_guarantor' or self.with_guarantor == 'no_loan_guarantor':
+            # CASO 1: Préstamos Regulares (Con o sin garantes)
+            if self.with_guarantor in ('loan_guarantor', 'no_loan_guarantor'):
                 interest = (self.monthly_interest + self.contingency_fund) / 100
                 index_quantity = (1 - (1 + interest) ** (-self.months_quantity))
                 self.index_loan = interest / index_quantity if index_quantity != 0 else 0
-                self.fixed_fee = self.amount_loan_dollars * self.index_loan
-                self.pay_slip_balance = self.fixed_fee_bs * (100 / 40)
-                self.total_fixed_fee = round(self.fixed_fee,2) + round(self.interest_month_surpluy,2) + round((self.amount_min_def * self.fixed_fee),2)
+
+            # CASO 2: Préstamo Hipotecario Especial (Nueva Opción)
+            elif self.with_guarantor == 'mortgage_especial':
+                interest = (self.monthly_interest_mortgage_especial + self.mortgage_especial_loan) / 100
+                index_quantity = (1 - (1 + interest) ** (-self.months_quantity))
+                self.index_loan = interest / index_quantity if index_quantity != 0 else 0
+
+            # CASO 3: Préstamo Hipotecario Regular o Especial de otra índole ('mortgage')
             else:
                 interest = (self.monthly_interest_mortgage + self.mortgage_loan) / 100
                 index_quantity = (1 - (1 + interest) ** (-self.months_quantity))
                 self.index_loan = interest / index_quantity if index_quantity != 0 else 0
-                self.fixed_fee = self.amount_loan_dollars * self.index_loan
-                self.pay_slip_balance = self.fixed_fee_bs * (100 / 40)
-                self.total_fixed_fee = round(self.fixed_fee, 2) + round(self.interest_month_surpluy, 2) + round(
-                    (self.amount_min_def * self.fixed_fee), 2)
-        except:
+
+            # Cálculos globales comunes para todas las opciones
+            self.fixed_fee = self.amount_loan_dollars * self.index_loan
+            self.pay_slip_balance = self.fixed_fee_bs * (100 / 40)
+            self.total_fixed_fee = round(self.fixed_fee, 2) + round(self.interest_month_surpluy, 2) + round(
+                (self.amount_min_def * self.fixed_fee), 2)
+
+        except Exception:
             self.index_loan = 0
 
     def button_value_dolar(self):
@@ -256,6 +267,20 @@ class LoanApplication(models.Model):
                                              default=lambda self: float(
                                                  self.env['ir.config_parameter'].sudo().get_param(
                                                      'rod_cooperativa.monthly_interest_mortgage')), digits=(6, 3))
+    mortgage_especial_loan = fields.Float(
+        string='Prestamo hipotecario especial %',
+        default=lambda self: float(
+            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_especial_loan', default=0.0))
+    )
+
+    monthly_interest_mortgage_especial = fields.Float(
+        string='Indice de prestamo hipotecario especial por mes %',
+        default=lambda self: float(
+            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage_especial',
+                                                             default=0.0)),
+        digits=(6, 3)
+    )
+
     # Relacion a los pagos
     loan_payment_ids = fields.One2many('loan.payment', 'loan_application_ids', string='Pagos')
 

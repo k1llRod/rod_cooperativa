@@ -176,8 +176,10 @@
                                 <field name="date_approval" attrs="{'required': [('state','=','approval')]}"/>
                                 <field name="monthly_interest" readonly="1" attrs="{'invisible':[('with_guarantor','=','mortgage')]}"/>
                                 <field name="monthly_interest_mortgage" readonly="1" attrs="{'invisible':[('with_guarantor','!=','mortgage')]}"/>
+                                <field name="monthly_interest_mortgage_especial" readonly="1" attrs="{'invisible':[('with_guarantor','!=','mortgage_especial')]}"/>
                                 <field name="contingency_fund" readonly="1" attrs="{'invisible':[('with_guarantor','=','mortgage')]}"/>
                                 <field name="mortgage_loan" readonly="1" attrs="{'invisible':[('with_guarantor','!=','mortgage')]}"/>
+                                <field name="mortgage_especial_loan" readonly="1" attrs="{'invisible':[('with_guarantor','!=','mortgage_especial')]}"/>
                                 <field name="index_loan" readonly="1" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <!--                                <field name="index_loan_bs" readonly="1" widget="monetary" />-->

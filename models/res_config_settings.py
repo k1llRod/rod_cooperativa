@@ -1,5 +1,8 @@
 from odoo import api, fields, models
 
+from encodings.punycode import digits
+
+
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
@@ -10,6 +13,8 @@ class ResConfigSettings(models.TransientModel):
     commission_min_def = fields.Float(string='Comisión Min. Defensa %', digits=(6, 3))
     mortgage_loan = fields.Float(string='Prestamo hipotecario', digits=(6, 3))
     monthly_interest_mortgage = fields.Float(string='Interes mensual hipotecario %', digits=(6, 3))
+    mortgage_especial_loan = fields.Float(string='Prestamo hipotecario especial', digits=(6, 3))
+    monthly_interest_mortgage_especial = fields.Float(string='Interes mensual hipotecario especial %', digits=(6, 3))
 
     account_loan_id = fields.Many2one('account.account', string='Cuenta contable de prestamos')
     account_egreso_id = fields.Many2one('account.account', string='Cuenta contable de egreso de intereses')
@@ -64,6 +69,8 @@ class ResConfigSettings(models.TransientModel):
             account_pm_post_mortem_id=int(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_pm_post_mortem_id', default=False) or False),
             account_pm_regulation_cup_id=int(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_pm_regulation_cup_id', default=False) or False),
             account_pm_inscription_id=int(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.account_pm_inscription_id', default=False) or False),
+            mortgage_especial_loan=float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_especial_loan', default=0) or False),
+            monthly_interest_mortgage_especial=float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage_especial', default=0) or False),
         )
         return res
 
@@ -94,6 +101,8 @@ class ResConfigSettings(models.TransientModel):
         self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_pm_post_mortem_id', str(self.account_pm_post_mortem_id.id if self.account_pm_post_mortem_id else ''))
         self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_pm_regulation_cup_id', str(self.account_pm_regulation_cup_id.id if self.account_pm_regulation_cup_id else ''))
         self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.account_pm_inscription_id', str(self.account_pm_inscription_id.id if self.account_pm_inscription_id else ''))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.mortgage_especial_loan', str(self.mortgage_especial_loan))
+        self.env['ir.config_parameter'].sudo().set_param('rod_cooperativa.monthly_interest_mortgage_especial', str(self.monthly_interest_mortgage_especial))
 
 
     #crear get y set
