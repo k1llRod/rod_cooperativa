@@ -58,7 +58,8 @@ class LoanPayment(models.Model):
     interest_base = fields.Float(string='0.7%', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
     interest_mortgage = fields.Float(string='Interes H.', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
     interest_base_mortgage = fields.Float(string='0.207%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
-
+    # interest_especial = fields.Float(string='Interes especial', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    # interest_base_especial = fields.Float(string='0.3%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     res_social = fields.Float(string='F.C. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     res_mortgage = fields.Float(string='P.H. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_interest', digits=(16, 2),currency_field='currency_id_dollar', store=True)

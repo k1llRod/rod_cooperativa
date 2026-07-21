@@ -31,7 +31,8 @@ class LoanApplication(models.Model):
         ('done', 'Concluido'),
         ('refinanced', 'Refinanciado'),
         ('expansion', 'Ampliación'),
-        ('cancel', 'Cancelado')
+        ('cancel', 'Cancelado'),
+        ('observed', 'Observado')
     ], string='Estado', default='init', tracking=True)
     type_loan = fields.Selection([('regular', 'Regular'), ('emergency', 'Emergencia')], string='Tipo de prestamo')
     partner_id = fields.Many2one('res.partner', string='Socio solicitante', tracking=True)
