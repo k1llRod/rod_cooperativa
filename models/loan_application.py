@@ -1012,6 +1012,7 @@ class LoanApplication(models.Model):
         """
         Versión Ultra-Optimizada para recálculo masivo de cuotas históricas.
         """
+        
         # Desactivar contexto de mensajería/tracking para acelerar la velocidad x10
         ctx = dict(self.env.context, mail_notrack=True, tracking_disable=True)
         records_to_process = self.with_context(ctx)
