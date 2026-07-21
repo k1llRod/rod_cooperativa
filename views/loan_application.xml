@@ -241,20 +241,20 @@
                                         <field name="period" />
                                         <field name="date_payment"/>
                                         <field name="capital_initial" />
-                                        <field name="capital_index_initial" />
-                                        <field name="mount"/>
+                                        <field name="capital_index_initial" sum="Total"/>
+                                        <field name="mount" sum="Total"/>
                                         <field name="interest_base" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" sum="Total"/>
-                                        <field name="res_social" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}"/>
-                                        <field name="interest_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}"/>
-                                        <field name="interest_base_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}"/>
+                                        <field name="res_social" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" sum="Total"/>
+                                        <field name="interest_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total"/>
+                                        <field name="interest_base_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total"/>
                                         <field name="balance_capital"/>
                                         <field name="interest_month_surpluy" sum="Total"/>
-                                        <field name="percentage_amount_min_def"/>
-                                        <field name="commission_min_def"/>
-                                        <field name="amount_total"/>
-                                        <field name="amount_total_bs"/>
-                                        <field name="amount_payment" optional="hidden"/>
-                                        <field name="amount_returned_coa" optional="hidden"/>
+                                        <field name="percentage_amount_min_def" sum="Total"/>
+                                        <field name="commission_min_def" sum="Total"/>
+                                        <field name="amount_total" sum="Total"/>
+                                        <field name="amount_total_bs" sum="Total"/>
+                                        <field name="amount_payment" optional="hidden" sum="Total"/>
+                                        <field name="amount_returned_coa" optional="hidden" sum="Total"/>
                                         <field name="state" decoration-info="state == 'init' or state == 'in_queue'"
                                                decoration-success="state in ('ministry_defense', 'debt_settlement_mindef', 'debt_settlement_deposit', 'transfer')"
                                                decoration-warning="state == 'ministry_defense_warrantor'"
@@ -423,6 +423,13 @@
             <field name="binding_model_id" ref="model_loan_application"/>
             <field name="state">code</field>
             <field name="code">action = records.update_loan_refinance()</field>
+        </record>
+        <record id="action_update_interest" model="ir.actions.server">
+            <field name="name">Actualizar intereses</field>
+            <field name="model_id" ref="model_loan_application"/>
+            <field name="binding_model_id" ref="model_loan_application"/>
+            <field name="state">code</field>
+            <field name="code">action = records.recalculate_historical()</field>
         </record>
 
         <!-- Accion para visualizar loan.application -->

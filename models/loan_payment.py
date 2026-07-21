@@ -51,26 +51,26 @@ class LoanPayment(models.Model):
     currency_id_dollar = fields.Many2one('res.currency', string='Moneda (USD)',
                                          default=lambda self: self.env.ref('base.USD'), readonly=True)
 
-    capital_initial = fields.Monetary(string='Capital inicial',currency_field='currency_id_dollar')
-    capital_index_initial = fields.Monetary(string='Capital',currency_field='currency_id_dollar')
-    mount = fields.Monetary(string='Cuota fija',currency_field='currency_id_dollar')
-    interest = fields.Monetary(string='Interes', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
-    interest_base = fields.Monetary(string='0.7%', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
-    interest_mortgage = fields.Monetary(string='Interes H.', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
-    interest_base_mortgage = fields.Monetary(string='0.207%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    capital_initial = fields.Float(string='Capital inicial',currency_field='currency_id_dollar')
+    capital_index_initial = fields.Float(string='Capital',currency_field='currency_id_dollar')
+    mount = fields.Float(string='Cuota fija',currency_field='currency_id_dollar')
+    interest = fields.Float(string='Interes', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
+    interest_base = fields.Float(string='0.7%', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
+    interest_mortgage = fields.Float(string='Interes H.', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
+    interest_base_mortgage = fields.Float(string='0.207%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
 
-    res_social = fields.Monetary(string='F.C. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
-    res_mortgage = fields.Monetary(string='P.H. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
-    balance_capital = fields.Monetary(string='Saldo capital', compute='_compute_interest', digits=(16, 2),currency_field='currency_id_dollar', store=True)
-    percentage_amount_min_def = fields.Monetary(string='%MINDEF', digits=(16, 2), store=True,currency_field='currency_id_dollar')
-    commission_min_def = fields.Monetary(string='0.25% MINDEF', digits=(16, 2), store=True,currency_field='currency_id_dollar')
-    coa_commission = fields.Monetary(string='%COA',currency_field='currency_id_dollar')
-    coa_commission_bs = fields.Monetary(string='%COA Bs',currency_field='currency_id')
-    interest_month_surpluy = fields.Monetary(string='D/E', digits=(16, 2), store=True,currency_field='currency_id_dollar')
-    amount_total = fields.Monetary(string='D/MINDEF $', digits=(16, 2),currency_field='currency_id_dollar')
-    amount_total_bs = fields.Monetary(string='D/MINDEF Bs', digits=(16, 2), store=True,currency_field='currency_id')
-    amount_returned_coa = fields.Monetary(string='Monto devuelto COA', digits=(16, 2), store=True,currency_field='currency_id')
-    amount_payment = fields.Monetary(string='Monto a pagar', digits=(16, 2), store=True,currency_field='currency_id')
+    res_social = fields.Float(string='F.C. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    res_mortgage = fields.Float(string='P.H. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    balance_capital = fields.Float(string='Saldo capital', compute='_compute_interest', digits=(16, 2),currency_field='currency_id_dollar', store=True)
+    percentage_amount_min_def = fields.Float(string='%MINDEF', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    commission_min_def = fields.Float(string='0.25% MINDEF', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    coa_commission = fields.Float(string='%COA',currency_field='currency_id_dollar')
+    coa_commission_bs = fields.Float(string='%COA Bs',currency_field='currency_id')
+    interest_month_surpluy = fields.Float(string='D/E', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    amount_total = fields.Float(string='D/MINDEF $', digits=(16, 2),currency_field='currency_id_dollar')
+    amount_total_bs = fields.Float(string='D/MINDEF Bs', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_returned_coa = fields.Float(string='Monto devuelto COA', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_payment = fields.Float(string='Monto a pagar', digits=(16, 2), store=True,currency_field='currency_id')
     state = fields.Selection(
         [('draft', 'Borrador'),
          ('scheduled', 'Programado'),
@@ -96,15 +96,15 @@ class LoanPayment(models.Model):
         ('cancel', 'Cancelado')
     ], string='Flag state', related='loan_application_ids.state',store=True)
 
-    capital_index_initial_bolivianos = fields.Monetary(string='Capital BS', compute='_compute_bolivianos', store=True,
+    capital_index_initial_bolivianos = fields.Float(string='Capital BS', compute='_compute_bolivianos', store=True,
                                                     digits=(16, 2),currency_field='currency_id')
-    interest_base_bolivianos = fields.Monetary(string='0.7% BS', compute='_compute_bolivianos', store=True, digits=(16, 2),currency_field='currency_id')
-    res_social_bolivianos = fields.Monetary(string='F.C. BS', compute='_compute_bolivianos', store=True, digits=(16, 2),currency_field='currency_id')
-    percentage_amount_min_def_bolivianos = fields.Monetary(string='%MINDEF BS', compute='_compute_bolivianos', store=True,
+    interest_base_bolivianos = fields.Float(string='0.7% BS', compute='_compute_bolivianos', store=True, digits=(16, 2),currency_field='currency_id')
+    res_social_bolivianos = fields.Float(string='F.C. BS', compute='_compute_bolivianos', store=True, digits=(16, 2),currency_field='currency_id')
+    percentage_amount_min_def_bolivianos = fields.Float(string='%MINDEF BS', compute='_compute_bolivianos', store=True,
                                                         digits=(16, 2),currency_field='currency_id')
-    interest_month_surpluy_bolivianos = fields.Monetary(string='D/E BS', compute='_compute_bolivianos', store=True,
+    interest_month_surpluy_bolivianos = fields.Float(string='D/E BS', compute='_compute_bolivianos', store=True,
                                                      digits=(16, 2),currency_field='currency_id')
-    amount_total_bolivianos = fields.Monetary(string='D/MINDEF Bs', compute='_compute_bolivianos', digits=(16, 2),
+    amount_total_bolivianos = fields.Float(string='D/MINDEF Bs', compute='_compute_bolivianos', digits=(16, 2),
                                            store=True,currency_field='currency_id')
 
     account_move_id = fields.Many2one('account.move', string='Asiento contable')
@@ -128,15 +128,15 @@ class LoanPayment(models.Model):
     amount_overage_days = fields.Monetary(string='Monto Dias D/E', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     amount_overage = fields.Monetary(string='Monto excedente', digits=(16, 2), store=True,currency_field='currency_id_dollar')
 
-    amount_interest_bs = fields.Monetary(string='Monto interes Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
-    amount_capital_index_bs = fields.Monetary(string='Monto Capital Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
-    amount_res_social_bs = fields.Monetary(string='Monto contingencia Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
-    amount_percentage_mindef_bs = fields.Monetary(string='Monto porcentaje MINDEF Bs', compute='_onchange_values_amount', digits=(16, 4), store=True,currency_field='currency_id')
-    amount_overage_days_bs = fields.Monetary(string='Monto Dias D/E Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
-    amount_overage_bs = fields.Monetary(string='Monto excedente Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_interest_bs = fields.Float(string='Monto interes Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_capital_index_bs = fields.Float(string='Monto Capital Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_res_social_bs = fields.Float(string='Monto contingencia Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_percentage_mindef_bs = fields.Float(string='Monto porcentaje MINDEF Bs', compute='_onchange_values_amount', digits=(16, 4), store=True,currency_field='currency_id')
+    amount_overage_days_bs = fields.Float(string='Monto Dias D/E Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_overage_bs = fields.Float(string='Monto excedente Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
 
-    amount_sum = fields.Monetary(string='Total', compute='_sum_total', digits=(16, 2), store=True,currency_field='currency_id')
-    amount_sum_bs = fields.Monetary(string='Total Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_sum = fields.Float(string='Total', compute='_sum_total', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_sum_bs = fields.Float(string='Total Bs', compute='_onchange_values_amount', digits=(16, 2), store=True,currency_field='currency_id')
 
     date_scheduled = fields.Date(string='Fecha programada', help="Fecha programada para el pago del préstamo")
     special_case = fields.Boolean(string='Caso especial', related='loan_application_ids.special_case', store=True)
@@ -144,9 +144,9 @@ class LoanPayment(models.Model):
     date_initial_mora = fields.Date(string='Fecha inicial de mora')
     date_end_mora = fields.Date(string='Fecha fin de mora')
     days_mora = fields.Integer(string='Días de mora')
-    amount_mora = fields.Monetary(string='Monto de mora', digits=(16, 2), compute='_calculate_mora', store=True,currency_field='currency_id_dollar')
-    amount_mora_bs = fields.Monetary(string='Monto de mora Bs', compute='_onchange_amount_mora', digits=(16, 2), store=True,currency_field='currency_id')
-    amount_total_original = fields.Monetary(string='Desc Original', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    amount_mora = fields.Float(string='Monto de mora', digits=(16, 2), compute='_calculate_mora', store=True,currency_field='currency_id_dollar')
+    amount_mora_bs = fields.Float(string='Monto de mora Bs', compute='_onchange_amount_mora', digits=(16, 2), store=True,currency_field='currency_id')
+    amount_total_original = fields.Float(string='Desc Original', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     mora_applied = fields.Boolean(string='Mora aplicada', store=True, default=False)
     sancion = fields.Boolean(string='Sanción', store=True, default=False)
 
@@ -182,79 +182,34 @@ class LoanPayment(models.Model):
 
     @api.depends('capital_initial', 'balance_capital', 'interest', 'res_social')
     def _compute_interest(self):
-        # 1. Carga de parámetros para Préstamos Regulares
         percentage_interest = float(
-            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest', default=0.0))
-        contingency_found = float(
-            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund', default=0.0))
-        interest_regular = (percentage_interest + contingency_found) / 100
+            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest'))
+        contingency_found = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund'))
 
-        # 2. Carga de parámetros para Préstamos Hipotecarios Normales
-        mortgage_loan = float(
-            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_loan', default=0.0))
+        interest = (percentage_interest + contingency_found) / 100
+
+        mortgage_loan = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_loan'))
         percentage_interest_mortgage = float(
-            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage', default=0.0))
+            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage'))
+
         interest_mortgage = (percentage_interest_mortgage + mortgage_loan) / 100
 
-        # 3. NUEVO: Carga de parámetros para Préstamos Hipotecarios Especiales
-        mortgage_especial_loan = float(
-            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_especial_loan', default=0.0))
-        monthly_interest_mortgage_especial = float(
-            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage_especial', default=0.0))
-        interest_mortgage_especial = (monthly_interest_mortgage_especial + mortgage_especial_loan) / 100
-
         for rec in self:
-            tipo_prestamo = rec.loan_application_ids.with_guarantor
-
-            # --- RAMA A: PRÉSTAMOS REGULARES ---
-            if tipo_prestamo in ('loan_guarantor', 'no_loan_guarantor'):
-                rec.interest = rec.capital_initial * interest_regular if rec.mount > 0 else 0
-                rec.interest_base = rec.capital_initial * round((percentage_interest / 100), 3) if rec.mount > 0 else 0
-                rec.res_social = rec.capital_initial * round((contingency_found / 100), 4) if rec.mount > 0 else 0
-                rec.interest_mortgage = 0
-                rec.interest_base_mortgage = 0
-                rec.res_mortgage = 0
-                if rec.mount > 0:
-                    rec.capital_index_initial = round(rec.mount - rec.interest, 2)
-
-            # --- RAMA B: PRÉSTAMOS HIPOTECARIOS NORMALES ---
-            elif tipo_prestamo == 'mortgage':
+            if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
+                rec.interest = rec.capital_initial * interest
+                rec.interest_base = rec.capital_initial * round((percentage_interest / 100), 3)
+                rec.capital_index_initial = round(rec.mount - rec.interest, 2)
+            if rec.loan_application_ids.with_guarantor == 'mortgage':
                 rec.interest_mortgage = rec.capital_initial * interest_mortgage
                 rec.interest_base_mortgage = rec.capital_initial * (percentage_interest_mortgage / 100)
-                rec.res_mortgage = rec.capital_initial * round((mortgage_loan / 100), 4)
-                rec.interest = 0
-                rec.interest_base = 0
-                rec.res_social = 0
-                if rec.mount > 0:
-                    rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
-
-            # --- RAMA C: NUEVO - PRÉSTAMOS HIPOTECARIOS ESPECIALES ---
-            elif tipo_prestamo == 'mortgage_especial':
-                # El préstamo especial utiliza sus propias cuentas de interés y recargo
-                rec.interest_mortgage = rec.capital_initial * interest_mortgage_especial
-                rec.interest_base_mortgage = rec.capital_initial * (monthly_interest_mortgage_especial / 100)
-                rec.res_mortgage = rec.capital_initial * round((mortgage_especial_loan / 100), 4)
-                rec.interest = 0
-                rec.interest_base = 0
-                rec.res_social = 0
-                if rec.mount > 0:
-                    rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
-
-            # --- CÁLCULOS GENERALES POST-CLASIFICACIÓN ---
+                rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
-            if rec.balance_capital < 0:
-                rec.balance_capital = 0
-            if 0 < rec.balance_capital < 1:
-                rec.balance_capital = 0
-
+            if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
+                rec.res_social = rec.capital_initial * round((contingency_found / 100), 4)
+            if rec.loan_application_ids.with_guarantor == 'mortgage':
+                rec.res_mortgage = rec.capital_initial * round((mortgage_loan / 100), 4)
             rec.amount_total = round(rec.mount, 2) + round(rec.percentage_amount_min_def, 2) + round(
-                rec.interest_month_surpluy,
-                2) if rec.mount > 0 else rec.capital_index_initial + rec.interest_month_surpluy
-
-            if rec.capital_index_initial >= rec.capital_initial:
-                rec.amount_payment = round(
-                    (rec.capital_index_initial + rec.interest_month_surpluy) * rec.loan_application_ids.value_dolar, 2)
-
+                rec.interest_month_surpluy, 2)
             rec._change_amount_total_bs()
 
     def open_loan_payment(self, context=None):

@@ -7,6 +7,9 @@ from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
 from docutils.parsers.rst.directives import percentage
 from encodings.punycode import digits
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class LoanApplication(models.Model):
@@ -1005,4 +1008,47 @@ class LoanApplication(models.Model):
             rec.message_post(
                 body=_("El préstamo ha sido finalizado correctamente tras verificar que no existen pagos pendientes."))
 
+    def recalculate_historical(self):
+        """
+        Versión Ultra-Optimizada para recálculo masivo de cuotas históricas.
+        """
+        # Desactivar contexto de mensajería/tracking para acelerar la velocidad x10
+        ctx = dict(self.env.context, mail_notrack=True, tracking_disable=True)
+        records_to_process = self.with_context(ctx)
 
+        total_records = len(records_to_process)
+        _logger.info("==================================================")
+        _logger.info("🚀 INICIANDO RECÁLCULO HISTÓRICO OPTIMIZADO (%s préstamos)", total_records)
+        _logger.info("==================================================")
+
+        count = 0
+        for record in records_to_process:
+            count += 1
+
+            # Filtramos solo pagos en borrador o los que coincidan con la cantidad de meses
+            payments = record.loan_payment_ids
+
+            if record.months_quantity == len(payments):
+                _logger.info("[%s/%s] Recalculando %s cuotas del Préstamo %s (Socio: %s)",
+                             count, total_records, len(payments), record.name or record.id, record.partner_id.name)
+                # 🚀 OPTIMIZACIÓN CLAVE: Se pasa el recordset completo de golpe.
+                payments._compute_interest()
+
+            else:
+                _logger.warning("  ⚠️ Se omite Préstamo %s: Meses configurados (%s) != Cuotas reales (%s)",
+                                record.name, record.months_quantity, len(payments))
+
+        _logger.info("==================================================")
+        _logger.info("✅ PROCESO COMPLETADO EXITOSAMENTE PARA %s REGISTROS", total_records)
+        _logger.info("==================================================")
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': "Recálculo Finalizado",
+                'message': f"Se recalcularon exitosamente {total_records} préstamos.",
+                'sticky': False,
+                'type': 'success',
+            }
+        }
