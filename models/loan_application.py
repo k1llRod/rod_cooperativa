@@ -1028,9 +1028,11 @@ class LoanApplication(models.Model):
             count += 1
 
             # Filtramos solo pagos en borrador o los que coincidan con la cantidad de meses
-            payments = record.loan_payment_ids
+            payments = record.loan_payment_ids.filtered(
+                lambda x: x.state in ('draft', 'scheduled', 'ministry_defense', 'ministry_defense_warrantor',
+                                      'payment_mora'))
 
-            if record.months_quantity == len(payments):
+            if record.months_quantity >= len(payments):
                 _logger.info("[%s/%s] Recalculando %s cuotas del Préstamo %s (Socio: %s)",
                              count, total_records, len(payments), record.name or record.id, record.partner_id.name)
                 # 🚀 OPTIMIZACIÓN CLAVE: Se pasa el recordset completo de golpe.
