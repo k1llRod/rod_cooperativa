@@ -1031,16 +1031,17 @@ class LoanApplication(models.Model):
             payments = record.loan_payment_ids.filtered(
                 lambda x: x.state in ('draft', 'scheduled', 'ministry_defense', 'ministry_defense_warrantor',
                                       'payment_mora'))
+            payments._compute_interest()
 
-            if record.months_quantity >= len(payments):
-                _logger.info("[%s/%s] Recalculando %s cuotas del Préstamo %s (Socio: %s)",
-                             count, total_records, len(payments), record.name or record.id, record.partner_id.name)
-                # 🚀 OPTIMIZACIÓN CLAVE: Se pasa el recordset completo de golpe.
-                payments._compute_interest()
-
-            else:
-                _logger.warning("  ⚠️ Se omite Préstamo %s: Meses configurados (%s) != Cuotas reales (%s)",
-                                record.name, record.months_quantity, len(payments))
+            # if record.months_quantity >= len(payments):
+            #     _logger.info("[%s/%s] Recalculando %s cuotas del Préstamo %s (Socio: %s)",
+            #                  count, total_records, len(payments), record.name or record.id, record.partner_id.name)
+            #     # 🚀 OPTIMIZACIÓN CLAVE: Se pasa el recordset completo de golpe.
+            #     payments._compute_interest()
+            #
+            # else:
+            #     _logger.warning("  ⚠️ Se omite Préstamo %s: Meses configurados (%s) != Cuotas reales (%s)",
+            #                     record.name, record.months_quantity, len(payments))
 
         _logger.info("==================================================")
         _logger.info("✅ PROCESO COMPLETADO EXITOSAMENTE PARA %s REGISTROS", total_records)
