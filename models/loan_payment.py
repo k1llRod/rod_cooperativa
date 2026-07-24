@@ -105,7 +105,7 @@ class LoanPayment(models.Model):
                                                         digits=(16, 2),currency_field='currency_id')
     interest_month_surpluy_bolivianos = fields.Float(string='D/E BS', compute='_compute_bolivianos', store=True,
                                                      digits=(16, 2),currency_field='currency_id')
-    amount_total_bolivianos = fields.Float(string='D/MINDEF Bs', compute='_compute_bolivianos', digits=(16, 2),
+    amount_total_bolivianos = fields.Float(string='DIF/MINDEF Bs', compute='_compute_bolivianos', digits=(16, 2),
                                            store=True,currency_field='currency_id')
 
     account_move_id = fields.Many2one('account.move', string='Asiento contable')
