@@ -242,11 +242,18 @@
                                         <field name="date_payment"/>
                                         <field name="capital_initial" />
                                         <field name="capital_index_initial" sum="Total"/>
-                                        <field name="mount" sum="Total"/>
+                                        <field name="capital_index_initial_bolivianos" sum="Total"/>
+                                        <field name="interest" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" sum="Total"/>
                                         <field name="interest_base" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" sum="Total"/>
+                                        <field name="interest_base_bolivianos" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" optional="hidden" sum="Total"/>
                                         <field name="res_social" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" sum="Total"/>
+                                        <field name="res_social_bolivianos" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" optional="hidden" sum="Total"/>
+
                                         <field name="interest_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total"/>
+                                        <field name="interest_mortgage_bolivianos" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total"/>
+
                                         <field name="interest_base_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total"/>
+                                        <field name="mount" sum="Total"/>
                                         <field name="balance_capital"/>
                                         <field name="interest_month_surpluy" sum="Total"/>
                                         <field name="percentage_amount_min_def" sum="Total"/>
