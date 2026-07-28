@@ -279,6 +279,7 @@
                     <field name="ci_partner" string="C.I."/>
                     <field name="partner_id" string="Socio"/>
                     <field name="name" string="ID Pago"/>
+                    <field name="account_move_id" string="Asiento Contable"/>
 
                     <!--                    <field name="flag_state" string="Estado del préstamo (Flag)"/>-->
 
