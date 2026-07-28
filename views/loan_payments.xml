@@ -7,7 +7,7 @@
             <field name="model">loan.payment</field>
             <field name="arch" type="xml">
 
-                <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense')" >
+                <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense', 'ministry_defense_warrantor')">
                     <header>
                         <button name="create_report_excel" string="Reporte MINDEF" type="object"/>
                     </header>
@@ -25,37 +25,41 @@
                     <field name="date"/>
                     <field name="date_payment"/>
                     <field name="period"/>
-                    <field name="capital_initial" optional="show" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"/>
+                    <field name="capital_initial" optional="show" widget="monetary"
+                           options="{'currency_field': 'currency_id_dollar'}"/>
                     <field name="capital_index_initial" sum="Total" optional="show"/>
-                    <field name="capital_index_initial_bolivianos" sum="Total" optional="Hide"/>
-                    <field name="mount" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
+                    <field name="capital_index_initial_bolivianos" sum="Total" optional="hidden"/>
                     <field name="interest_base" optional="show" sum="Total"/>
                     <field name="interest_base_bolivianos" optional="hidden" sum="Total"/>
-                    <field name="res_social" optional="show" sum="Total" />
+                    <field name="res_social" optional="show" sum="Total"/>
                     <field name="res_social_bolivianos" optional="hidden" sum="Total"/>
-                    <field name="interest" sum="Total" />
-                    <field name="interest_mortgage" optional="show" sum="Total"/>
+                    <field name="interest" sum="Total"/>
                     <field name="interest_base_mortgage" optional="show" sum="Total"/>
+                    <field name="interest_mortgage" optional="show" sum="Total"/>
                     <field name="res_mortgage" optional="show" sum="Total"/>
+                    <field name="mount" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
+                           sum="Total"/>
                     <field name="interest_month_surpluy" sum="Total"/>
                     <field name="interest_month_surpluy_bolivianos" sum="Total"/>
-                    <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
+                    <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
+                           sum="Total"/>
                     <field name="percentage_amount_min_def" optional="hidden" sum="Total"/>
                     <field name="percentage_amount_min_def_bolivianos" optional="hidden" sum="Total"/>
                     <field name="commission_min_def" optional="hidden" sum="Total"/>
                     <field name="coa_commission" optional="hidden" sum="Total"/>
                     <field name="coa_commission_bs" optional="hidden" sum="Total"/>
-                    <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
+                    <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
+                           sum="Total"/>
                     <field name="amount_total_bs" widget="monetary" sum="Total"/>
                     <field name="amount_total_bolivianos" sum="Total" optional="hidden"/>
                     <field name="amount_payment" widget="monetary" sum="Total"/>
                     <field name="amount_returned_coa" optional="hidden" sum="Total"/>
 
-                    <field name="loan_application_ids" invisible="1"/>
-                    <field name="state" decoration-info="state == 'init' or state == 'in_queue'" decoration-success="state == 'progress' or state == 'done'" widget="badge"/>
+                    <field name="state" decoration-info="state == 'init' or state == 'in_queue'"
+                           decoration-success="state == 'progress' or state == 'done'" widget="badge"/>
                     <field name="state_account" widget="badge"/>
                     <button name="open_loan_payment" type="object" class="oe_highlight"
-                                                icon="fa-eye"/>
+                            icon="fa-eye"/>
                 </tree>
             </field>
         </record>
@@ -79,16 +83,19 @@
                     <field name="date"/>
                     <field name="date_payment"/>
                     <field name="period"/>
-                    <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
-                    <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}" sum="Total"/>
+                    <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
+                           sum="Total"/>
+                    <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
+                           sum="Total"/>
                     <field name="amount_total_bs" widget="monetary" sum="Total"/>
                     <field name="amount_total_bolivianos" sum="Total" optional="hidden"/>
                     <field name="amount_payment" widget="monetary" sum="Total"/>
                     <field name="amount_returned_coa" optional="hidden" sum="Total"/>
-                    <field name="state" decoration-info="state == 'init' or state == 'in_queue'" decoration-success="state == 'progress' or state == 'done'" widget="badge"/>
+                    <field name="state" decoration-info="state == 'init' or state == 'in_queue'"
+                           decoration-success="state == 'progress' or state == 'done'" widget="badge"/>
                     <field name="state_account" widget="badge"/>
                     <button name="open_loan_payment" type="object" class="oe_highlight"
-                                                icon="fa-eye"/>
+                            icon="fa-eye"/>
                 </tree>
             </field>
         </record>
@@ -105,44 +112,46 @@
                                 class="oe_highlight"
                                 attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'progress')]}"
                                 groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
-                                />
+                        />
                         <button name="confirm_ministry_defense" string="Por ministerio de defensa" type="object"
                                 class="oe_highlight"
                                 attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'progress')]}"
                                 groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
-                                />
+                        />
                         <button name="debt_settlement_min_def" string="Liquidacion de deuda por MINDEF" type="object"
                                 class="oe_highlight"
                                 attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'liquidation_process')]}"
                                 groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
-                                />
+                        />
                         <button name="debt_settlement_deposit" string="Liquidacion de deuda por deposito" type="object"
                                 class="oe_highlight"
                                 attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'liquidation_process')]}"
                                 groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
-                                />
-                        <button name="debt_settlement_contributions" string="Liquidacion de deuda con aportes" type="object"
+                        />
+                        <button name="debt_settlement_contributions" string="Liquidacion de deuda con aportes"
+                                type="object"
                                 class="oe_highlight"
                                 attrs="{'invisible': ['|',('state', '!=', 'draft'),('flag_state', '!=', 'liquidation_process')]}"
                                 groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
-                                />
-                        <button name="confirm_ministry_defense_warrantor" string="Por ministerio de defensa garantes" type="object"
+                        />
+                        <button name="confirm_ministry_defense_warrantor" string="Por ministerio de defensa garantes"
+                                type="object"
                                 class="oe_highlight"
                                 attrs="{'invisible': [('flag_collect_guarantors', '!=', True)]}"
                                 groups="rod_cooperativa.group_rod_cooperativa_administrator,rod_cooperativa.group_rod_cooperativa_operator"
-                                />
+                        />
                         <button name="not_discounted_loan" string="No descontado" type="object"
                                 class="oe_highlight"
                                 groups="base.group_no_one"
-                                />
+                        />
                         <button name="action_pay_mora" string="Descuento con mora" type="object"
                                 class="oe_highlight"
                                 groups="base.group_no_one"
-                                />
+                        />
                         <button name="scheduled_mora" string="Programado con mora" type="object"
                                 class="oe_highlight"
                                 groups="base.group_no_one"
-                                />
+                        />
 
                         <field name="state" widget="statusbar" statusbar_visible="draft,transfer,ministry_defense"/>
                     </header>
@@ -165,7 +174,7 @@
                                 <field name="interest_base_bolivianos"/>
                                 <field name="res_social"/>
                                 <field name="res_social_bolivianos"/>
-                                <field name="res_mortgage" />
+                                <field name="res_mortgage"/>
                                 <field name="capital_initial" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="balance_capital" widget="monetary"
@@ -178,7 +187,7 @@
                                 <field name="percentage_amount_min_def_bolivianos"/>
                                 <field name="commission_min_def"/>
                                 <field name="loan_application_ids" invisible="1"/>
-<!--                                <field name="type_payment" />-->
+                                <!--                                <field name="type_payment" />-->
                                 <field name="sancion"/>
                                 <label for="date_initial_mora" string="Fecha inicial de mora" class="text-danger"/>
                                 <field name="date_initial_mora" class="text-danger" nolabel="1"/>
@@ -190,13 +199,13 @@
                                 <field name="amount_mora" class="text-danger" nolabel="1"/>
                                 <label for="amount_mora_bs" string="Monto de mora Bs." class="text-danger"/>
                                 <field name="amount_mora_bs" class="text-danger" nolabel="1"/>
-<!--                                <label for="amount_total_with_mora" string="Monto total con mora" class="text-danger"/>-->
-<!--                                <field name="amount_total_with_mora" class="text-danger" nolabel="1"/>-->
+                                <!--                                <label for="amount_total_with_mora" string="Monto total con mora" class="text-danger"/>-->
+                                <!--                                <field name="amount_total_with_mora" class="text-danger" nolabel="1"/>-->
                                 <field name="amount_total_original" class="text-danger"/>
                                 <field name="amount_total" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="amount_total_bs" widget="monetary"/>
-                                <field name="amount_total_bolivianos" />
+                                <field name="amount_total_bolivianos"/>
                                 <field name="amount_returned_coa"/>
                                 <field name="amount_payment"/>
 
@@ -245,7 +254,7 @@
                                         <field name="amount_overage_days_bs"/>
                                         <field name="account_overage_amount"/>
                                         <field name="amount_overage"/>
-                                        <field name="amount_sum" />
+                                        <field name="amount_sum"/>
                                         <field name="amount_sum_bs"/>
                                     </group>
                                 </group>
@@ -271,10 +280,10 @@
                     <field name="partner_id" string="Socio"/>
                     <field name="name" string="ID Pago"/>
 
-<!--                    <field name="flag_state" string="Estado del préstamo (Flag)"/>-->
+                    <!--                    <field name="flag_state" string="Estado del préstamo (Flag)"/>-->
 
                     <separator/>
-                    <filter string="Estado del prestamo " name="flag_state" />
+                    <filter string="Estado del prestamo " name="flag_state"/>
                     <filter string="Fecha Registro" name="filter_date" date="date"/>
                     <filter string="Fecha de Pago" name="filter_date_payment" date="date_payment"/>
 
@@ -291,14 +300,14 @@
                     <separator/>
 
                     <group expand="0" string="Agrupar Por">
-<!--                        <filter string="Periodo / Estado"-->
-<!--                                name="group_period_state"-->
-<!--                                context="{'group_by': ['period', 'state']}"/>-->
+                        <!--                        <filter string="Periodo / Estado"-->
+                        <!--                                name="group_period_state"-->
+                        <!--                                context="{'group_by': ['period', 'state']}"/>-->
                         <filter string="Estado del Préstamo (Flag)"
                                 name="group_flag_state"
                                 context="{'group_by': 'flag_state'}"/>
                         <separator/>
-<!--                        <filter string="Marcados (Flag)" name="flag_active" domain="[('flag_state', '=', True)]"/>-->
+                        <!--                        <filter string="Marcados (Flag)" name="flag_active" domain="[('flag_state', '=', True)]"/>-->
                         <filter string="Periodo" name="group_period" context="{'group_by': 'period'}"/>
                         <filter string="Fecha Registro" name="group_date" context="{'group_by': 'date'}"/>
                         <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
