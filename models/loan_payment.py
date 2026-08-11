@@ -196,7 +196,7 @@ class LoanPayment(models.Model):
         interest_mortgage = (percentage_interest_mortgage + mortgage_loan) / 100
 
         for rec in self:
-            if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
+            if (rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor') and not rec.state == 'amortization':
                 rec.interest = rec.capital_initial * interest
                 rec.interest_base = rec.capital_initial * round((percentage_interest / 100), 3)
                 rec.capital_index_initial = round(rec.mount - rec.interest, 2)
@@ -205,12 +205,12 @@ class LoanPayment(models.Model):
                 rec.interest_base_mortgage = rec.capital_initial * (percentage_interest_mortgage / 100)
                 rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
-            if rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor':
+            if (rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor') and not rec.state == 'amortization':
                 rec.res_social = rec.capital_initial * round((contingency_found / 100), 4)
             if rec.loan_application_ids.with_guarantor == 'mortgage':
                 rec.res_mortgage = rec.capital_initial * round((mortgage_loan / 100), 4)
             rec.amount_total = round(rec.mount, 2) + round(rec.percentage_amount_min_def, 2) + round(
-                rec.interest_month_surpluy, 2)
+                rec.interest_month_surpluy, 2) if not rec.state == 'amortization' else rec.capital_index_initial + rec.interest_month_surpluy
             rec._change_amount_total_bs()
 
     def open_loan_payment(self, context=None):

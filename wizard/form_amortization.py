@@ -70,7 +70,7 @@ class FormAmortization(models.TransientModel):
             'name': 'AMORT '+str(count_amortization+1),
             'date': self.date_amortization,
             'date_payment': self.date_amortization,
-            'amount_payment': self.amount_amortization,
+            'amount_payment': self.amount_amortization * 6.96,
             'capital_initial': self.capital_rest,
             'capital_index_initial': self.amount_amortization - self.interest_days_rest,
             'interest_month_surpluy': self.interest_days_rest,
