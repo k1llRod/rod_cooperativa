@@ -1057,3 +1057,8 @@ class LoanApplication(models.Model):
                 'type': 'success',
             }
         }
+
+    def loan_observed(self):
+        for record in self:
+            record.state = 'observed'
+            record.message_post(body=_("El préstamo ha sido marcado como observado. Se requiere revisión adicional."))
