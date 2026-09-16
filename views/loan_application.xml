@@ -223,7 +223,10 @@
                                 <field name="ending_date_period" />
                                 <field name="last_payment_id"/>
                                 <field name="state_last_payment"/>
-
+                                <field name="last_capital_index_initial"/>
+                                <field name="last_capital_index_initial_bolivianos"/>
+                                <field name="last_interest_month_surpluy"/>
+                                <field name="last_interest_month_surpluy_bolivianos"/>
                             </group>
                         </group>
                         <notebook>

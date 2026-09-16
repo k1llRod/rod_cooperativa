@@ -116,21 +116,30 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                    <td><strong>CELULAR:</strong>
+                                    </td>
                                         <td>
-                                            <strong>CELULAR:</strong>
+                                            <span t-esc="o.partner_id.mobile"/>
                                         </td>
                                         <td>
-                                            <span t-esc="o.partner_id.mobile"></span>
+                                            <t t-if="o.state in ('liquidation_process', 'done')">
+                                                <strong>ULTIMO SALDO CAPITAL</strong>
+                                            </t>
+                                            <t t-if="o.state not in ('liquidation_process', 'done')">
+                                                <strong>SALDO CAPITAL</strong>
+                                            </t>
                                         </td>
                                         <td>
-                                            <strong>SALDO CAPITAL</strong>
-                                        </td>
-                                        <td>
-                                            <t t-if="o.balance_capital_scheduled &gt; 0">
+                                            <t t-if="o.state in ('liquidation_process', 'done')">
+                                                <span>
+                                                    <t t-esc="'{0:,.2f}'.format(o.last_capital_index_initial or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
+                                            </t>
+                                            <t t-elif="o.balance_capital_scheduled &gt; 0">
                                                 <span t-field="o.balance_capital_scheduled" style="color:red;"/>
                                             </t>
                                             <t t-else="">
-                                                <span t-esc="o.balance_capital"></span>
+                                                <span t-field="o.balance_capital"/>
                                             </t>
                                         </td>
                                     </tr>

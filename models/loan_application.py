@@ -296,8 +296,10 @@ class LoanApplication(models.Model):
     ending_date_period = fields.Date(string='Fecha de finalizacion', compute='_compute_ending_date_period', store=True)
     last_payment_id = fields.Many2one('loan.payment', string='Ultimo pago', compute='_compute_ending_date_period')
     state_last_payment = fields.Char(string='Estado ultimo pago', compute='_compute_ending_date_period')
-    
-
+    last_capital_index_initial = fields.Float(string='Ultimo saldo capital', compute='_compute_ending_date_period')
+    last_capital_index_initial_bolivianos = fields.Float(string='Ultimo saldo capital Bs.', compute='_compute_ending_date_period')
+    last_interest_month_surpluy = fields.Float(string='Ultimo interes mensual', compute='_compute_ending_date_period')
+    last_interest_month_surpluy_bolivianos = fields.Float(string='Ultimo interes mensual Bs.', compute='_compute_ending_date_period')
     # @api.onchange('state')
     # def _onchange_state(self):
     #     for rec in self:
@@ -988,6 +990,11 @@ class LoanApplication(models.Model):
                 state_value = last_payment.state
                 selection = rec.loan_payment_ids._fields['state'].selection
                 rec.state_last_payment = dict(selection).get(state_value, '')
+                rec.last_capital_index_initial = last_payment.capital_index_initial
+                rec.last_capital_index_initial_bolivianos = last_payment.capital_index_initial_bolivianos
+                rec.last_interest_month_surpluy = last_payment.interest_month_surpluy
+                rec.last_interest_month_surpluy_bolivianos = last_payment.interest_month_surpluy_bolivianos
+
             else:
                 rec.ending_date_period = ''
                 rec.last_payment_id = None  # ← asignación obligatoria

@@ -58,6 +58,7 @@
                         <field name="allergies"/>
                         <field name="type_blood"/>
                         <field name="marital_status"/>
+                        <field name="gender"/>
                         <field name="street" string="Dirección"/>
                         <field name="city" string="Destino"/>
                         <field name="phone" string="Telefono"/>

@@ -80,6 +80,7 @@ class ResPartner(models.Model):
     date_deceased = fields.Date(string='Fecha de fallecimiento', track_visibility='always')
     date_unsubcribe = fields.Date(string='Fecha de baja', track_visibility='always')
     affcoop = fields.Boolean(string='Inscrito a la AFCOOP')
+    gender = fields.Selection([('male', 'Masculino'), ('female', 'Femenino')], string='Género', default='male')
 
     @api.depends('graduation_year')
     def _compute_year_service(self):
