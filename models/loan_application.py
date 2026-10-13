@@ -979,26 +979,28 @@ class LoanApplication(models.Model):
     #     for rec in self:
     #         percentage_min_def = rec.fixed_fee * rec.amount_min_def
     #         rec.total_fixed_fee = rec.fixed_fee + percentage_min_def
-    @api.depends('loan_payment_ids','date_approval')
+    @api.depends('loan_payment_ids', 'date_approval')
     def _compute_ending_date_period(self):
         for rec in self:
             if rec.loan_payment_ids:
                 last_payment = rec.loan_payment_ids[-1]
-                # rec.ending_date_period = last_payment.date.strftime('%d/%m/%Y')
                 rec.ending_date_period = last_payment.date
                 rec.last_payment_id = last_payment
                 state_value = last_payment.state
                 selection = rec.loan_payment_ids._fields['state'].selection
                 rec.state_last_payment = dict(selection).get(state_value, '')
-                rec.last_capital_index_initial = last_payment.capital_index_initial
-                rec.last_capital_index_initial_bolivianos = last_payment.capital_index_initial_bolivianos
-                rec.last_interest_month_surpluy = last_payment.interest_month_surpluy
-                rec.last_interest_month_surpluy_bolivianos = last_payment.interest_month_surpluy_bolivianos
-
+                rec.last_capital_index_initial = last_payment.capital_index_initial or 0.0
+                rec.last_capital_index_initial_bolivianos = last_payment.capital_index_initial_bolivianos or 0.0
+                rec.last_interest_month_surpluy = last_payment.interest_month_surpluy or 0.0
+                rec.last_interest_month_surpluy_bolivianos = last_payment.interest_month_surpluy_bolivianos or 0.0
             else:
-                rec.ending_date_period = ''
-                rec.last_payment_id = None  # ← asignación obligatoria
-                rec.state_last_payment = ''  # ← asignación obligatoria
+                rec.ending_date_period = False
+                rec.last_payment_id = False
+                rec.state_last_payment = False
+                rec.last_capital_index_initial = 0.0
+                rec.last_capital_index_initial_bolivianos = 0.0
+                rec.last_interest_month_surpluy = 0.0
+                rec.last_interest_month_surpluy_bolivianos = 0.0
 
     def done_loan(self):
         for rec in self:
