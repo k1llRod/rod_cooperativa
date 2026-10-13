@@ -10,6 +10,16 @@
 <!--        <field name="paperformat_id" ref="rod_cooperativa_aportes.paperformat_certificate" />-->
         <field name="binding_type">report</field>
     </record>
+    <record id="action_report_pdf_loan_application_bs" model="ir.actions.report">
+        <field name="name">Plan de pagos Bs</field>
+        <field name="model">loan.application</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">rod_cooperativa.report_loan_application_bs</field>
+        <field name="report_file">rod_cooperativa.report.report_loan_application_bs</field>
+        <field name="binding_model_id" ref="model_loan_application"/>
+<!--        <field name="paperformat_id" ref="rod_cooperativa_aportes.paperformat_certificate" />-->
+        <field name="binding_type">report</field>
+    </record>
 
     <record id="action_report_payment_statement_loan" model="ir.actions.report">
         <field name="name">Extracto de prestamo</field>
@@ -20,6 +30,18 @@
         <field name="binding_model_id" ref="model_loan_application"/>
 <!--        <field name="paperformat_id" ref="rod_cooperativa_aportes.paperformat_certificate" />-->
         <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_payment_statement_loan_bs" model="ir.actions.report">
+        <field name="name">Extracto de prestamo Bs.</field>
+        <field name="model">loan.application</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">rod_cooperativa.report_payment_statement_loan_bs</field>
+        <field name="report_file">rod_cooperativa.report.report_payment_statement_loan_bs</field>
+        <field name="binding_model_id" ref="model_loan_application"/>
+<!--        <field name="paperformat_id" ref="rod_cooperativa_aportes.paperformat_certificate" />-->
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Extracto - %s - %s' % (object.partner_id.name, object.name)</field>
     </record>
 
     <record id="action_report_loan_application_xls" model="ir.actions.report">

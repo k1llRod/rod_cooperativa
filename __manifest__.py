@@ -54,6 +54,8 @@
         'reports/payment_statement_loan.xml',
         'reports/report_mindef_loan_report.xml',
         'reports/partner_birthday.xml',
+        'reports/loan_application_bs_pdf.xml',
+        'reports/payment_statement_loan_bs.xml',
     ],
     "assets": {
         "web.assets_qweb": [

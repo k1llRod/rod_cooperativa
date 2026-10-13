@@ -27,6 +27,9 @@
                     <field name="period"/>
                     <field name="capital_initial" optional="show" widget="monetary"
                            options="{'currency_field': 'currency_id_dollar'}"/>
+                    <field name="capital_initial_bs" optional="show" widget="monetary"
+                           options="{'currency_field': 'currency_id'}"/>
+
                     <field name="capital_index_initial" sum="Total" optional="show"/>
                     <field name="capital_index_initial_bolivianos" sum="Total" optional="hidden"/>
                     <field name="interest_base" optional="show" sum="Total"/>
@@ -39,9 +42,12 @@
                     <field name="res_mortgage" optional="show" sum="Total"/>
                     <field name="mount" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
                            sum="Total"/>
+                    <field name="mount_bs" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
                     <field name="interest_month_surpluy" sum="Total"/>
                     <field name="interest_month_surpluy_bolivianos" sum="Total"/>
                     <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
+                           sum="Total"/>
+                    <field name="balance_capital_bs" widget="monetary" options="{'currency_field': 'currency_id'}"
                            sum="Total"/>
                     <field name="percentage_amount_min_def" optional="hidden" sum="Total"/>
                     <field name="percentage_amount_min_def_bolivianos" optional="hidden" sum="Total"/>
@@ -84,6 +90,8 @@
                     <field name="date_payment"/>
                     <field name="period"/>
                     <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
+                           sum="Total"/>
+                    <field name="balance_capital_bs" widget="monetary" options="{'currency_field': 'currency_id'}"
                            sum="Total"/>
                     <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
                            sum="Total"/>
@@ -177,10 +185,14 @@
                                 <field name="res_mortgage"/>
                                 <field name="capital_initial" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
+                                <field name="capital_initial_bs" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
                                 <field name="balance_capital" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
                                 <field name="mount" widget="monetary"
                                        options="{'currency_field': 'currency_id_dollar'}"/>
+                                <field name="mount_bs" widget="monetary"
+                                       options="{'currency_field': 'currency_id'}"/>
                                 <field name="interest_month_surpluy" sum="Total"/>
                                 <field name="interest_month_surpluy_bolivianos"/>
                                 <field name="percentage_amount_min_def"/>
@@ -334,6 +346,13 @@
             <field name="binding_model_id" ref="model_loan_payment"/>
             <field name="state">code</field>
             <field name="code">action = records.update_amount_total_original()</field>
+        </record>
+        <record id="action_change_dollar" model="ir.actions.server">
+            <field name="name">Cambiar tipo de cambio</field>
+            <field name="model_id" ref="model_loan_payment"/>
+            <field name="binding_model_id" ref="model_loan_payment"/>
+            <field name="state">code</field>
+            <field name="code">action = records.action_change_dollar()</field>
         </record>
         <record id="action_publish_accounting_loan" model="ir.actions.server">
             <field name="name">Publicar asiento contable</field>

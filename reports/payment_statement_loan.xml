@@ -39,6 +39,13 @@
                                     <span t-esc="user.name"/>
                                 </td>
                             </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Estado:
+                                    <span t-esc="dict(o.fields_get(allfields=['state'])['state']['selection']).get(o.state)"/>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                     <div>
@@ -122,24 +129,14 @@
                                             <span t-esc="o.partner_id.mobile"/>
                                         </td>
                                         <td>
-                                            <t t-if="o.state in ('liquidation_process', 'done')">
-                                                <strong>ULTIMO SALDO CAPITAL</strong>
-                                            </t>
-                                            <t t-if="o.state not in ('liquidation_process', 'done')">
-                                                <strong>SALDO CAPITAL</strong>
-                                            </t>
+                                            <strong>SALDO D/E</strong>
                                         </td>
                                         <td>
-                                            <t t-if="o.state in ('liquidation_process', 'done')">
-                                                <span>
-                                                    <t t-esc="'{0:,.2f}'.format(o.last_capital_index_initial or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
-                                                </span>
-                                            </t>
-                                            <t t-elif="o.balance_capital_scheduled &gt; 0">
-                                                <span t-field="o.balance_capital_scheduled" style="color:red;"/>
+                                            <t t-if="o.balance_capital_scheduled &gt; 0">
+                                                <span t-field="o.balance_total_interest_month_scheduled" style="color:red;"/>
                                             </t>
                                             <t t-else="">
-                                                <span t-field="o.balance_capital"/>
+                                                <span t-field="o.balance_total_interest_month"></span>
                                             </t>
                                         </td>
                                     </tr>
@@ -150,15 +147,10 @@
                                         <td>
                                         </td>
                                         <td>
-                                            <strong>SALDO D/E</strong>
+
                                         </td>
                                         <td>
-                                            <t t-if="o.balance_capital_scheduled &gt; 0">
-                                                <span t-field="o.balance_total_interest_month_scheduled" style="color:red;"/>
-                                            </t>
-                                            <t t-else="">
-                                                <span t-field="o.balance_total_interest_month"></span>
-                                            </t>
+
                                         </td>
                                     </tr>
                                     <tr>
@@ -219,22 +211,55 @@
                                             </t>
                                         </td>
                                     </tr>
-<!--                                    <tr>-->
-<!--                                        <td>-->
-<!--                                            <strong></strong>-->
-<!--                                        </td>-->
-<!--                                        <td>-->
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <t t-if="o.state in ('liquidation_process', 'done') and o.last_capital_index_initial &gt; 0">
+                                                <strong>ULTIMO SALDO CAPITAL $</strong>
+                                            </t>
 
-<!--                                        </td>-->
-<!--                                        <t t-if="o.interest_day_rest &gt; 0">-->
-<!--                                            <td>-->
-<!--                                                <strong>INTERES ANTERIOR D/E</strong>-->
-<!--                                            </td>-->
-<!--                                            <td>-->
-<!--                                                <span t-field="o.interest_day_rest"></span>-->
-<!--                                            </td>-->
-<!--                                        </t>-->
-<!--                                    </tr>-->
+                                        </td>
+                                        <td>
+                                            <t t-if="o.state in ('liquidation_process', 'done') and o.last_capital_index_initial &gt; 0">
+                                                <span style="color:red;">
+                                                    <t t-esc="o.currency_id_dollar.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(o.last_capital_index_initial).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
+                                            </t>
+<!--                                            <t t-elif="o.balance_capital_scheduled &gt; 0">-->
+<!--                                                <span t-field="o.balance_capital_scheduled" style="color:red;"/>-->
+<!--                                            </t>-->
+<!--                                            <t t-else="">-->
+<!--                                                <span t-field="o.balance_capital"/>-->
+<!--                                            </t>-->
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <t t-if="o.state in ('liquidation_process', 'done') and o.last_capital_index_initial_bolivianos &gt; 0">
+                                                <strong>ULTIMO SALDO CAPITAL BS</strong>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="o.state in ('liquidation_process', 'done') and o.last_capital_index_initial_bolivianos &gt; 0">
+                                                <span style="color:red;">
+                                                    <t t-esc="o.company_id.currency_id.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(o.last_capital_index_initial_bolivianos).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
+                                            </t>
+<!--                                            <t t-elif="o.balance_capital_scheduled &gt; 0">-->
+<!--                                                <span t-field="o.balance_capital_scheduled_bs" style="color:red;"/>-->
+<!--                                            </t>-->
+<!--                                            <t t-else="">-->
+<!--                                                <span t-field="o.balance_capital_bs"/>-->
+<!--                                            </t>-->
+                                        </td>
+                                    </tr>
 
                                 </table>
                                 <br/>

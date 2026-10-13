@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_payment_statement_loan_bs">
+            <t t-call="web.html_container">
+                <t t-if="o and 'company_id' in o">
+                    <t t-set="company" t-value="o.company_id"></t>
+                </t>
+                <t t-if="not o or not 'company_id' in o">
+                    <t t-set="company" t-value="res_company"></t>
+                </t>
+                <t t-foreach="docs" t-as="o">
+                    <div t-attf-class="o_company_#{company.id}_layout header" t-att-style="report_header_style">
+                    <div class="o_background_header">
+                        <table style="width:100%;font-size:14px;">
+                            <tr>
+                                <td style="width:500px;text-align:center;center;">COOPERATIVA DE
+                                    AHORRO Y CREDITO DE
+                                    VINCULO LABORAL
+                                </td>
+                                <td style="width:160px"></td>
+                                <td>Paginas:
+                                    <span class="topage"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;center;">COA - 4 DE DICIEMBRE R.L.
+                                </td>
+                                <td></td>
+                                <td>Fecha:
+                                    <!--                                    <t t-set="now" t-value="context.get('tz').localize(fields.Datetime.now())" />-->
+                                    <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;">LA PAZ - BOLIVIA</td>
+                                <td></td>
+                                <td>Usuario:
+                                    <span t-esc="user.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Estado:
+                                    <span t-esc="dict(o.fields_get(allfields=['state'])['state']['selection']).get(o.state)"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <br/>
+                        <h3>
+                            <center>EXTRACTO DE PRESTAMO</center>
+                        </h3>
+                    </div>
+                </div>
+                    <t t-call="web.external_layout">
+                        <div class="page"
+                             t-att-style="'background-image: url(/rod_cooperativa_aportes/static/src/img/background_cooperativa.png);background-repeat:repeat-y; height:850px; background-position-x:center;'">
+                            <div class="body">
+                                <table style="width:100%; font-family:Arial;">
+                                    <tr>
+                                        <td>
+                                            <strong>CODIGO:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.partner_id.code_contact"/>
+                                        </td>
+                                        <td>
+                                            <strong>FECHA DE APROBACION:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.date_approval"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>CEDULA IDENTIDAD:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.partner_id.vat"/>
+                                        </td>
+                                        <td>
+                                            <strong>PLAZO:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.months_quantity"/>
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>ASOCIADO:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.partner_id"/>
+                                        </td>
+                                        <td>
+                                            <strong>TASA DE INTERES</strong>
+                                        </td>
+                                        <td>
+                                            <t t-if="o.with_guarantor == 'mortgage'">
+                                                <span t-field="o.monthly_interest_mortgage"/>
+                                            </t>
+                                            <t t-if="o.with_guarantor == 'loan_guarantor' or o.with_guarantor == 'no_loan_guarantor'">
+                                                <span t-field="o.monthly_interest"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>GRADO:</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.partner_id.category_partner_id"/>
+                                        </td>
+                                        <td>
+                                            <strong>CAPITAL DE PRESTAMO $</strong>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.amount_loan_dollars"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    <td><strong>CELULAR:</strong>
+                                    </td>
+                                        <td>
+                                            <span t-esc="o.partner_id.mobile"/>
+                                        </td>
+                                        <td>
+                                            <strong>SALDO D/E</strong>
+                                        </td>
+                                        <td>
+                                            <t t-if="o.balance_capital_scheduled &gt; 0">
+                                                <span t-field="o.balance_total_interest_month_scheduled_bs" style="color:red;"/>
+
+                                            </t>
+                                            <t t-else="">
+                                                <span t-field="o.balance_total_interest_month_bs"></span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong></strong>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong></strong>
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                        <td>
+                                            <strong>SALDO CAPITAL</strong>
+                                        </td>
+                                        <td>
+                                            <t t-if="o.balance_capital_scheduled &gt; 0">
+                                                <t t-set="total_bs_scheduled"
+                                                   t-value="(o.balance_capital_scheduled_bs or 0.0)"/>
+<!--                                                   t-value="(o.balance_capital_scheduled_bs or 0.0) + (o.balance_total_interest_month_scheduled_bs or 0.0)"/>-->
+                                                <span style="color:red;">
+                                                    <t t-esc="o.currency_id.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(total_bs_scheduled).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-set="total_bs"
+                                                   t-value="(o.balance_capital_bs or 0.0)"/>
+<!--                                                   t-value="(o.balance_capital_bs or 0.0) + (o.balance_total_interest_month_bs or 0.0)"/>-->
+                                                <span>
+                                                    <t t-esc="o.currency_id.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(total_bs).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong></strong>
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                        <td>
+                                            <strong>TOTAL SALDO BS</strong>
+                                        </td>
+                                        <td>
+                                            <t t-if="o.balance_capital_scheduled &gt; 0">
+                                                <t t-set="total_bs_scheduled"
+                                                   t-value="(o.balance_capital_scheduled_bs or 0.0) + (o.balance_total_interest_month_scheduled_bs or 0.0)"/>
+                                                <span style="color:red;">
+                                                    <t t-esc="o.company_id.currency_id.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(total_bs_scheduled).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-set="total_bs"
+                                                   t-value="(o.balance_capital_bs or 0.0) + (o.balance_total_interest_month_bs or 0.0)"/>
+                                                <span>
+                                                    <t t-esc="o.company_id.currency_id.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(total_bs).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <t t-if="o.state in ('liquidation_process', 'done') and o.last_capital_index_initial &gt; 0">
+                                                <strong>ULTIMO SALDO CAPITAL $</strong>
+                                            </t>
+
+                                        </td>
+                                        <td>
+                                            <t t-if="o.state in ('liquidation_process', 'done') and o.last_capital_index_initial &gt; 0">
+                                                <span style="color:red;">
+                                                    <t t-esc="o.currency_id_dollar.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(o.last_capital_index_initial).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
+                                            </t>
+<!--                                            <t t-elif="o.balance_capital_scheduled &gt; 0">-->
+<!--                                                <span t-field="o.balance_capital_scheduled" style="color:red;"/>-->
+<!--                                            </t>-->
+<!--                                            <t t-else="">-->
+<!--                                                <span t-field="o.balance_capital"/>-->
+<!--                                            </t>-->
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <t t-if="o.state in ('liquidation_process', 'done') and o.last_capital_index_initial_bolivianos &gt; 0">
+                                                <strong>ULTIMO SALDO CAPITAL BS</strong>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="o.state in ('liquidation_process', 'done') and o.last_capital_index_initial_bolivianos &gt; 0">
+                                                <span style="color:red;">
+                                                    <t t-esc="o.company_id.currency_id.symbol"/>
+                                                    <t t-esc="'{0:,.2f}'.format(o.last_capital_index_initial_bolivianos).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </span>
+                                            </t>
+<!--                                            <t t-elif="o.balance_capital_scheduled &gt; 0">-->
+<!--                                                <span t-field="o.balance_capital_scheduled_bs" style="color:red;"/>-->
+<!--                                            </t>-->
+<!--                                            <t t-else="">-->
+<!--                                                <span t-field="o.balance_capital_bs"/>-->
+<!--                                            </t>-->
+                                        </td>
+                                    </tr>
+
+                                </table>
+                                <br/>
+                                <table class="table text-center align-middle">
+                                    <thead>
+                                        <tr style="font-size:12px;padding-top:10px;padding-bottom:10px;">
+                                            <th style="width:20px;padding:5px;" class="align-middle">N</th>
+                                            <th style="width:30px;" class="align-middle">C.PAGO</th>
+                                            <th style="width:20px;" class="align-middle">PERIODO</th>
+                                            <th style="width:100px;" class="align-middle">CAP. INICIAL</th>
+                                            <th style="width:75px;" class="align-middle">CUOTA FIJA</th>
+                                            <th style="width:80px" class="align-middle">CAPITAL</th>
+                                            <t t-if="o.with_guarantor == 'loan_guarantor' or o.with_guarantor == 'no_loan_guarantor'">
+                                                <th style=" width:70px;" class="align-middle">0.7%</th>
+                                            </t>
+                                            <t t-if="o.with_guarantor == 'mortgage'">
+                                                <th style=" width:70px;" class="align-middle">0.207%</th>
+                                            </t>
+                                            <t t-if="o.with_guarantor == 'loan_guarantor' or o.with_guarantor == 'no_loan_guarantor'">
+                                                <th style=" width:50px;" class="align-middle">F.C.0.04%</th>
+                                            </t>
+                                            <t t-if="o.with_guarantor == 'mortgage'">
+                                                <th style=" width:50px;" class="align-middle">P.H.0.04%</th>
+                                            </t>
+                                            <th style=" width:40px;" class="align-middle">SALDO CAPITAL</th>
+                                            <th style=" width:40px;" class="align-middle">D/E</th>
+                                            <th style=" width:40px;" class="align-middle">%COM</th>
+                                            <th style=" width:40px;" class="align-middle">D/MINDEF Bs</th>
+                                            <th style=" width:40px;" class="align-middle">T. PAGO</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="font-size:12px;">
+                                        <tr t-set="acumulador" t-value="0"/>
+                                        <t t-set="line_number" t-value="0"/>
+                                        <t t-foreach="o.loan_payment_ids.filtered(lambda x:x.state == 'transfer' or x.state == 'ministry_defense' or x.state == 'debt_settlement_deposit' or x.state == 'debt_settlement_mindef' or x.state == 'debt_settlement_contributions' or x.state == 'amortization' or x.state=='scheduled' or x.state=='ministry_defense_warrantor' or x.state=='payment_mora' or x.state=='scheduled_mora')" t-as="p">
+                                            <style>
+                                                .table th, .table td {
+                                                    padding: 0px;
+                                                }
+                                            </style>
+                                            <t t-set="line_number" t-value="line_number + 1"/>
+                                            <tr style="padding:0px; margin:0px;">
+                                                <td class="align-middle">
+                                                    <t t-esc="line_number"/>
+                                                </td>
+                                                <td class="align-middle" style="font-size:8px;">
+                                                    <t t-esc="p.name"/>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <t t-esc="p.period"/>
+                                                </td>
+                                                <td class="align-middle">
+<!--                                                    <t t-esc="round(p.capital_initial_bs,2)"/>-->
+                                                    <t t-esc="'{:,.2f}'.format(p.capital_initial_bs or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </td>
+                                                <td class="align-middle">
+<!--                                                    <t t-esc="round(p.mount_bs,2)"/>-->
+                                                    <t t-esc="'{:,.2f}'.format(p.mount_bs or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <t t-esc="'{:,.2f}'.format(p.capital_index_initial_bolivianos or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </td>
+
+                                                <t t-if="p.with_guarantor in ['loan_guarantor', 'no_loan_guarantor']">
+                                                    <td class="align-middle text-center">
+                                                        <t t-esc="'{:,.2f}'.format(p.interest_base_bolivianos or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                    </td>
+                                                </t>
+                                                <t t-if="p.with_guarantor == 'mortgage'">
+                                                    <td class="align-middle text-center">
+                                                        <t t-esc="'{:,.2f}'.format(p.interest_base_mortgage or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                    </td>
+                                                </t>
+
+                                                <t t-if="p.with_guarantor in ['loan_guarantor', 'no_loan_guarantor']">
+                                                    <td class="align-middle text-center">
+                                                        <t t-esc="'{:,.2f}'.format(p.res_social_bolivianos or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                    </td>
+                                                </t>
+                                                <t t-if="p.with_guarantor == 'mortgage'">
+                                                    <td class="align-middle text-center">
+                                                        <t t-esc="'{:,.2f}'.format(p.res_mortgage or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                    </td>
+                                                </t>
+
+                                                <td class="align-middle text-center">
+                                                    <t t-esc="'{:,.2f}'.format(p.balance_capital_bs or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <t t-esc="'{:,.2f}'.format(p.interest_month_surpluy_bolivianos or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <t t-esc="'{:,.2f}'.format(p.percentage_amount_min_def_bolivianos or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <t t-esc="'{:,.2f}'.format(p.amount_total_bolivianos or 0.0).replace(',', 'X').replace('.', ',').replace('X', '.')"/>
+                                                </td>
+                                                <td>
+                                                    <span t-attf-class="#{ 'text-danger' if p.state == 'scheduled' or p.state == 'scheduled_mora' else '' }">
+                                                        <t t-esc="dict(p._fields['state']._description_selection(env)).get(p.state)"/>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                        </t>
+                                    </tbody>
+                                </table>
+                                <br/>
+                            </div>
+                        </div>
+                        <div class="oe_structure"/>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

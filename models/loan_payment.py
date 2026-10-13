@@ -52,17 +52,21 @@ class LoanPayment(models.Model):
                                          default=lambda self: self.env.ref('base.USD'), readonly=True)
 
     capital_initial = fields.Float(string='Capital inicial',currency_field='currency_id_dollar')
+    capital_initial_bs = fields.Float(string='Capital inicial (Bs)', currency_field='currency_id')
     capital_index_initial = fields.Float(string='Capital',currency_field='currency_id_dollar')
     mount = fields.Float(string='Cuota fija',currency_field='currency_id_dollar')
+    mount_bs = fields.Float(string='Cuota fija (Bs)', currency_field='currency_id')
     interest = fields.Float(string='Interes', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
     interest_base = fields.Float(string='0.7%', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
     interest_mortgage = fields.Float(string='Interes H.', compute='_compute_interest', store=True,currency_field='currency_id_dollar')
     interest_base_mortgage = fields.Float(string='0.207%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
+    interest_base_mortgage_bs = fields.Float(string='0.207% Bs', digits=(16, 2), store=True,currency_field='currency_id')
     # interest_especial = fields.Float(string='Interes especial', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     # interest_base_especial = fields.Float(string='0.3%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     res_social = fields.Float(string='F.C. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     res_mortgage = fields.Float(string='P.H. 0.04%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     balance_capital = fields.Float(string='Saldo capital', compute='_compute_interest', digits=(16, 2),currency_field='currency_id_dollar', store=True)
+    balance_capital_bs = fields.Float(string='Saldo capital Bs', digits=(16, 2),currency_field='currency_id', store=True)
     percentage_amount_min_def = fields.Float(string='%MINDEF', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     commission_min_def = fields.Float(string='0.25% MINDEF', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     coa_commission = fields.Float(string='%COA',currency_field='currency_id_dollar')
@@ -102,7 +106,7 @@ class LoanPayment(models.Model):
     interest_base_bolivianos = fields.Float(string='0.7% BS', compute='_compute_bolivianos', store=True, digits=(16, 2),currency_field='currency_id')
     res_social_bolivianos = fields.Float(string='F.C. BS', compute='_compute_bolivianos', store=True, digits=(16, 2),currency_field='currency_id')
     percentage_amount_min_def_bolivianos = fields.Float(string='%MINDEF BS', compute='_compute_bolivianos', store=True,
-                                                        digits=(16, 2),currency_field='currency_id')
+                                                         digits=(16, 2),currency_field='currency_id')
     interest_month_surpluy_bolivianos = fields.Float(string='D/E BS', compute='_compute_bolivianos', store=True,
                                                      digits=(16, 2),currency_field='currency_id')
     amount_total_bolivianos = fields.Float(string='DIF/MINDEF Bs', compute='_compute_bolivianos', digits=(16, 2),
@@ -165,6 +169,7 @@ class LoanPayment(models.Model):
                 rec.currency_id_dollar.inverse_rate, 2)
             rec.amount_total_bolivianos = (rec.capital_index_initial_bolivianos + rec.interest_base_bolivianos +
                                            rec.res_social_bolivianos + rec.percentage_amount_min_def_bolivianos + rec.interest_month_surpluy_bolivianos)
+            rec.capital_initial_bs = rec.capital_initial * rec.currency_id_dollar.inverse_rate
 
     @api.onchange('amount_total')
     def _change_amount_total_bs(self):
@@ -539,5 +544,9 @@ class LoanPayment(models.Model):
         for rec in self:
             rec.amount_total_original = rec.amount_total
 
-
-
+    def action_change_dollar(self):
+        for rec in self:
+            rec.capital_initial_bs = round(rec.capital_initial * round(rec.currency_id_dollar.inverse_rate, 2), 2)
+            rec.mount_bs = round(rec.mount * round(rec.currency_id_dollar.inverse_rate, 2), 2)
+            rec.balance_capital_bs = round(rec.balance_capital * round(rec.currency_id_dollar.inverse_rate, 2), 2)
+            rec.interest_base_mortgage_bs = round(rec.interest_base_mortgage * round(rec.currency_id_dollar.inverse_rate, 2), 2)

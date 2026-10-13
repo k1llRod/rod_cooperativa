@@ -245,6 +245,7 @@
                                         <field name="period" />
                                         <field name="date_payment"/>
                                         <field name="capital_initial" />
+                                        <field name="capital_initial_bs"/>
                                         <field name="capital_index_initial" sum="Total"/>
                                         <field name="capital_index_initial_bolivianos" sum="Total"/>
 
@@ -259,8 +260,11 @@
                                         <field name="res_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total" optional="show"/>
 <!--                                        <field name="interest_mortgage_bolivianos" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total"/>-->
                                         <field name="mount" sum="Total"/>
+                                        <field name="mount_bs" sum="Total"/>
                                         <field name="balance_capital"/>
+                                        <field name="balance_capital_bs"/>
                                         <field name="interest_month_surpluy" sum="Total"/>
+                                        <field name="interest_month_surpluy_bolivianos" sum="Total" optional="hidden"/>
                                         <field name="percentage_amount_min_def" sum="Total"/>
                                         <field name="percentage_amount_min_def_bolivianos" sum="Total" optional="hidden"/>
                                         <field name="commission_min_def" sum="Total" optional="hidden"/>
