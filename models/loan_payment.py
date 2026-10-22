@@ -186,19 +186,21 @@ class LoanPayment(models.Model):
     #     for rec in self:
     #         rec.interest = rec.mount * 0.1
 
-    @api.depends('capital_initial', 'balance_capital', 'interest', 'res_social')
+    @api.depends('capital_initial', 'capital_index_initial','balance_capital', 'interest', 'res_social')
     def _compute_interest(self):
         percentage_interest = float(
             self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest'))
         contingency_found = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.contingency_fund'))
-
         interest = (percentage_interest + contingency_found) / 100
-
         mortgage_loan = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_loan'))
         percentage_interest_mortgage = float(
             self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage'))
-
         interest_mortgage = (percentage_interest_mortgage + mortgage_loan) / 100
+
+        mortgage_loan_especial = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_especial_loan'))
+        monthly_interest_mortgage_especial = float(self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage_especial'))
+        interest_mortgage_especial = round((monthly_interest_mortgage_especial + mortgage_loan_especial) / 100, 5)
+
 
         for rec in self:
             if (rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor') and not rec.state == 'amortization':
@@ -209,14 +211,30 @@ class LoanPayment(models.Model):
                 rec.interest_mortgage = rec.capital_initial * interest_mortgage
                 rec.interest_base_mortgage = rec.capital_initial * (percentage_interest_mortgage / 100)
                 rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
+            if rec.loan_application_ids.with_guarantor == 'mortgage_especial':
+                rec.interest_mortgage = rec.capital_initial * interest_mortgage_especial
+                rec.interest_base_mortgage = rec.capital_initial * (mortgage_loan_especial / 100)
+                rec.capital_index_initial = round(rec.mount - rec.interest_mortgage, 2)
+
             rec.balance_capital = rec.capital_initial - rec.capital_index_initial
+            if -1.0 <= rec.balance_capital <= 1.0:
+                if (rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor') and not rec.state == 'amortization':
+                    rec.capital_index_initial = round(rec.mount - rec.interest + rec.balance_capital, 2)
+                if rec.loan_application_ids.with_guarantor == 'mortgage':
+                    rec.capital_index_initial = round(rec.mount - rec.interest_mortgage + rec.balance_capital, 2)
+                if rec.loan_application_ids.with_guarantor == 'mortgage_especial':
+                    rec.capital_index_initial = round(rec.mount - rec.interest_mortgage + rec.balance_capital, 2)
+                rec.balance_capital = rec.capital_initial - rec.capital_index_initial
             if (rec.loan_application_ids.with_guarantor == 'loan_guarantor' or rec.loan_application_ids.with_guarantor == 'no_loan_guarantor') and not rec.state == 'amortization':
                 rec.res_social = rec.capital_initial * round((contingency_found / 100), 4)
             if rec.loan_application_ids.with_guarantor == 'mortgage':
                 rec.res_mortgage = rec.capital_initial * round((mortgage_loan / 100), 4)
+            if rec.loan_application_ids.with_guarantor == 'mortgage_especial':
+                rec.res_mortgage = rec.capital_initial * round((monthly_interest_mortgage_especial / 100), 4)
             rec.amount_total = round(rec.mount, 2) + round(rec.percentage_amount_min_def, 2) + round(
                 rec.interest_month_surpluy, 2) if not rec.state == 'amortization' else rec.capital_index_initial + rec.interest_month_surpluy
             rec._change_amount_total_bs()
+            rec.action_change_dollar()
 
     def open_loan_payment(self, context=None):
         return {

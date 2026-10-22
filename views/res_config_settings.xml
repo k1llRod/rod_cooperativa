@@ -38,14 +38,14 @@
                                         <field name="monthly_interest_mortgage" class="oe_inline"/> %%
                                     </div>
 
-                                    <label string="Préstamo hipotecario especial %" for="mortgage_especial_loan"/>
-                                    <div class="text-muted">Establecer el recargo/fondo para préstamo hipotecario especial.</div>
+                                    <label string="Interés mensual hipotecario especial %" for="mortgage_especial_loan"/>
+                                    <div class="text-muted">Establecer el porcentaje de interés mensual para préstamo hipotecario especial.</div>
                                     <div class="mb16">
                                         <field name="mortgage_especial_loan" class="oe_inline"/> %%
                                     </div>
 
-                                    <label string="Interés mensual hipotecario especial %" for="monthly_interest_mortgage_especial"/>
-                                    <div class="text-muted">Establecer la tasa de interés mensual para préstamo hipotecario especial.</div>
+                                    <label string="Fondo contingencia hipotecario especial %" for="monthly_interest_mortgage_especial"/>
+                                    <div class="text-muted">Establecer el fondo de contingencia para préstamo hipotecario especial.</div>
                                     <div class="mb16">
                                         <field name="monthly_interest_mortgage_especial" class="oe_inline"/> %%
                                     </div>

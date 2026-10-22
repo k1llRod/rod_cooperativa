@@ -210,6 +210,11 @@ class LoanApplication(models.Model):
         self.fixed_fee = self.amount_loan_dollars * self.index_loan
         self.pay_slip_balance = self.fixed_fee_bs * (100 / 40)
 
+    @api.onchange('amount_loan')
+    def _onchange_amount_dollars(self):
+        for record in self:
+            record.amount_loan_dollars = record.amount_loan / record.value_dolar
+
     def _compute_set_dollar(self):
         dollar = self.env['res.currency'].search([('name', '=', 'USD')], limit=1)
         return round(dollar.inverse_rate, 2)
@@ -272,13 +277,15 @@ class LoanApplication(models.Model):
                                                  self.env['ir.config_parameter'].sudo().get_param(
                                                      'rod_cooperativa.monthly_interest_mortgage')), digits=(6, 3))
     mortgage_especial_loan = fields.Float(
-        string='Prestamo hipotecario especial %',
+        string='Interés mensual hipotecario especial %',
+        digits=(6, 3),
         default=lambda self: float(
-            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_especial_loan', default=0.0))
+            self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.mortgage_especial_loan') or 0.0
+        ),
     )
 
     monthly_interest_mortgage_especial = fields.Float(
-        string='Indice de prestamo hipotecario especial por mes %',
+        string='Fondo contingencia hipotecario especial %',
         default=lambda self: float(
             self.env['ir.config_parameter'].sudo().get_param('rod_cooperativa.monthly_interest_mortgage_especial',
                                                              default=0.0)),

@@ -127,7 +127,7 @@
 
                                 <!--                                <field name="category_loan"/>-->
                                 <field name="guarantor_one" required="" domain="[('id','!=',partner_id),('guarantor','=',True)]"
-                                       attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')],
+                                       attrs="{'invisible':['|','|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage'),('with_guarantor','=','mortgage_especial')],
                                                                             'readonly': ['|',('state','=','progress'),('state','=','done')],
                                                                             'required': [('with_guarantor','=','loan_guarantor')]}"
                                        options="{'no_create': True, 'no_create_edit': True,'no_quick_create': True}"
@@ -154,9 +154,9 @@
                         <group style="margin-top:0px;">
                             <group>
                                 <field name="code_garantor_one"
-                                       attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')]}"/>
+                                       attrs="{'invisible':['|','|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage'),('with_guarantor','=','mortgage_especial')]}"/>
                                 <field name="guarantor_two" domain="[('id','!=',partner_id),('guarantor','=',True)]"
-                                       attrs="{'invisible':['|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage')],
+                                       attrs="{'invisible':['|','|','|',('type_loan', '!=', 'regular'),('with_guarantor','=','no_loan_guarantor'),('with_guarantor','=','mortgage'),('with_guarantor','=','mortgage_especial')],
                                                                                                                 'readonly': ['|',('state','=','progress'),('state','=','done')]}"
                                        options="{'no_create': True, 'no_create_edit': True,'no_quick_create': True}"
                                 />
@@ -175,14 +175,14 @@
                                 <!--                                <field name="date_approval" attrs="{'readonly': [('state','!=','init')],-->
                                 <!--                                                                    'invisible': [('state','=','init')]}"/>-->
                                 <field name="date_approval" attrs="{'required': [('state','=','approval')]}"/>
-                                <field name="monthly_interest" readonly="1" attrs="{'invisible':[('with_guarantor','=','mortgage')]}"/>
+                                <field name="monthly_interest" readonly="1" attrs="{'invisible':['|',('with_guarantor','!=','loan_guarantor'),('with_guarantor','!=','no_loan_guarantor')]}"/>
                                 <field name="monthly_interest_mortgage" readonly="1" attrs="{'invisible':[('with_guarantor','!=','mortgage')]}"/>
                                 <field name="monthly_interest_mortgage_especial" readonly="1" attrs="{'invisible':[('with_guarantor','!=','mortgage_especial')]}"/>
-                                <field name="contingency_fund" readonly="1" attrs="{'invisible':[('with_guarantor','=','mortgage')]}"/>
+                                <field name="contingency_fund" readonly="1" attrs="{'invisible':['|',('with_guarantor','!=','loan_guarantor'),('with_guarantor','!=','no_loan_guarantor')]}"/>
                                 <field name="mortgage_loan" readonly="1" attrs="{'invisible':[('with_guarantor','!=','mortgage')]}"/>
                                 <field name="mortgage_especial_loan" readonly="1" attrs="{'invisible':[('with_guarantor','!=','mortgage_especial')]}"/>
-                                <field name="index_loan" readonly="1" widget="monetary"
-                                       options="{'currency_field': 'currency_id_dollar'}"/>
+                                <field name="index_loan" readonly="1" widget="float"
+                                       options="{'precision': 6}"/>
                                 <!--                                <field name="index_loan_bs" readonly="1" widget="monetary" />-->
                                 <field name="amount_min_def" readonly="1"/>
                                 <field name="fixed_fee" readonly="1" widget="monetary"
@@ -249,16 +249,34 @@
                                         <field name="capital_index_initial" sum="Total"/>
                                         <field name="capital_index_initial_bolivianos" sum="Total"/>
 
-                                        <field name="interest_base" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" sum="Total"/>
-                                        <field name="interest_base_bolivianos" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" optional="hidden" sum="Total"/>
-                                        <field name="res_social" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" sum="Total"/>
-                                        <field name="res_social_bolivianos" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" optional="hidden" sum="Total"/>
-                                        <field name="interest" attrs="{'column_invisible': [('parent.with_guarantor','=','mortgage')]}" sum="Total"/>
+                                        <!-- Columnas para Garante y Sin Garante -->
+                                        <field name="interest_base"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['loan_guarantor', 'no_loan_guarantor'])]}"
+                                               sum="Total"/>
+                                        <field name="interest_base_bolivianos"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['loan_guarantor', 'no_loan_guarantor'])]}"
+                                               optional="hidden" sum="Total"/>
+                                        <field name="res_social"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['loan_guarantor', 'no_loan_guarantor'])]}"
+                                               sum="Total"/>
+                                        <field name="res_social_bolivianos"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['loan_guarantor', 'no_loan_guarantor'])]}"
+                                               optional="hidden" sum="Total"/>
+                                        <field name="interest"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['loan_guarantor', 'no_loan_guarantor'])]}"
+                                               sum="Total"/>
 
-                                        <field name="interest_base_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total"/>
-                                        <field name="interest_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total"/>
-                                        <field name="res_mortgage" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total" optional="show"/>
-<!--                                        <field name="interest_mortgage_bolivianos" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total"/>-->
+                                        <!-- Columnas para Hipotecario e Hipotecario Especial -->
+                                        <field name="interest_base_mortgage"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['mortgage', 'mortgage_especial'])]}"
+                                               sum="Total"/>
+                                        <field name="interest_mortgage"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['mortgage', 'mortgage_especial'])]}"
+                                               sum="Total"/>
+                                        <field name="res_mortgage"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['mortgage', 'mortgage_especial'])]}"
+                                               sum="Total" optional="show"/>
+                                        <!--                                        <field name="interest_mortgage_bolivianos" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total"/>-->
                                         <field name="mount" sum="Total"/>
                                         <field name="mount_bs" sum="Total"/>
                                         <field name="balance_capital"/>

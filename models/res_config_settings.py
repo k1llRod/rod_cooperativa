@@ -6,15 +6,15 @@ from encodings.punycode import digits
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    monthly_interest = fields.Float(string='Interes mensual %', digits=(6, 3))
-    contingency_fund = fields.Float(string='Fondo de contingencia %', digits=(6, 3))
+    monthly_interest = fields.Float(string='Interes mensual prestamo regular %', digits=(6, 3))
+    contingency_fund = fields.Float(string='Fondo de contingencia prestamo regular %', digits=(6, 3))
     percentage_min_def = fields.Float(string='Porcentaje Min. Defensa %', digits=(6, 3))
     insurance_relief = fields.Float(string='Seguro de desgravamen %', digits=(6, 3))
     commission_min_def = fields.Float(string='Comisión Min. Defensa %', digits=(6, 3))
-    mortgage_loan = fields.Float(string='Prestamo hipotecario', digits=(6, 3))
+    mortgage_loan = fields.Float(string='Interes mensual Prestamo hipotecario %', digits=(6, 3))
     monthly_interest_mortgage = fields.Float(string='Interes mensual hipotecario %', digits=(6, 3))
-    mortgage_especial_loan = fields.Float(string='Prestamo hipotecario especial', digits=(6, 3))
-    monthly_interest_mortgage_especial = fields.Float(string='Interes mensual hipotecario especial %', digits=(6, 3))
+    mortgage_especial_loan = fields.Float(string='Interes mensual hipotecario especial %', digits=(6, 3))
+    monthly_interest_mortgage_especial = fields.Float(string='Fondo contingencia hipotecario especial %', digits=(6, 3))
 
     account_loan_id = fields.Many2one('account.account', string='Cuenta contable de prestamos')
     account_egreso_id = fields.Many2one('account.account', string='Cuenta contable de egreso de intereses')
