@@ -546,7 +546,6 @@ class LoanApplication(models.Model):
             'debt_settlement_deposit',
             'debt_settlement_mindef',
             'debt_settlement_contributions',
-            'scheduled',
             'amortization',
             'payment_mora',
         )
