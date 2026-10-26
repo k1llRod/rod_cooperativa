@@ -20,6 +20,18 @@ class FormFinalizedLoan(models.TransientModel):
     balance_total_interest_month_bolivianos = fields.Float(string='Saldo total de interes mensual en Bs.', compute='_compute_calculate_dollar', store=True)
     balance_total = fields.Float(string='Saldo total $.', compute='_compute_calculate_total', store=True)
     balance_total_bolivianos = fields.Float(string='Saldo total Bs.')
+    state_payment = fields.Selection(
+        selection=[
+            ('draft', 'Sin Liquidar'),
+            ('debt_settlement_mindef', 'Liquidación de deuda MINDEF'),
+            ('debt_settlement_deposit', 'Liquidación de deuda por depósito'),
+            ('debt_settlement_contributions', 'Liquidación de deuda por aportes'),
+        ],
+        string='Estado de Liquidación',
+        default='draft',
+        tracking=True,
+        help="Define el mecanismo y estado de liquidación de la deuda del socio.",
+    )
 
 
     @api.depends('balance_capital', 'balance_total_interest_month')

@@ -40,12 +40,25 @@ class FinalizedLoan(models.Model):
     total_payment = fields.Float(string='Total de pagos', compute='_compute_total_payment', store=True)
     total_payment_bolivianos = fields.Float(string='Total de pagos en Bs.', compute='_compute_total_payment',
                                             store=True)
+    state_payment = fields.Selection(
+        selection=[
+            ('draft', 'Sin Liquidar'),
+            ('debt_settlement_mindef', 'Liquidación de deuda MINDEF'),
+            ('debt_settlement_deposit', 'Liquidación de deuda por depósito'),
+            ('debt_settlement_contributions', 'Liquidación de deuda por aportes'),
+        ],
+        string='Estado de Liquidación',
+        default='draft',
+        tracking=True,
+        help="Define el mecanismo y estado de liquidación de la deuda del socio.",
+    )
 
     @api.depends('balance_capital_dollar', 'balance_total_interest_month')
     def _compute_total_payment(self):
         for record in self:
-            record.total_payment = round(record.balance_capital_dollar + record.balance_total_interest_month,2)
-            record.total_payment_bolivianos = round(record.balance_capital_bolivianos + record.balance_total_interest_month_bolivianos,2)
+            record.total_payment = round(record.balance_capital_dollar + record.balance_total_interest_month, 2)
+            record.total_payment_bolivianos = round(
+                record.balance_capital_bolivianos + record.balance_total_interest_month_bolivianos, 2)
 
     state = fields.Selection([
         ('draft', 'Borrador'),
@@ -63,16 +76,20 @@ class FinalizedLoan(models.Model):
             if delete_records:
                 # record.loan_application_id.state = 'done'
                 record.state = 'confirmed'
-                values = record.loan_application_id.loan_payment_ids[-1].filtered(lambda x:x.state == 'ministry_defense' or x.state == 'transfer')
+                values = record.loan_application_id.loan_payment_ids[-1].filtered(
+                    lambda x: x.state == 'ministry_defense' or x.state == 'transfer')
                 payment = record.loan_application_id.loan_payment_ids.create(
                     {
-                        'name': 'LIQUID 1',
                         'loan_application_ids': record.loan_application_id.id,
+                        'name': 'LIQUID 1',
                         'date': record.date_finalize,
-                        'capital_initial': values['balance_capital'],
+                        'date_payment': record.date_finalize,
+                        'amount_payment': record.total_payment_bolivianos,
+                        'capital_initial': record.balance_capital_dollar,
                         'capital_index_initial': record.balance_capital_dollar,
                         'interest_month_surpluy': record.balance_total_interest_month,
-                        'state': 'draft'
+                        'amount_total': record.total_payment,
+                        'state': record.state_payment,
                     }
                 )
                 if payment:
@@ -80,7 +97,8 @@ class FinalizedLoan(models.Model):
                     data = (0, 0, {
                         'account_id': record.account_loan_id.id,
                         'debit': record.amount_account_loan, 'credit': 0,
-                        'partner_id': self.env['res.partner'].search([('name','=',record.journal_id.bank_id.display_name.upper())]).id if record.journal_id.bank_id else "",
+                        'partner_id': self.env['res.partner'].search([('name', '=',
+                                                                       record.journal_id.bank_id.display_name.upper())]).id if record.journal_id.bank_id else "",
                         'amount_currency': 0
                     })
                     if not record.amount_account_loan == 0:
@@ -135,9 +153,9 @@ class FinalizedLoan(models.Model):
 
     @api.onchange('account_loan_id')
     def _onchange_account_loan_id(self):
-        self.amount_account_loan = round(self.total_payment_bolivianos,2)
-        self.amount_regular_loan_amortization = round(self.balance_capital_bolivianos,2)
-        self.amount_other_income = round(self.balance_total_interest_month_bolivianos,2)
+        self.amount_account_loan = round(self.total_payment_bolivianos, 2)
+        self.amount_regular_loan_amortization = round(self.balance_capital_bolivianos, 2)
+        self.amount_other_income = round(self.balance_total_interest_month_bolivianos, 2)
 
     def _format_name(self, name):
         """Transforma un nombre en mayúsculas a minúsculas con la primera letra en mayúscula."""

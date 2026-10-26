@@ -21,6 +21,7 @@
                             <field name="balance_total_interest_month_bolivianos"/>
                             <field name="balance_total"/>
                             <field name="balance_total_bolivianos"/>
+                            <field name="state_payment"/>
                         </group>
                     </group>
                     <footer>

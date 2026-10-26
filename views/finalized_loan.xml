@@ -18,6 +18,7 @@
                     <field name="balance_capital_bolivianos"/>
                     <field name="balance_total_interest_month" />
                     <field name="balance_total_interest_month_bolivianos"/>
+                    <field name="state_payment"/>
                 </tree>
             </field>
         </record>
@@ -53,6 +54,7 @@
                                 <field name="balance_total_interest_month_bolivianos" />
                                 <field name="total_payment"/>
                                 <field name="total_payment_bolivianos"/>
+                                <field name="state_payment"/>
                             </group>
                         </group>
                         <notebook>
