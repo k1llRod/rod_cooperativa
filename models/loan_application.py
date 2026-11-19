@@ -798,11 +798,28 @@ class LoanApplication(models.Model):
                         record.surplus_days) + " DIAS " + "CUOTA FIJA $US: " + str(
                         round(record.loan_payment_ids[0].amount_total,
                               2)) + " GARANTES " + record.guarantor_one.category_partner_id.code_loan + " " + record.guarantor_one.name + " " + record.guarantor_two.category_partner_id.code_loan + " " + record.guarantor_two.name
-                else:
+
+                if record.with_guarantor == 'no_loan_guarantor':
                     glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(
                         record.amount_loan_dollars) + " INT " + str(
                         round(record.monthly_interest, 2)) + "% " + "F.CONTIGENCIA: " + str(
                         round(record.contingency_fund, 2)) + "% PLAZO: " + str(
+                        record.months_quantity) + " MESES EXCED " + str(
+                        record.surplus_days) + " DIAS " + "CUOTA FIJA $US: " + str(
+                        round(record.loan_payment_ids[0].amount_total, 2))
+                if record.with_guarantor == 'mortgage_especial':
+                    glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(
+                        record.amount_loan_dollars) + " INT " + str(
+                        round(record.mortgage_especial_loan, 3)) + "% " + "F.CONTIGENCIA: " + str(
+                        round(record.monthly_interest_mortgage_especial, 2)) + "% PLAZO: " + str(
+                        record.months_quantity) + " MESES EXCED " + str(
+                        record.surplus_days) + " DIAS " + "CUOTA FIJA $US: " + str(
+                        round(record.loan_payment_ids[0].amount_total, 2))
+                if record.with_guarantor == 'mortgage':
+                    glosa = "P/CONTAB. PREST. AMORT." + " " + record.partner_id.category_partner_id.code_loan + " " + record.partner_id.name + " COD: " + record.partner_id.code_contact + " PREST $US " + str(
+                        record.amount_loan_dollars) + " INT " + str(
+                        round(record.monthly_interest_mortgage, 3)) + "% " + "F.CONTIGENCIA: " + str(
+                        round(record.mortgage_loan, 2)) + "% PLAZO: " + str(
                         record.months_quantity) + " MESES EXCED " + str(
                         record.surplus_days) + " DIAS " + "CUOTA FIJA $US: " + str(
                         round(record.loan_payment_ids[0].amount_total, 2))
