@@ -70,9 +70,11 @@ class LoanPayment(models.Model):
                                  currency_field='currency_id_dollar')
     interest_mortgage = fields.Float(string='Interes H.', compute='_compute_interest', store=True,
                                      currency_field='currency_id_dollar')
-    interest_base_mortgage = fields.Float(string='0.207%', compute='_compute_interest', digits=(16, 2), store=True,
+    interest_mortgage_bs = fields.Float(string='Interes H. Bs', store=True,
+                                        currency_field='currency_id')
+    interest_base_mortgage = fields.Float(string='Int.Hip.%', compute='_compute_interest', digits=(16, 2), store=True,
                                           currency_field='currency_id_dollar')
-    interest_base_mortgage_bs = fields.Float(string='0.207% Bs', digits=(16, 2), store=True,
+    interest_base_mortgage_bs = fields.Float(string='Int.Hip.% Bs', digits=(16, 2), store=True,
                                              currency_field='currency_id')
     # interest_especial = fields.Float(string='Interes especial', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
     # interest_base_especial = fields.Float(string='0.3%', compute='_compute_interest', digits=(16, 2), store=True,currency_field='currency_id_dollar')
@@ -91,6 +93,7 @@ class LoanPayment(models.Model):
     coa_commission = fields.Float(string='%COA', currency_field='currency_id_dollar')
     coa_commission_bs = fields.Float(string='%COA Bs', currency_field='currency_id')
     interest_month_surpluy = fields.Float(string='D/E', digits=(16, 2), store=True, currency_field='currency_id_dollar')
+
     amount_total = fields.Float(string='D/MINDEF $', digits=(16, 2), currency_field='currency_id_dollar')
     amount_total_bs = fields.Float(string='D/MINDEF Bs', digits=(16, 2), store=True, currency_field='currency_id')
     amount_returned_coa = fields.Float(string='Monto devuelto COA', digits=(16, 2), store=True,
@@ -123,6 +126,7 @@ class LoanPayment(models.Model):
 
     capital_index_initial_bolivianos = fields.Float(string='Capital BS', compute='_compute_bolivianos', store=True,
                                                     digits=(16, 2), currency_field='currency_id')
+    interest_bolivianos = fields.Float(string='Interes BS', store=True, digits=(16, 2), currency_field='currency_id')
     interest_base_bolivianos = fields.Float(string='0.7% BS', compute='_compute_bolivianos', store=True, digits=(16, 2),
                                             currency_field='currency_id')
     res_social_bolivianos = fields.Float(string='F.C. BS', compute='_compute_bolivianos', store=True, digits=(16, 2),
@@ -133,6 +137,7 @@ class LoanPayment(models.Model):
                                                      digits=(16, 2), currency_field='currency_id')
     amount_total_bolivianos = fields.Float(string='DIF/MINDEF Bs', compute='_compute_bolivianos', digits=(16, 2),
                                            store=True, currency_field='currency_id')
+    res_mortgage_bolivianos = fields.Float(string='P.H. BS', store=True, digits=(16, 2), currency_field='currency_id')
 
     account_move_id = fields.Many2one('account.move', string='Asiento contable')
     state_account = fields.Selection([('draft', 'Borrador'), ('posted', 'Contabilizado'), ('cancel', 'Cancelado')],
@@ -620,3 +625,8 @@ class LoanPayment(models.Model):
             rec.balance_capital_bs = round(rec.balance_capital * round(rec.currency_id_dollar.inverse_rate, 2), 2)
             rec.interest_base_mortgage_bs = round(
                 rec.interest_base_mortgage * round(rec.currency_id_dollar.inverse_rate, 2), 2)
+            rec.interest_mortgage_bs = round(
+                rec.interest_mortgage * round(rec.currency_id_dollar.inverse_rate, 2), 2)
+            rec.coa_commission_bs = round(rec.coa_commission * round(rec.currency_id_dollar.inverse_rate, 2), 2)
+            rec.res_mortgage_bolivianos = round(rec.res_mortgage * round(rec.currency_id_dollar.inverse_rate, 2), 2)
+            rec.interest_bolivianos = round(rec.interest * round(rec.currency_id_dollar.inverse_rate, 2), 2)

@@ -7,7 +7,9 @@
             <field name="model">loan.payment</field>
             <field name="arch" type="xml">
 
-                <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense', 'ministry_defense_warrantor')">
+                <tree editable="bottom" decoration-info="state in ('transfer', 'ministry_defense', 'ministry_defense_warrantor')"
+                decoration-danger="state == 'not_discounted'"
+                class="o_tabla_prestamos">
                     <header>
                         <button name="create_report_excel" string="Reporte MINDEF" type="object"/>
                     </header>
@@ -31,33 +33,39 @@
                            options="{'currency_field': 'currency_id'}"/>
 
                     <field name="capital_index_initial" sum="Total" optional="show"/>
-                    <field name="capital_index_initial_bolivianos" sum="Total" optional="hidden"/>
+                    <field name="capital_index_initial_bolivianos" sum="Total" optional="hidden" class="col_fondo_verde"/>
                     <field name="interest_base" optional="show" sum="Total"/>
-                    <field name="interest_base_bolivianos" optional="hidden" sum="Total"/>
+                    <field name="interest_base_bolivianos" optional="hidden" sum="Total" class="col_fondo_verde"/>
                     <field name="res_social" optional="show" sum="Total"/>
-                    <field name="res_social_bolivianos" optional="hidden" sum="Total"/>
+                    <field name="res_social_bolivianos" optional="hidden" sum="Total" class="col_fondo_verde"/>
                     <field name="interest" sum="Total"/>
                     <field name="interest_base_mortgage" optional="show" sum="Total"/>
+                    <field name="interest_base_mortgage_bs" optional="show" sum="Total" class="col_fondo_verde"/>
                     <field name="interest_mortgage" optional="show" sum="Total"/>
+                    <field name="interest_mortgage_bs"
+                                optional="hide"
+                                sum="Total"
+                                class="col_fondo_verde"/>
                     <field name="res_mortgage" optional="show" sum="Total"/>
+                    <field name="res_mortgage_bolivianos" optional="hide" sum="Total" class="col_fondo_verde"/>
                     <field name="mount" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
-                           sum="Total"/>
-                    <field name="mount_bs" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total"/>
+                           sum="Total" class="col_fondo_verde"/>
+                    <field name="mount_bs" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total" class="col_fondo_verde"/>
                     <field name="interest_month_surpluy" sum="Total"/>
-                    <field name="interest_month_surpluy_bolivianos" sum="Total"/>
+                    <field name="interest_month_surpluy_bolivianos" sum="Total" class="col_fondo_verde"/>
                     <field name="balance_capital" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
                            sum="Total"/>
                     <field name="balance_capital_bs" widget="monetary" options="{'currency_field': 'currency_id'}"
-                           sum="Total"/>
+                           sum="Total" class="col_fondo_verde"/>
                     <field name="percentage_amount_min_def" optional="hidden" sum="Total"/>
-                    <field name="percentage_amount_min_def_bolivianos" optional="hidden" sum="Total"/>
+                    <field name="percentage_amount_min_def_bolivianos" optional="hidden" sum="Total" class="col_fondo_verde"/>
                     <field name="commission_min_def" optional="hidden" sum="Total"/>
                     <field name="coa_commission" optional="hidden" sum="Total"/>
-                    <field name="coa_commission_bs" optional="hidden" sum="Total"/>
+                    <field name="coa_commission_bs" optional="hidden" sum="Total" class="col_fondo_verde"/>
                     <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id_dollar'}"
                            sum="Total"/>
-                    <field name="amount_total_bs" widget="monetary" sum="Total"/>
-                    <field name="amount_total_bolivianos" sum="Total" optional="hidden"/>
+                    <field name="amount_total_bs" widget="monetary" sum="Total" class="col_fondo_verde"/>
+                    <field name="amount_total_bolivianos" sum="Total" optional="hidden" class="col_fondo_verde"/>
                     <field name="amount_payment" widget="monetary" sum="Total"/>
                     <field name="amount_returned_coa" optional="hidden" sum="Total"/>
 
@@ -176,7 +184,7 @@
                                 <field name="date_payment"/>
                                 <field name="period"/>
                                 <field name="capital_index_initial"/>
-                                <field name="capital_index_initial_bolivianos"/>
+                                <field name="capital_index_initial_bolivianos" />
                                 <field name="interest"/>
                                 <field name="interest_base"/>
                                 <field name="interest_base_bolivianos"/>

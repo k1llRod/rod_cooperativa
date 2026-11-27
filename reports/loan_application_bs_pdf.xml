@@ -99,6 +99,9 @@
                                             <t t-if="o.with_guarantor == 'loan_guarantor' or o.with_guarantor == 'no_loan_guarantor'">
                                                 <span t-field="o.monthly_interest"/>
                                             </t>
+                                            <t t-if="o.with_guarantor == 'mortgage_especial'">
+                                                <span t-field="o.mortgage_especial_loan"/>
+                                            </t>
                                         </td>
                                     </tr>
                                     <tr>

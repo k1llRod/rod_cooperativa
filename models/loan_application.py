@@ -1094,3 +1094,7 @@ class LoanApplication(models.Model):
         for record in self:
             record.state = 'observed'
             record.message_post(body=_("El préstamo ha sido marcado como observado. Se requiere revisión adicional."))
+
+    def loan_change_dollar(self):
+        for rec in self.loan_payment_ids:
+            rec.action_change_dollar()

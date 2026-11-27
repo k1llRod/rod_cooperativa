@@ -1,0 +1,15 @@
+.o_tabla_prestamos {
+    // Cubre campos normales (td) y campos con widget (span interno)
+    td.col_fondo_verde,
+    td > span.col_fondo_verde {
+        background-color: #eafaf1 !important;
+        display: block; // Hace que el span ocupe todo el ancho de la celda
+        padding: 4px 6px;
+        border-radius: 3px;
+    }
+
+    tbody tr:hover td.col_fondo_verde,
+    tbody tr:hover td > span.col_fondo_verde {
+        background-color: #d5f5e3 !important;
+    }
+}

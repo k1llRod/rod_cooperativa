@@ -236,6 +236,7 @@
                                           decoration-info="state in ('transfer', 'ministry_defense', 'debt_settlement_mindef', 'debt_settlement_deposit', 'ministry_defense_warrantor') "
                                           decoration-warning="state in ('scheduled')"
                                           decoration-danger="state in ('not_discounted')"
+                                          class="o_tabla_prestamos"
                                     >
                                         <field name="company_id" invisible="1"/>
                                         <field name="currency_id" invisible="1" groups="base.group_multi_currency"/>
@@ -247,7 +248,7 @@
                                         <field name="capital_initial" />
                                         <field name="capital_initial_bs"/>
                                         <field name="capital_index_initial" sum="Total"/>
-                                        <field name="capital_index_initial_bolivianos" sum="Total"/>
+                                        <field name="capital_index_initial_bolivianos" sum="Total" class="col_fondo_verde"/>
 
                                         <!-- Columnas para Garante y Sin Garante -->
                                         <field name="interest_base"
@@ -255,41 +256,53 @@
                                                sum="Total"/>
                                         <field name="interest_base_bolivianos"
                                                attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['loan_guarantor', 'no_loan_guarantor'])]}"
-                                               optional="hidden" sum="Total"/>
+                                               optional="hidden" sum="Total" class="col_fondo_verde"/>
                                         <field name="res_social"
                                                attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['loan_guarantor', 'no_loan_guarantor'])]}"
                                                sum="Total"/>
                                         <field name="res_social_bolivianos"
                                                attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['loan_guarantor', 'no_loan_guarantor'])]}"
-                                               optional="hidden" sum="Total"/>
+                                               optional="hidden" sum="Total" class="col_fondo_verde"/>
                                         <field name="interest"
                                                attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['loan_guarantor', 'no_loan_guarantor'])]}"
                                                sum="Total"/>
+                                        <field name="interest_bolivianos"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['loan_guarantor', 'no_loan_guarantor'])]}"
+                                               optional="hidden" sum="Total" class="col_fondo_verde"/>
 
                                         <!-- Columnas para Hipotecario e Hipotecario Especial -->
                                         <field name="interest_base_mortgage"
                                                attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['mortgage', 'mortgage_especial'])]}"
                                                sum="Total"/>
+                                        <field name="interest_base_mortgage_bs"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['mortgage', 'mortgage_especial'])]}"
+                                               sum="Total" class="col_fondo_verde"/>
                                         <field name="interest_mortgage"
                                                attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['mortgage', 'mortgage_especial'])]}"
                                                sum="Total"/>
+                                        <field name="interest_mortgage_bs"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['mortgage', 'mortgage_especial'])]}"
+                                               sum="Total" class="col_fondo_verde"/>
                                         <field name="res_mortgage"
                                                attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['mortgage', 'mortgage_especial'])]}"
                                                sum="Total" optional="show"/>
+                                        <field name="res_mortgage_bolivianos"
+                                               attrs="{'column_invisible': [('parent.with_guarantor', 'not in', ['mortgage', 'mortgage_especial'])]}"
+                                               sum="Total" optional="show" class="col_fondo_verde"/>
                                         <!--                                        <field name="interest_mortgage_bolivianos" attrs="{'column_invisible': [('parent.with_guarantor','!=','mortgage')]}" sum="Total"/>-->
                                         <field name="mount" sum="Total"/>
-                                        <field name="mount_bs" sum="Total"/>
+                                        <field name="mount_bs" sum="Total" class="col_fondo_verde"/>
                                         <field name="balance_capital"/>
-                                        <field name="balance_capital_bs"/>
+                                        <field name="balance_capital_bs" class="col_fondo_verde"/>
                                         <field name="interest_month_surpluy" sum="Total"/>
-                                        <field name="interest_month_surpluy_bolivianos" sum="Total" optional="hidden"/>
+                                        <field name="interest_month_surpluy_bolivianos" sum="Total" optional="hidden" class="col_fondo_verde"/>
                                         <field name="percentage_amount_min_def" sum="Total"/>
-                                        <field name="percentage_amount_min_def_bolivianos" sum="Total" optional="hidden"/>
+                                        <field name="percentage_amount_min_def_bolivianos" sum="Total" optional="hidden" class="col_fondo_verde"/>
                                         <field name="commission_min_def" sum="Total" optional="hidden"/>
                                         <field name="amount_total" sum="Total"/>
-                                        <field name="amount_total_bs" sum="Total"/>
+                                        <field name="amount_total_bs" sum="Total" class="col_fondo_verde"/>
                                         <field name="amount_payment" optional="hidden" sum="Total"/>
-                                        <field name="amount_returned_coa" optional="hidden" sum="Total"/>
+                                        <field name="amount_returned_coa" optional="hidden" sum="Total" class="col_fondo_verde"/>
                                         <field name="state" decoration-info="state == 'init' or state == 'in_queue'"
                                                decoration-success="state in ('ministry_defense', 'debt_settlement_mindef', 'debt_settlement_deposit', 'transfer')"
                                                decoration-warning="state == 'ministry_defense_warrantor'"
@@ -465,6 +478,14 @@
             <field name="binding_model_id" ref="model_loan_application"/>
             <field name="state">code</field>
             <field name="code">action = records.recalculate_historical()</field>
+        </record>
+
+        <record id="action_loan_change_dollar" model="ir.actions.server">
+            <field name="name">Actualizar tipo de cambio</field>
+            <field name="model_id" ref="model_loan_application"/>
+            <field name="binding_model_id" ref="model_loan_application"/>
+            <field name="state">code</field>
+            <field name="code">action = records.loan_change_dollar()</field>
         </record>
 
         <!-- Accion para visualizar loan.application -->
